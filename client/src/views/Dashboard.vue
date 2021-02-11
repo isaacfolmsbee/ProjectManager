@@ -1,7 +1,5 @@
 <template>
 <div>
-	<TheNavbar />
-	<div class="pt-16"></div>
 	<label for="project-bar">Project:</label>
 	<div id="project-bar">
 		<h1 v-for="project in projects" :key="project._id">{{ project.projectName }}</h1>
@@ -11,13 +9,10 @@
 </template>
 <script lang="ts">
 import Vue from 'vue'
-import TheNavbar from '../components/TheNavbar.vue';
 import { getProjectNames } from '../api/project';
 
 export default Vue.extend({
-	components: {
-		TheNavbar,
-	},
+	name: 'Dashboard',
 	data() {
 		return {
 			jwt: '',
