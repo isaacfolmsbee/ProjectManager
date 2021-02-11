@@ -1,5 +1,5 @@
 <template>
-<div class="w-screen h-screen bg-gray-700 flex flex-col items-center">
+<div class="w-screen h-screen flex flex-col items-center">
 	<h1 class="font-bold text-gray-200 text-2xl mt-10">Project Manager</h1>
 	<div class="flex flex-col h-20 justify-evenly">
 		<input type="text" v-model="email" placeholder="email...">

@@ -11,13 +11,12 @@
 </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 
 export default Vue.extend({
 	name: "the-modal",
 })
 </script>
-
 <style lang="postcss" scoped>
 .router-link {
 	@apply py-1 px-2 mb-4 text-3xl font-bold text-gray-50;
