@@ -1,6 +1,6 @@
 <template >
-<div id="app" :class="{ 'dark': darkMode }">
-	<div class="bg-gray-100 dark:bg-gray-700 transition-colors duration-300">
+<div id="app">
+	<div>
 		<TheNavbar :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
 		<router-view class="pt-16 xl:pt-0 xl:px-36" />
 	</div>
@@ -19,6 +19,18 @@ export default Vue.extend({
 	data() {
 		return {
 			darkMode: false,
+		}
+	},
+	watch: {
+		darkMode: function () {
+			const html = document.getElementsByTagName('html')[0];
+			if (this.darkMode) {
+				html.setAttribute('class', 'dark');
+			} else {
+				html.setAttribute('class', '');
+			}
+			
+			
 		}
 	}
 });
