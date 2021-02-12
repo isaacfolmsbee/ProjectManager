@@ -1,7 +1,7 @@
 <template >
 <div id="app">
 	<div>
-		<TheNavbar :JWT="JWT" :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
+		<TheNavbar @logout="logout" :JWT="JWT" :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
 		<router-view @updateJWT="updateJWT($event)" :JWT="JWT" class="pt-16 xl:pt-0 xl:px-36" />
 	</div>
 </div>
@@ -45,6 +45,11 @@ export default Vue.extend({
 				sessionStorage.removeItem('authtoken');
 			}
 			this.JWT = JWT;
+		},
+		logout() {
+			sessionStorage.removeItem('authtoken');
+			this.JWT = '';
+			this.$router.push('/login');
 		}
 	}
 });
