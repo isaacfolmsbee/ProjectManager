@@ -224,16 +224,18 @@ router.get('/type/:projectID', auth('getStats'), async (req: any, res: any) => {
 		{
 			_id: new mongodb.ObjectID(req.params.projectID),
 		},
-		{ projection: { ticketTypes: 1, tickets: 1 } }
+		{ projection: { tickets: 1 } }
 	);
 
 	let statistic: { [key: string]: any } = {};
 
-	for (const type of query.ticketTypes) {
-		statistic[type] = query.tickets.filter(
-			(el: { type: string }) => el.type === type
-		).length;
-	}
+	statistic['bug'] = query.tickets.filter(
+		(el: { type: string }) => el.type === 'bug'
+	).length;
+
+	statistic['suggestion'] = query.tickets.filter(
+		(el: { type: string }) => el.type === 'suggestion'
+	).length;
 
 	res.status(200).send(statistic);
 });
