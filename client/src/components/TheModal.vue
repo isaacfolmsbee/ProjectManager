@@ -7,7 +7,9 @@
 		<router-link to="/tickets" class="router-link">Tickets</router-link>
 		<router-link to="/manage-users" class="router-link">Manage Users</router-link>
 		<router-link to="/manage-projects" class="router-link">Manage Projects</router-link>
-		<router-link to="/account" class="router-link account">Account</router-link>
+		<span @click="$emit('closeModal')" class="my-auto">
+			<router-link v-if="JWT" to="/logout" class="router-link">Logout</router-link>
+		</span>
 	</div>
 </div>
 </template>
@@ -17,6 +19,10 @@ import Vue from 'vue';
 export default Vue.extend({
 	name: "the-modal",
 	props: {
+		JWT: {
+			type: String,
+			required: true,
+		},
 		darkMode: {
 			type: Boolean,
 			required: true,
@@ -27,10 +33,6 @@ export default Vue.extend({
 <style lang="postcss" scoped>
 .router-link {
 	@apply py-1 px-2 mb-4 text-3xl font-bold text-gray-50;
-}
-
-.router-link.account {
-	@apply my-auto;
 }
 
 .router-link-exact-active {
