@@ -1,8 +1,8 @@
 <template >
 <div id="app">
 	<div>
-		<TheNavbar :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
-		<router-view class="pt-16 xl:pt-0 xl:px-36" />
+		<TheNavbar :JWT="JWT" :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
+		<router-view @updateJWT="updateJWT($event)" :JWT="JWT" class="pt-16 xl:pt-0 xl:px-36" />
 	</div>
 </div>
 </template>
@@ -19,6 +19,7 @@ export default Vue.extend({
 	data() {
 		return {
 			darkMode: false,
+			JWT: '',
 		}
 	},
 	watch: {
@@ -31,6 +32,16 @@ export default Vue.extend({
 			}
 			
 			
+		}
+	},
+	methods: {
+		updateJWT(JWT: string) {
+			if (JWT) {
+				sessionStorage.setItem('authtoken', JWT);
+			} else {
+				sessionStorage.removeItem('authtoken');
+			}
+			this.JWT = JWT;
 		}
 	}
 });

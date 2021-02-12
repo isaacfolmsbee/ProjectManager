@@ -7,7 +7,7 @@
 import Vue from 'vue'
 export default Vue.extend({
 	created() {
-		sessionStorage.removeItem('authtoken');
+		this.$emit('updateJWT', undefined);
 		this.$router.push('/login');
 	}
 })

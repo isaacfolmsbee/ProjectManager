@@ -1,7 +1,7 @@
 <template>
 <div class="w-screen lg:w-11/12 lg:mx-auto flex flex-col items-center">
 	<div class="w-full lg:px-2 my-2 lg:my-3 xl:my-6 flex items-center">
-		<label for="project-bar" class="px-1 text-2xl dark:text-gray-50">Project:</label>
+		<label for="project-bar" class="px-1 lg:font-bold text-2xl dark:text-gray-50">Project:</label>
 		<div id="project-bar" class="flex overflow-x-auto">
 			<h1 v-for="project in projectNames" :key="project._id" 
 				@click="changeProject(project)" 
@@ -80,9 +80,14 @@ import { getTickets, getSeverityStat, getTypeStat } from '../api/ticket';
 
 export default Vue.extend({
 	name: 'Dashboard',
+	props: {
+		JWT: {
+			type: String,
+			required: true,
+		}
+	},
 	data() {
 		return {
-			jwt: '',
 			projectNames: [{
 				_id: '',
 				projectName: '',
@@ -111,15 +116,12 @@ export default Vue.extend({
 	},
 	async created() {
 		window.scrollTo(0, 0);
-		const authtoken = sessionStorage.getItem('authtoken');
-
-		if (authtoken) {
-			this.jwt = authtoken;
-			this.projectNames = await getProjectNames(this.jwt);
+		if (this.JWT) {
+			this.projectNames = await getProjectNames(this.JWT);
 			this.selectedProject = this.projectNames[0].projectName;
-			this.severity = await getSeverityStat(this.projectNames[0]._id, this.jwt);
-			this.type = await getTypeStat(this.projectNames[0]._id, this.jwt);
-			this.tickets = await getTickets(this.projectNames[0]._id, this.jwt);
+			this.severity = await getSeverityStat(this.projectNames[0]._id, this.JWT);
+			this.type = await getTypeStat(this.projectNames[0]._id, this.JWT);
+			this.tickets = await getTickets(this.projectNames[0]._id, this.JWT);
 		} else {
 			this.$router.push('/login');
 		}
@@ -127,9 +129,9 @@ export default Vue.extend({
 	methods: {
 		async changeProject(project: { _id: string; projectName: string }) {
 			this.selectedProject = project.projectName;
-			this.severity = await getSeverityStat(project._id, this.jwt);
-			this.type = await getTypeStat(project._id, this.jwt);
-			this.tickets = await getTickets(project._id, this.jwt);
+			this.severity = await getSeverityStat(project._id, this.JWT);
+			this.type = await getTypeStat(project._id, this.JWT);
+			this.tickets = await getTickets(project._id, this.JWT);
 		}
 	}
 })
@@ -137,7 +139,7 @@ export default Vue.extend({
 
 <style lang="postcss" scoped>
 .stat-wrapper {
-	@apply w-min max-w-sm overflow-x-scroll m-1 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md flex flex-wrap;
+	@apply w-min max-w-sm m-1 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md flex flex-wrap;
 }
 
 .stat {

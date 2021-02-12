@@ -9,18 +9,21 @@
 		<router-link to="/manage-users" class="router-link">Manage Users</router-link>
 		<router-link to="/manage-projects" class="router-link">Manage Projects</router-link>
 	</div>
-	<div class="hidden xl:inline transform translate-y-10 hover:translate-y-0 transition-transform duration-500 group w-36 h-auto bottom-4 left-0 mt-auto border-t">
-		<span class="p-2 flex justify-between items-center">
+	<div :class="{ 'translate-y-10': !JWT, 'translate-y-20': JWT }" class="hidden xl:inline transform hover:translate-y-0 transition-transform duration-500 group w-36 h-auto mt-auto border-t">
+		<div class="p-2 flex justify-between items-center">
 			<span class="text-xl font-mono font-bold text-gray-50">Account</span>
 			<svg class="w-6 h-6 text-gray-50 fill-current transform rotate-180 group-hover:rotate-0 transition-transform duration-500" viewBox="0 0 24 24"><path d="M12 2a10 10 0 0 1 10 10a10 10 0 0 1-10 10A10 10 0 0 1 2 12A10 10 0 0 1 12 2m-5 8l5 5l5-5H7z"></path></svg>
-		</span>
-		<span class="p-2 flex justify-between items-center">
+		</div>
+		<div class="p-2 flex justify-between items-center">
 			<span class="text-lg text-gray-50">Theme:</span>
 			<span @click="$emit('changeTheme')" :class="{ 'bg-indigo-100': !darkMode, 'justify-end bg-gray-900': darkMode }" 
 				class="w-14 h-7 px-0.5 flex items-center rounded-full cursor-pointer">
 				<span class="w-6 h-6 rounded-full bg-gray-50"></span>
 			</span>
-		</span>
+		</div>
+		<div v-if="JWT" class="mb-1.5 text-center">
+			<router-link to="logout" class="text-xl font-bold text-gray-50">Logout</router-link>
+		</div>
 	</div>
 </div>
 </template>
@@ -34,6 +37,10 @@ export default Vue.extend({
 		TheModal,
 	},
 	props: {
+		JWT: {
+			type: String,
+			required: true
+		},
 		darkMode: {
 			type: Boolean,
 			required: true,
