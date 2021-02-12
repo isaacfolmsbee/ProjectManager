@@ -1,15 +1,14 @@
 <template>
-<div class="w-screen h-screen flex flex-col items-center">
-	<h1 class="font-bold text-gray-200 text-2xl mt-10">Project Manager</h1>
-	<div class="flex flex-col h-20 justify-evenly">
-		<input type="text" v-model="email" placeholder="email...">
-		<input type="password" v-model="password" placeholder="password...">
-	</div>
-	<button @click="login()" class=" px-2 py-1 rounded-lg text-gray-300 text-xl transition-colors duration-500 hover:text-gray-100 hover:bg-gray-600">Login</button>
+<div class="fixed w-screen h-screen flex flex-col justify-center items-center">
+	<input type="text" v-model="email" placeholder="email..."
+		class="input -mt-32">
+	<input type="password" v-model="password" placeholder="password..."
+		class="input">
+	<button @click="login()" class="text-gray-600 dark:text-gray-200 text-2xl xl:text-3xl">Login</button>
 </div>
 </template>
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 import { login } from '../api/user';
 
 export default Vue.extend({
@@ -29,3 +28,9 @@ export default Vue.extend({
 	}
 })
 </script>
+
+<style lang="postcss" scoped>
+.input {
+	@apply w-11/12 max-w-xs xl:max-w-sm pl-2 h-11 xl:h-12 mb-5 bg-gray-200 dark:bg-gray-600 border border-gray-700 dark:border-gray-400 rounded-md text-xl dark:text-gray-100;
+}
+</style>
