@@ -1,6 +1,6 @@
 <template>
 <div class="fixed w-screen xl:w-36 h-16 xl:h-screen bg-indigo-700 flex xl:flex-col justify-between xl:justify-start items-center">
-	<TheModal v-if="isModalOpen" @closeModal="isModalOpen = false" />
+	<TheModal v-if="isModalOpen" :darkMode="darkMode" @changeTheme="$emit('changeTheme')" @closeModal="isModalOpen = false" />
 	<h1 class="xl:border-b xl:pb-4 xl:w-11/12 font-sans font-bold text-center text-gray-50 text-2xl ml-3 xl:ml-0 xl:mt-4">Project Manager</h1>
 	<svg @click="isModalOpen = !isModalOpen" class="xl:hidden w-10 h-10 mr-3 text-gray-300 fill-current" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
 	<div class="hidden xl:flex w-full flex-col items-center">
