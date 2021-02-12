@@ -57,7 +57,9 @@ router.get('/', auth(''), async (req: any, res: any) => {
 
 	// If they are admin, override and return all project names
 	if (req.user.isAdmin === true) {
-		const query: any = await projects.find({}, { projection: { projectName: 1 } }).toArray();
+		const query: any = await projects
+			.find({}, { projection: { projectName: 1 } })
+			.toArray();
 
 		return res.status(200).send(query);
 	}
@@ -81,6 +83,16 @@ router.get('/', auth(''), async (req: any, res: any) => {
 	}
 
 	res.status(200).send(projectNames);
+});
+
+router.get('/:projectID', auth(''), async (req: any, res: any) => {
+	const projects: Collection = await dbHandler('projects');
+
+	const project: any = await projects.findOne({
+		_id: new mongodb.ObjectID(req.params.projectID),
+	});
+
+	res.status(200).send(project);
 });
 
 router.put('/:projectID', auth('admin'), async (req: any, res: any) => {
