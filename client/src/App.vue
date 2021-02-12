@@ -18,9 +18,12 @@ export default Vue.extend({
 	},
 	data() {
 		return {
-			darkMode: false,
+			darkMode: true,
 			JWT: '',
 		}
+	},
+	created() {
+		this.darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 	},
 	watch: {
 		darkMode: function () {
