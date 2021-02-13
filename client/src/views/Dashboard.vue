@@ -8,7 +8,7 @@
 
 	<hr class="w-full dark:border-gray-600">
 
-	<div class="w-full overflow-x-auto flex justify-center xl:justify-start xl:pl-2 my-2">
+	<div class="w-full overflow-x-auto flex xl:pl-2 my-2">
 		<StatList :stats="severity" />
 		<div class="hidden lg:inline ml-3">
 			<StatList :stats="type" />
