@@ -26,12 +26,3 @@ export default Vue.extend({
 	}
 })
 </script>
-
-<style lang="postcss" scoped>
-/* @media (min-width: 360px) {
-	.fix-wrap {
-		width: auto;
-		@apply flex-nowrap;
-	}
-} */
-</style>
