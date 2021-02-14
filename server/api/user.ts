@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import mongodb, { Collection } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
@@ -7,13 +7,21 @@ import { auth } from '../tools/auth';
 import Joi from 'joi';
 const router = express.Router();
 
-router.post('/', auth('admin'), async (req: any, res: any) => {
+router.post('/', auth('admin'), async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
-		name: Joi.string().min(4).required(),
+		username: Joi.string().min(4).required(),
 		email: Joi.string().email().required(),
 		password: Joi.string().required().min(8),
 		isAdmin: Joi.boolean(),
+		roles: Joi.array().items(
+			Joi.object({
+				_id: Joi.string().required().hex().min(24).max(24),
+				role: Joi.string()
+					.required()
+					.valid('projectAdmin', 'user', 'statistics'),
+			})
+		),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -24,7 +32,7 @@ router.post('/', auth('admin'), async (req: any, res: any) => {
 	// Check if the user already exists
 	const emailExists: any = await users.findOne({ email: req.body.email });
 	if (emailExists) {
-		return res.status(400).send('email in use');
+		return res.status(400).send('Email in use');
 	}
 
 	// Hash the password
@@ -32,20 +40,20 @@ router.post('/', auth('admin'), async (req: any, res: any) => {
 	const hashedPassword: string = await bcrypt.hash(req.body.password, salt);
 
 	await users.insertOne({
-		name: req.body.name,
+		username: req.body.username,
 		email: req.body.email,
 		password: hashedPassword,
 		isAdmin: req.body.isAdmin ?? false,
-		projectRoles: {},
+		roles: req.body.roles || [],
 	});
 
-	res.status(201).send();
+	res.status(201).send('User added to database');
 });
 
-router.put('/:userID', auth('admin'), async (req: any, res: any) => {
+router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
-		name: Joi.string().min(4),
+		username: Joi.string().min(4),
 		email: Joi.string().email(),
 		isAdmin: Joi.boolean(),
 	}).validate(req.body);
@@ -62,18 +70,19 @@ router.put('/:userID', auth('admin'), async (req: any, res: any) => {
 		);
 	}
 
-	res.status(201).send();
+	res.status(200).send('User information changed');
 });
 
 router.post(
-	'/role/:userID/:projectID',
-	auth('assignProjectRole'),
-	async (req: any, res: any) => {
+	'/role/:userID',
+	auth('projectAdmin'),
+	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
+			_id: Joi.string().required().hex().min(24).max(24),
 			role: Joi.string()
 				.required()
-				.valid('projectAdmin', 'developer', 'tester', 'statUser'),
+				.valid('projectAdmin', 'user', 'statistics'),
 		}).validate(req.body);
 		if (error) {
 			return res.status(400).send(error.details[0].message);
@@ -83,35 +92,15 @@ router.post(
 
 		await users.updateOne(
 			{ _id: new mongodb.ObjectID(req.params.userID) },
-			{ $push: { [`projectRoles.${req.params.projectID}`]: req.body.role } }
+			{ $pull: { roles: { _id: req.body._id } } }
 		);
-
-		res.status(201).send();
-	}
-);
-
-router.delete(
-	'/role/:userID/:projectID',
-	auth('removeProjectRole'),
-	async (req: any, res: any) => {
-		//Validate the request
-		const { error } = Joi.object({
-			role: Joi.string()
-				.required()
-				.valid('projectAdmin', 'developer', 'tester', 'statUser'),
-		}).validate(req.body);
-		if (error) {
-			return res.status(400).send(error.details[0].message);
-		}
-
-		const users: Collection = await dbHandler('users');
 
 		await users.updateOne(
 			{ _id: new mongodb.ObjectID(req.params.userID) },
-			{ $pull: { [`projectRoles.${req.params.projectID}`]: req.body.role } }
+			{ $push: { roles: req.body } }
 		);
 
-		res.status(200).send();
+		res.status(200).send('Project role set');
 	}
 );
 
@@ -120,10 +109,10 @@ router.delete('/:userID', auth('admin'), async (req: any, res: any) => {
 
 	await users.deleteOne({ _id: new mongodb.ObjectID(req.params.userID) });
 
-	res.status(200).send();
+	res.status(200).send('User removed from database');
 });
 
-router.post('/login', async (req: any, res: any) => {
+router.post('/login', async (req: Request, res: Response) => {
 	const users: Collection = await dbHandler('users');
 
 	//Validate the request
@@ -155,14 +144,14 @@ router.post('/login', async (req: any, res: any) => {
 	// Create and assign a token
 	const token: string = jwt.sign(
 		{
-			userid: user._id,
-			name: user.name,
+			_id: user._id,
+			username: user.username,
 			isAdmin: user.isAdmin,
-			projectRoles: user.projectRoles,
+			roles: user.roles,
 		},
 		TOKEN_SECRET
 	);
-	res.header('authtoken', token).status(202).send(token);
+	res.header('auth', token).sendStatus(202);
 });
 
 export { router };
