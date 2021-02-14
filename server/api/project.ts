@@ -1,11 +1,11 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import mongodb, { Collection } from 'mongodb';
 import { dbHandler } from '../tools/db';
 import { auth } from '../tools/auth';
 import Joi from 'joi';
 const router = express.Router();
 
-router.post('/', auth('admin'), async (req: any, res: any) => {
+router.post('/', auth('admin'), async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
 		name: Joi.string().required().min(2),
@@ -17,66 +17,38 @@ router.post('/', auth('admin'), async (req: any, res: any) => {
 	const projects: Collection = await dbHandler('projects');
 
 	await projects.insertOne({
-		projectName: req.body.name,
-		roles: {
-			projectAdmin: [
-				'assignProjectRole',
-				'removeProjectRole',
-				'changeProjectName',
-				'createTicket',
-				'comment',
-				'editTicket',
-				'deleteTicket',
-				'getTicket',
-				'getStats',
-			],
-			developer: [
-				'createTicket',
-				'comment',
-				'editTicket',
-				'getTicket',
-				'getStats',
-			],
-			tester: [
-				'createTicket',
-				'comment',
-				'editTicket',
-				'getTicket',
-				'getStats',
-			],
-			statUser: ['getStats'],
-		},
+		name: req.body.name,
 		tickets: [],
 	});
 
-	res.status(201).send();
+	res.status(201).send('Project added to database');
 });
 
-router.get('/', auth(''), async (req: any, res: any) => {
+router.get('/', auth(''), async (req: Request, res: Response) => {
 	const projects: Collection = await dbHandler('projects');
 
 	// If they are admin, override and return all project names
 	if (req.user.isAdmin === true) {
 		const query: any = await projects
-			.find({}, { projection: { projectName: 1 } })
+			.find({}, { projection: { name: 1 } })
 			.toArray();
 
 		return res.status(200).send(query);
 	}
 
 	// If they have no projects assigned then end
-	if (Object.keys(req.user.projectRoles).length === 0) {
+	if (req.user.roles.length !>= 0) {
 		return res.sendStatus(400);
 	}
 
 	let projectNames = [];
 
-	for (const key in req.user.projectRoles) {
+	for (const object of req.user.roles) {
 		const query: any = await projects.findOne(
 			{
-				_id: new mongodb.ObjectID(key),
+				_id: new mongodb.ObjectID(object._id),
 			},
-			{ projection: { projectName: 1 } }
+			{ projection: { name: 1 } }
 		);
 
 		projectNames.push(query);
@@ -85,17 +57,7 @@ router.get('/', auth(''), async (req: any, res: any) => {
 	res.status(200).send(projectNames);
 });
 
-router.get('/:projectID', auth(''), async (req: any, res: any) => {
-	const projects: Collection = await dbHandler('projects');
-
-	const project: any = await projects.findOne({
-		_id: new mongodb.ObjectID(req.params.projectID),
-	});
-
-	res.status(200).send(project);
-});
-
-router.put('/:projectID', auth('admin'), async (req: any, res: any) => {
+router.put('/:projectID', auth('projectAdmin'), async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
 		name: Joi.string().required().min(2),
@@ -108,10 +70,10 @@ router.put('/:projectID', auth('admin'), async (req: any, res: any) => {
 
 	await projects.updateOne(
 		{ _id: new mongodb.ObjectID(req.params.projectID) },
-		{ $set: { projectName: req.body.name } }
+		{ $set: { name: req.body.name } }
 	);
 
-	res.status(201).send();
+	res.status(201).send('Project name changed');
 });
 
 router.delete('/:projectID', auth('admin'), async (req: any, res: any) => {
@@ -119,7 +81,7 @@ router.delete('/:projectID', auth('admin'), async (req: any, res: any) => {
 
 	projects.deleteOne({ _id: new mongodb.ObjectID(req.params.projectID) });
 
-	res.status(200).send();
+	res.status(200).send('Project removed from database');
 });
 
 export { router };

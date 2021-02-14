@@ -1,12 +1,12 @@
 declare namespace Express {
 	interface Request {
 		user: {
-			userid: String;
-			name: String;
+			userid: string;
+			name: string;
 			isAdmin: Boolean;
 			roles: [{
-				_id: String;
-				role: String;
+				_id: string;
+				role: string;
 			}]
 		},
 	};

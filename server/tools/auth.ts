@@ -16,12 +16,12 @@ export function auth(permission: string) {
 		try {
 			const verifiedToken: string | object = jwt.verify(token, TOKEN_SECRET);
 			req.user = verifiedToken as {
-				userid: String,
-				name: String,
+				userid: string,
+				name: string,
 				isAdmin: Boolean,
 				roles: [{
-					_id: String,
-					role: String,
+					_id: string,
+					role: string,
 				}]
 			};
 		} catch (error) {
