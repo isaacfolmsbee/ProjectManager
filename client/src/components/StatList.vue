@@ -1,5 +1,5 @@
 <template>
-<div class="w-max mx-auto bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md flex">
+<div class="w-max mx-auto lg:mx-0 bg-gray-50 dark:bg-gray-600 rounded-lg shadow-md flex">
 	<StatItem 
 		v-for="(value, name) in stats" 
 		:key="name"

@@ -40,14 +40,14 @@ export default Vue.extend({
 	methods: {
 		updateJWT(JWT: string) {
 			if (JWT) {
-				sessionStorage.setItem('authtoken', JWT);
+				sessionStorage.setItem('auth', JWT);
 			} else {
-				sessionStorage.removeItem('authtoken');
+				sessionStorage.removeItem('auth');
 			}
 			this.JWT = JWT;
 		},
 		logout() {
-			sessionStorage.removeItem('authtoken');
+			sessionStorage.removeItem('auth');
 			this.JWT = '';
 			this.$router.push('/login');
 		}

@@ -8,7 +8,7 @@
 
 	<hr class="w-full dark:border-gray-600">
 
-	<div class="w-full overflow-x-auto flex xl:pl-2 my-2">
+	<div class="w-full overflow-x-auto flex lg:justify-center xl:justify-start p-2">
 		<StatList :stats="severity" />
 		<div class="hidden lg:inline ml-3">
 			<StatList :stats="type" />
@@ -50,7 +50,7 @@ export default Vue.extend({
 		return {
 			projects: [{
 				_id: '',
-				projectName: '',
+				name: '',
 			}],
 			selectedProject: '',
 			severity: {
@@ -78,7 +78,7 @@ export default Vue.extend({
 		window.scrollTo(0, 0);
 		if (this.JWT) {
 			this.projects = await getProjectNames(this.JWT);
-			this.selectedProject = this.projects[0].projectName;
+			this.selectedProject = this.projects[0].name;
 			this.severity = await getSeverityStat(this.projects[0]._id, this.JWT);
 			this.type = await getTypeStat(this.projects[0]._id, this.JWT);
 			this.tickets = await getTickets(this.projects[0]._id, this.JWT);
@@ -87,8 +87,8 @@ export default Vue.extend({
 		}
 	},
 	methods: {
-		async changeProject(project: { _id: string; projectName: string }) {
-			this.selectedProject = project.projectName;
+		async changeProject(project: { _id: string; name: string }) {
+			this.selectedProject = project.name;
 			this.severity = await getSeverityStat(project._id, this.JWT);
 			this.type = await getTypeStat(project._id, this.JWT);
 			this.tickets = await getTickets(project._id, this.JWT);

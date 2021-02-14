@@ -6,23 +6,26 @@
 			v-for="project in projects" 
 			:key="project._id" 
 			@click="$emit('changeProject', project)" 
-			:class="{ 'bg-indigo-500 dark:bg-indigo-200 text-gray-50 dark:text-gray-800 font-bold': (project.projectName === selectedProject) }" 
+			:class="{ 'bg-indigo-500 dark:bg-indigo-200 text-gray-50 dark:text-gray-800 font-bold': (project.name === selectedProject) }" 
 			class="px-1 mx-1 text-2xl rounded-lg cursor-pointer dark:text-gray-50 whitespace-nowrap">
 
-			{{ project.projectName }}
+			{{ project.name }}
 		</h1>
 	</div>
 </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
 	name: "ProjectList",
 	props: {
 		projects: {
-			type: Array,
+			type: Array as PropType<Array<{
+				_id: '';
+				name: '';
+			}>>,
 			required: true,
 		},
 		selectedProject: {
