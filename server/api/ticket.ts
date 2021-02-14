@@ -73,8 +73,8 @@ router.post(
 						createdBy: req.user.username,
 						dateCreated: new Date(),
 						text: req.body.text,
-					}
-				}
+					},
+				},
 			}
 		);
 
@@ -82,158 +82,168 @@ router.post(
 	}
 );
 
-// router.put(
-// 	'/:projectID/:ticketID',
-// 	auth('editTicket'),
-// 	async (req: any, res: any) => {
-// 		//Validate the request
-// 		const { error } = Joi.object({
-// 			type: Joi.string().min(2),
-// 			title: Joi.string().min(2),
-// 			description: Joi.string().min(10),
-// 			severity: Joi.string().valid('low', 'medium', 'high', 'severe'),
-// 		}).validate(req.body);
-// 		if (error) {
-// 			return res.status(400).send(error.details[0].message);
-// 		}
+router.put(
+	'/:projectID/:ticketID',
+	auth('user'),
+	async (req: Request, res: Response) => {
+		//Validate the request
+		const { error } = Joi.object({
+			type: Joi.string().min(2),
+			title: Joi.string().min(2),
+			description: Joi.string().min(10),
+			severity: Joi.string().valid('low', 'medium', 'high', 'severe'),
+		}).validate(req.body);
+		if (error) {
+			return res.status(400).send(error.details[0].message);
+		}
 
-// 		const projects: Collection = await dbHandler('projects');
+		const projects: Collection = await dbHandler('projects');
 
-// 		let historyEntry: {
-// 			changes: Object[],
-// 			changedBy: string,
-// 			dateChanged: Date,
-// 		} = {
-// 			changes: [],
-// 			changedBy: req.user.name,
-// 			dateChanged: new Date(),
-// 		};
+		let historyEntry: {
+			changes: Object[],
+			changedBy: string,
+			dateChanged: Date,
+		} = {
+			changes: [],
+			changedBy: req.user.username,
+			dateChanged: new Date(),
+		};
 
-// 		const project: any = await projects.findOne(
-// 			{
-// 				_id: new mongodb.ObjectID(req.params.projectID),
-// 			},
-// 			{ projection: { tickets: 1 } }
-// 		);
+		for (const key in req.body) {
+			let oldValue = await projects.findOneAndUpdate(
+				{
+					_id: new mongodb.ObjectID(req.params.projectID),
+					'tickets._id': new mongodb.ObjectID(req.params.ticketID),
+				},
+				{
+					$set: {
+						[`tickets.$.${key}`]: req.body[key],
+					},
+				},
+				{
+					projection: { 'tickets.$': 1 },
+				}
+			);
 
-// 		const ticketIndex = project.tickets.findIndex(
-// 			(obj: any) => obj._id == req.params.ticketID
-// 		);
+			historyEntry.changes.push({
+				propertyChanged: key,
+				oldValue: oldValue.value.tickets[0][key],
+				newValue: req.body[key],
+			});
+		}
 
-// 		for (const key in req.body) {
-// 			await projects.updateOne(
-// 				{ _id: new mongodb.ObjectID(req.params.projectID) },
-// 				{ $set: { [`tickets.${ticketIndex}.${key}`]: req.body[key] } }
-// 			);
+		await projects.findOneAndUpdate(
+			{
+				_id: new mongodb.ObjectID(req.params.projectID),
+				'tickets._id': new mongodb.ObjectID(req.params.ticketID),
+			},
+			{
+				$push: {
+					[`tickets.$.history`]: historyEntry,
+				},
+			}
+		);
 
-// 			historyEntry.changes.push({
-// 				propertyChanged: key,
-// 				oldValue: project.tickets[ticketIndex][key],
-// 				newValue: req.body[key],
-// 			});
-// 		}
+		res.status(201).send('Ticket modified');
+	}
+);
 
-// 		await projects.updateOne(
-// 			{ _id: new mongodb.ObjectID(req.params.projectID) },
-// 			{ $push: { [`tickets.${ticketIndex}.history`]: historyEntry } }
-// 		);
+router.delete(
+	'/:projectID/:ticketID',
+	auth('user'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
 
-// 		res.status(201).send();
-// 	}
-// );
+		await projects.updateOne(
+			{ _id: new mongodb.ObjectID(req.params.projectID) },
+			{
+				$pull: {
+					tickets: {
+						_id: new mongodb.ObjectID(req.params.ticketID),
+					},
+				},
+			}
+		);
 
-// router.delete(
-// 	'/:projectID/:ticketID',
-// 	auth('deleteTicket'),
-// 	async (req: any, res: any) => {
-// 		const projects: Collection = await dbHandler('projects');
+		res.status(200).send('Ticket deleted');
+	}
+);
 
-// 		await projects.updateOne(
-// 			{ _id: new mongodb.ObjectID(req.params.projectID) },
-// 			{
-// 				$pull: {
-// 					tickets: {
-// 						_id: new mongodb.ObjectID(req.params.ticketID),
-// 					},
-// 				},
-// 			}
-// 		);
+router.get('/:projectID', auth('user'), async (req: Request, res: Response) => {
+	const projects: Collection = await dbHandler('projects');
 
-// 		res.status(200).send();
-// 	}
-// );
+	const query: any = await projects.findOne(
+		{
+			_id: new mongodb.ObjectID(req.params.projectID),
+		},
+		{ projection: { tickets: 1 } }
+	);
 
-// router.get('/:projectID', auth('getTicket'), async (req: any, res: any) => {
-// 	const projects: Collection = await dbHandler('projects');
+	if (req.query.type) {
+		const filteredTickets = query.tickets.filter(
+			(el: { type: string }) => el.type === req.query.type
+		);
+		return res.status(200).send(filteredTickets);
+	}
 
-// 	const query: any = await projects.findOne(
-// 		{
-// 			_id: new mongodb.ObjectID(req.params.projectID),
-// 		},
-// 		{ projection: { tickets: 1 } }
-// 	);
+	res.status(200).send(query.tickets);
+});
 
-// 	if (req.body.type) {
-// 		const filteredTickets = query.tickets.filter(
-// 			(el: { type: string }) => el.type === req.body.type
-// 		);
-// 		return res.status(200).send(filteredTickets);
-// 	}
+router.get(
+	'/severity/:projectID',
+	auth('statistics'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
 
-// 	res.status(200).send(query.tickets);
-// });
+		const query: any = await projects.findOne(
+			{
+				_id: new mongodb.ObjectID(req.params.projectID),
+			},
+			{ projection: { tickets: 1 } }
+		);
 
-// router.get(
-// 	'/severity/:projectID',
-// 	auth('getStats'),
-// 	async (req: any, res: any) => {
-// 		const projects: Collection = await dbHandler('projects');
+		let statistic: { [key: string]: any } = {
+			low: 0,
+			medium: 0,
+			high: 0,
+			severe: 0,
+		};
 
-// 		const query: any = await projects.findOne(
-// 			{
-// 				_id: new mongodb.ObjectID(req.params.projectID),
-// 			},
-// 			{ projection: { tickets: 1 } }
-// 		);
+		for (const severity in statistic) {
+			statistic[severity] = query.tickets.filter(
+				(el: { severity: string }) => el.severity === severity
+			).length;
+		}
 
-// 		let statistic: { [key: string]: any } = {
-// 			low: 0,
-// 			medium: 0,
-// 			high: 0,
-// 			severe: 0,
-// 		};
+		res.status(200).send(statistic);
+	}
+);
 
-// 		for (const severity in statistic) {
-// 			statistic[severity] = query.tickets.filter(
-// 				(el: { severity: string }) => el.severity === severity
-// 			).length;
-// 		}
+router.get(
+	'/type/:projectID',
+	auth('statistics'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
 
-// 		res.status(200).send(statistic);
-// 	}
-// );
+		const query: any = await projects.findOne(
+			{
+				_id: new mongodb.ObjectID(req.params.projectID),
+			},
+			{ projection: { tickets: 1 } }
+		);
 
-// router.get('/type/:projectID', auth('getStats'), async (req: any, res: any) => {
-// 	const projects: Collection = await dbHandler('projects');
+		let statistic: { [key: string]: any } = {};
 
-// 	const query: any = await projects.findOne(
-// 		{
-// 			_id: new mongodb.ObjectID(req.params.projectID),
-// 		},
-// 		{ projection: { tickets: 1 } }
-// 	);
+		statistic['bug'] = query.tickets.filter(
+			(el: { type: string }) => el.type === 'bug'
+		).length;
 
-// 	let statistic: { [key: string]: any } = {};
+		statistic['suggestion'] = query.tickets.filter(
+			(el: { type: string }) => el.type === 'suggestion'
+		).length;
 
-// 	statistic['bug'] = query.tickets.filter(
-// 		(el: { type: string }) => el.type === 'bug'
-// 	).length;
-
-// 	statistic['suggestion'] = query.tickets.filter(
-// 		(el: { type: string }) => el.type === 'suggestion'
-// 	).length;
-
-// 	res.status(200).send(statistic);
-// });
+		res.status(200).send(statistic);
+	}
+);
 
 export { router };
