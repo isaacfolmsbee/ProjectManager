@@ -2,7 +2,7 @@ declare namespace Express {
 	interface Request {
 		user: {
 			userid: string;
-			name: string;
+			username: string;
 			isAdmin: Boolean;
 			roles: [{
 				_id: string;

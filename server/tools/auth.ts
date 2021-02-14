@@ -17,7 +17,7 @@ export function auth(permission: string) {
 			const verifiedToken: string | object = jwt.verify(token, TOKEN_SECRET);
 			req.user = verifiedToken as {
 				userid: string,
-				name: string,
+				username: string,
 				isAdmin: Boolean,
 				roles: [{
 					_id: string,
