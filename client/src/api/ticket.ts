@@ -2,6 +2,25 @@ import axios from 'axios';
 
 const url = 'api/ticket/';
 
+export async function postTicket(
+	ticket: {
+		title: string;
+		type: string;
+		severity: string;
+		description: string;
+	},
+	projectID: string,
+	jwt: string
+) {
+	const response = await axios.post(url + projectID, ticket, {
+		headers: {
+			auth: jwt,
+		},
+	});
+
+	return response.data;
+}
+
 export async function getTickets(projectID: string, jwt: string) {
 	const response = await axios.get(url + projectID, {
 		headers: {

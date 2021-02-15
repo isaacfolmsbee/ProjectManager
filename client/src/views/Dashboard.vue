@@ -20,7 +20,8 @@
 			<TicketItem 
 				v-for="ticket in tickets" 
 				:key="ticket._id" 
-				v-bind="ticket" />
+				v-bind="ticket"
+				class="mb-2.5" />
 	</div>
 </div>
 </template>
