@@ -27,6 +27,14 @@ export default Vue.extend({
 	},
 	created() {
 		this.darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+		const auth = sessionStorage.getItem('auth');
+		const role = sessionStorage.getItem('role');
+
+		this.user = {
+			JWT: auth || '',
+			role: role || '',
+		}
 	},
 	watch: {
 		darkMode: function () {
