@@ -28,6 +28,9 @@ module.exports = {
 				'800': '#101628',
 				'900': '#0d1221',
 			},
+		},
+		minHeight: {
+			'80': '20rem',
 		}
 	},
 	variants: {
