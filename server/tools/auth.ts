@@ -47,9 +47,15 @@ export function auth(permission: string) {
 			return res.status(403).send(`This request requires being admin`);
 		}
 
-		const hasProjectPermission = req.user.projects.find(
-			(element) => element === req.query.projectID
-		);
+		let hasProjectPermission;
+		try {
+			hasProjectPermission = req.user.projects.find(
+				(element) => element === req.query.projectID
+			);
+		} catch (error) {
+			return res.status(400).send('Invalid Token');
+		}
+		
 
 		// This hunka junk is to see if they have permission to the request
 		if (hasProjectPermission) {
