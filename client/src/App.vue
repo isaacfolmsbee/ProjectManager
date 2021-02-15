@@ -1,8 +1,8 @@
 <template >
 <div id="app">
 	<div>
-		<TheNavbar @logout="logout" :JWT="JWT" :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
-		<router-view @updateJWT="updateJWT($event)" :JWT="JWT" class="pt-16 xl:pt-0 xl:px-36" />
+		<TheNavbar @logout="logout" :JWT="user.JWT" :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
+		<router-view @login="login($event)" :JWT="user.JWT" class="pt-16 xl:pt-0 xl:px-36" />
 	</div>
 </div>
 </template>
@@ -19,7 +19,10 @@ export default Vue.extend({
 	data() {
 		return {
 			darkMode: true,
-			JWT: '',
+			user: {
+				JWT: '',
+				role: '',
+			},
 		}
 	},
 	created() {
@@ -38,17 +41,29 @@ export default Vue.extend({
 		}
 	},
 	methods: {
-		updateJWT(JWT: string) {
-			if (JWT) {
-				sessionStorage.setItem('auth', JWT);
-			} else {
-				sessionStorage.removeItem('auth');
+		login(response: {
+			headers: {
+				auth: string;
+			};
+			data: {
+				role: string;
+			};
+		}) {
+			sessionStorage.setItem('auth', response.headers.auth);
+			sessionStorage.setItem('role', response.data.role);
+			this.user = {
+				JWT: response.headers.auth,
+				role: response.data.role,
 			}
-			this.JWT = JWT;
+			this.$router.push('/');
 		},
 		logout() {
 			sessionStorage.removeItem('auth');
-			this.JWT = '';
+			sessionStorage.removeItem('role');
+			this.user = {
+				JWT: '',
+				role: '',
+			};
 			this.$router.push('/login');
 		}
 	}

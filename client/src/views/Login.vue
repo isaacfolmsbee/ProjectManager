@@ -21,8 +21,7 @@ export default Vue.extend({
 	methods: {
 		async login() {
 			const response = await login(this.email, this.password);
-			this.$emit('updateJWT', response);
-			this.$router.push('/');
+			this.$emit('login', response);
 		}
 	}
 })

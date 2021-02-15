@@ -76,15 +76,12 @@ export default Vue.extend({
 	},
 	async created() {
 		window.scrollTo(0, 0);
-		if (this.JWT) {
-			this.projects = await getProjectNames(this.JWT);
-			this.selectedProject = this.projects[0].name;
-			this.severity = await getSeverityStat(this.projects[0]._id, this.JWT);
-			this.type = await getTypeStat(this.projects[0]._id, this.JWT);
-			this.tickets = await getTickets(this.projects[0]._id, this.JWT);
-		} else {
-			this.$router.push('/login');
-		}
+		this.projects = await getProjectNames(this.JWT);
+		this.selectedProject = this.projects[0].name;
+		this.severity = await getSeverityStat(this.projects[0]._id, this.JWT);
+		this.type = await getTypeStat(this.projects[0]._id, this.JWT);
+		this.tickets = await getTickets(this.projects[0]._id, this.JWT);
+
 	},
 	methods: {
 		async changeProject(project: { _id: string; name: string }) {
