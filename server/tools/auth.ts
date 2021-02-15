@@ -18,11 +18,8 @@ export function auth(permission: string) {
 			req.user = verifiedToken as {
 				userid: string,
 				username: string,
-				isAdmin: Boolean,
-				roles: [{
-					_id: string,
-					role: string,
-				}]
+				role: string,
+				projects: string[],
 			};
 		} catch (error) {
 			return res.status(400).send('Invalid Token');
@@ -44,19 +41,19 @@ export function auth(permission: string) {
 		}
 
 		// If they are admin override checking their perms
-		if (req.user.isAdmin === true) {
+		if (req.user.role === 'admin') {
 			return next();
 		} else if (permission === 'admin') {
 			return res.status(403).send(`This request requires being admin`);
 		}
 
-		const projectRole = req.user.roles.find(
-			(element) => element._id === req.query.projectID
-		)?.role;
+		const hasProjectPermission = req.user.projects.find(
+			(element) => element === req.query.projectID
+		);
 
 		// This hunka junk is to see if they have permission to the request
-		if (projectRole) {
-			switch (projectRole) {
+		if (hasProjectPermission) {
+			switch (req.user.role) {
 				case 'projectAdmin':
 					return next();
 				case 'user':

@@ -28,7 +28,7 @@ router.get('/', auth(''), async (req: Request, res: Response) => {
 	const projects: Collection = await dbHandler('projects');
 
 	// If they are admin, override and return all project names
-	if (req.user.isAdmin === true) {
+	if (req.user.role === 'admin') {
 		const query: any = await projects
 			.find({}, { projection: { name: 1 } })
 			.toArray();
@@ -37,16 +37,16 @@ router.get('/', auth(''), async (req: Request, res: Response) => {
 	}
 
 	// If they have no projects assigned then end
-	if (req.user.roles.length !>= 0) {
+	if (req.user.projects.length === 0) {
 		return res.sendStatus(400);
 	}
 
 	let projectNames = [];
 
-	for (const object of req.user.roles) {
+	for (const projectID of req.user.projects) {
 		const query: any = await projects.findOne(
 			{
-				_id: new mongodb.ObjectID(object._id),
+				_id: new mongodb.ObjectID(projectID),
 			},
 			{ projection: { name: 1 } }
 		);

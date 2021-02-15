@@ -13,15 +13,8 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 		username: Joi.string().min(4).required(),
 		email: Joi.string().email().required(),
 		password: Joi.string().required().min(8),
-		isAdmin: Joi.boolean(),
-		roles: Joi.array().items(
-			Joi.object({
-				_id: Joi.string().required().hex().min(24).max(24),
-				role: Joi.string()
-					.required()
-					.valid('projectAdmin', 'user', 'statistics'),
-			})
-		),
+		role: Joi.string().valid('admin', 'projectAdmin', 'user', 'statistics'),
+		projects: Joi.array().items(Joi.string().hex().min(24).max(24)),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -43,8 +36,7 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 		username: req.body.username,
 		email: req.body.email,
 		password: hashedPassword,
-		isAdmin: req.body.isAdmin ?? false,
-		roles: req.body.roles || [],
+		role: req.body.role ?? 'user',
 	});
 
 	res.status(201).send('User added to database');
@@ -55,7 +47,7 @@ router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 	const { error } = Joi.object({
 		username: Joi.string().min(4),
 		email: Joi.string().email(),
-		isAdmin: Joi.boolean(),
+		role: Joi.string().valid('admin', 'projectAdmin', 'user', 'statistics'),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -74,15 +66,12 @@ router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 });
 
 router.post(
-	'/role/:userID',
-	auth('projectAdmin'),
+	'/projects/:userID',
+	auth('admin'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
-			_id: Joi.string().required().hex().min(24).max(24),
-			role: Joi.string()
-				.required()
-				.valid('projectAdmin', 'user', 'statistics'),
+			_id: Joi.array().items(Joi.string().hex().min(24).max(24)),
 		}).validate(req.body);
 		if (error) {
 			return res.status(400).send(error.details[0].message);
@@ -92,15 +81,10 @@ router.post(
 
 		await users.updateOne(
 			{ _id: new mongodb.ObjectID(req.params.userID) },
-			{ $pull: { roles: { _id: req.body._id } } }
+			{ $push: { projects: req.body._id } }
 		);
 
-		await users.updateOne(
-			{ _id: new mongodb.ObjectID(req.params.userID) },
-			{ $push: { roles: req.body } }
-		);
-
-		res.status(200).send('Project role set');
+		res.status(200).send('Project added to user');
 	}
 );
 
@@ -146,12 +130,14 @@ router.post('/login', async (req: Request, res: Response) => {
 		{
 			_id: user._id,
 			username: user.username,
-			isAdmin: user.isAdmin,
-			roles: user.roles,
+			role: user.role,
+			projects: user.projects,
 		},
 		TOKEN_SECRET
 	);
-	res.header('auth', token).sendStatus(202);
+	res.header('auth', token).status(202).send({
+		role: user.role,
+	});
 });
 
 export { router };
