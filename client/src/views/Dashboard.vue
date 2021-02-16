@@ -21,7 +21,7 @@
 				v-for="ticket in tickets" 
 				:key="ticket._id" 
 				v-bind="ticket"
-				class="mb-2.5" />
+				class="mb-2.5 bg-gray-50 dark:bg-gray-600 shadow-md" />
 	</div>
 </div>
 </template>
