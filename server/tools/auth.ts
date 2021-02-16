@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import Joi from 'joi';
+import { ObjectID } from 'mongodb';
 
 export function auth(permission: string) {
 	return async function (req: Request, res: Response, next: NextFunction) {
 		// Get token and check if it exists
-		const token: string | undefined = req.header('auth');
+		const token: string | undefined = req.header('Authorization');
 		if (!token) {
 			return res.status(401).send('Missing JWT');
 		}
@@ -14,12 +15,17 @@ export function auth(permission: string) {
 
 		// Verify token and assign it to req.user
 		try {
-			const verifiedToken: string | object = jwt.verify(token, TOKEN_SECRET);
-			req.user = verifiedToken as {
-				userid: string,
-				username: string,
-				role: string,
-				projects: string[],
+			req.user = jwt.verify(token.split(' ')[1], TOKEN_SECRET) as {
+				_id: string;
+				username: string;
+				isAdmin: boolean;
+				projects: [
+					{
+						_id: string;
+						role: string;
+						permissions: string[];
+					},
+				];
 			};
 		} catch (error) {
 			return res.status(400).send('Invalid Token');
@@ -41,43 +47,46 @@ export function auth(permission: string) {
 		}
 
 		// If they are admin override checking their perms
-		if (req.user.role === 'admin') {
+		if (req.user.isAdmin) {
 			return next();
 		} else if (permission === 'admin') {
 			return res.status(403).send(`This request requires being admin`);
 		}
 
-		let hasProjectPermission;
+		// Loop through their projects until you get to one that matches
+		// the projectID they are attempted to modify, once you get that
+		// loop through their permissions on the project to see
+		// if they have permission for this request
+		let hasProjectRole = false;
 		try {
-			hasProjectPermission = req.user.projects.find(
-				(element) => element === req.query.projectID
-			);
+			for (let i = 0; i < req.user.projects.length; i++) {
+				if (
+					new ObjectID(req.user.projects[i]._id).equals(
+						new ObjectID(req.params.projectID)
+					)
+				) {
+					for (
+						let j = 0;
+						j < req.user.projects[i].permissions.length;
+						j++
+					) {
+						if (
+							req.user.projects[i].permissions[j] === permission ||
+							req.user.projects[i].permissions[j] === 'projectAdmin'
+						) {
+							hasProjectRole = true;
+						}
+					}
+				}
+			}
 		} catch (error) {
 			return res.status(400).send('Invalid Token');
 		}
-		
 
-		// This hunka junk is to see if they have permission to the request
-		if (hasProjectPermission) {
-			switch (req.user.role) {
-				case 'projectAdmin':
-					return next();
-				case 'user':
-					if (permission !== 'projectAdmin') {
-						return next();
-					}
-				case 'statistics':
-					if (permission === 'statistics') {
-						return next();
-					}
-				default:
-					res.status(403).send(
-						`This request requires the ${permission} role`
-					);
-					break;
-			}
+		if (hasProjectRole) {
+			return next();
 		} else {
-			return res.status(403).send("You don't have access to this project");
+			res.status(403).send(`This request requires the ${permission} role`);
 		}
 	};
 }

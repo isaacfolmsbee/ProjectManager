@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import mongodb, { Collection } from 'mongodb';
+import mongodb, { Collection, ObjectID } from 'mongodb';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { dbHandler } from '../tools/db';
@@ -7,14 +7,12 @@ import { auth } from '../tools/auth';
 import Joi from 'joi';
 const router = express.Router();
 
-router.post('/', auth('admin'), async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
 		username: Joi.string().min(4).required(),
 		email: Joi.string().email().required(),
 		password: Joi.string().required().min(8),
-		role: Joi.string().valid('admin', 'projectAdmin', 'user', 'statistics'),
-		projects: Joi.array().items(Joi.string().hex().min(24).max(24)),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -36,7 +34,8 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 		username: req.body.username,
 		email: req.body.email,
 		password: hashedPassword,
-		role: req.body.role ?? 'user',
+		isAdmin: false,
+		notifications: [],
 	});
 
 	res.status(201).send('User added to database');
@@ -47,7 +46,7 @@ router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 	const { error } = Joi.object({
 		username: Joi.string().min(4),
 		email: Joi.string().email(),
-		role: Joi.string().valid('admin', 'projectAdmin', 'user', 'statistics'),
+		isAdmin: Joi.boolean(),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -65,30 +64,15 @@ router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 	res.status(200).send('User information changed');
 });
 
-router.post(
-	'/projects/:userID',
-	auth('admin'),
-	async (req: Request, res: Response) => {
-		//Validate the request
-		const { error } = Joi.object({
-			_id: Joi.array().items(Joi.string().hex().min(24).max(24)),
-		}).validate(req.body);
-		if (error) {
-			return res.status(400).send(error.details[0].message);
-		}
+router.delete('/', auth(''), async (req: Request, res: Response) => {
+	const users: Collection = await dbHandler('users');
 
-		const users: Collection = await dbHandler('users');
+	await users.deleteOne({ _id: new mongodb.ObjectID(req.user._id) });
 
-		await users.updateOne(
-			{ _id: new mongodb.ObjectID(req.params.userID) },
-			{ $push: { projects: req.body._id } }
-		);
+	res.status(200).send('Your account has been removed');
+});
 
-		res.status(200).send('Project added to user');
-	}
-);
-
-router.delete('/:userID', auth('admin'), async (req: any, res: any) => {
+router.delete('/:userID', auth('admin'), async (req: Request, res: Response) => {
 	const users: Collection = await dbHandler('users');
 
 	await users.deleteOne({ _id: new mongodb.ObjectID(req.params.userID) });
@@ -102,7 +86,7 @@ router.post('/login', async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
 		email: Joi.string().email().required(),
-		password: Joi.string().required().min(8),
+		password: Joi.string().required(),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -123,6 +107,46 @@ router.post('/login', async (req: Request, res: Response) => {
 		return res.status(400).send('Invalid password');
 	}
 
+	const projects: Collection = await dbHandler('projects');
+
+	// Get all the projects the user is in,
+	// then return the roleID and roles to
+	// crunch further down to extract their
+	// role and permissions
+	const userRoles: any = await projects
+		.find(
+			{
+				'assignedUsers._id': new ObjectID(user._id),
+			},
+			{
+				projection: { 'assignedUsers.$': 1, roles: 1 },
+			}
+		)
+		.toArray();
+
+	// Filter the roles that this user has so all their
+	// project roles and permissions with them can be
+	// added to their JWT
+	let projectRoles = [];
+	for (let index = 0; index < userRoles.length; index++) {
+		let role: any = userRoles[
+			index
+		].roles.filter(
+			(el: { _id: ObjectID, name: string, permissions: string[] }) =>
+				new ObjectID(el._id).equals(
+					new ObjectID(userRoles[index].assignedUsers[0].role)
+				)
+		)[0];
+
+		let projectRole = {
+			_id: userRoles[index]._id,
+			role: role.name,
+			permissions: role.permissions,
+		};
+
+		projectRoles.push(projectRole);
+	}
+
 	const TOKEN_SECRET: any = process.env.TOKEN_SECRET;
 
 	// Create and assign a token
@@ -130,14 +154,14 @@ router.post('/login', async (req: Request, res: Response) => {
 		{
 			_id: user._id,
 			username: user.username,
-			role: user.role,
-			projects: user.projects,
+			isAdmin: user.isAdmin,
+			projects: projectRoles,
 		},
 		TOKEN_SECRET
 	);
-	res.header('auth', token).status(202).send({
-		role: user.role,
-	});
+	res.header('Authorization', token)
+		.status(202)
+		.send('Successfully authenticated');
 });
 
 export { router };
