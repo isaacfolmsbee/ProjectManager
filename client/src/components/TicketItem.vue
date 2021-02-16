@@ -1,5 +1,5 @@
 <template>
-<div class="bg-gray-50 dark:bg-gray-600 p-1 lg:p-2 flex flex-wrap rounded-md shadow-md">
+<div class="p-1 lg:p-2 flex flex-wrap rounded-md">
 	<div class="flex flex-col">
 		<span class="text-lg lg:text-2xl font-bold dark:text-gray-50">{{ title }}</span>
 		<span class="lg:ml-0.5 text-xs lg:text-sm text-gray-500 dark:text-gray-300">
