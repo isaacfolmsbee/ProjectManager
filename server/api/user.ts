@@ -160,7 +160,7 @@ router.post('/login', async (req: Request, res: Response) => {
 		TOKEN_SECRET
 	);
 	res.header('Authorization', token)
-		.status(202)
+		.status(200)
 		.send('Successfully authenticated');
 });
 

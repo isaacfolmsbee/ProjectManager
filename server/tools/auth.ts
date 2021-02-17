@@ -35,6 +35,7 @@ export function auth(permission: string) {
 		const { error } = Joi.object({
 			projectID: Joi.string().hex().min(24).max(24),
 			userID: Joi.string().hex().min(24).max(24),
+			roleID: Joi.string().hex().min(24).max(24),
 			ticketID: Joi.string().hex().min(24).max(24),
 		}).validate(req.params);
 		if (error) {
@@ -71,8 +72,7 @@ export function auth(permission: string) {
 						j++
 					) {
 						if (
-							req.user.projects[i].permissions[j] === permission ||
-							req.user.projects[i].permissions[j] === 'projectAdmin'
+							req.user.projects[i].permissions[j] === permission
 						) {
 							hasProjectRole = true;
 						}
