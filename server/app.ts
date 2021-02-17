@@ -1,7 +1,6 @@
 import express, { Application } from 'express';
 import helmet from 'helmet';
 import dotenv from 'dotenv';
-import path from 'path';
 const app: Application = express();
 
 // Import ENV variables
@@ -11,6 +10,7 @@ dotenv.config();
 import { router as project } from './api/project';
 import { router as ticket } from './api/ticket';
 import { router as user } from './api/user';
+import { router as statistic } from './api/statistic';
 
 // Middlewares
 app.use(helmet({
@@ -25,6 +25,7 @@ app.use(express.json());
 app.use('/api/project', project);
 app.use('/api/ticket', ticket);
 app.use('/api/user', user);
+app.use('/api/statistic', statistic);
 
 // Handle a production environment
 if (process.env.NODE_ENV == 'production') {
