@@ -9,7 +9,7 @@ dotenv.config();
 
 // Importing routes
 import { router as project } from './api/project';
-// import { router as ticket } from './api/ticket';
+import { router as ticket } from './api/ticket';
 import { router as user } from './api/user';
 
 // Middlewares
@@ -23,7 +23,7 @@ app.use(express.json());
 
 // Route Middlewares
 app.use('/api/project', project);
-// app.use('/api/ticket', ticket);
+app.use('/api/ticket', ticket);
 app.use('/api/user', user);
 
 // Handle a production environment

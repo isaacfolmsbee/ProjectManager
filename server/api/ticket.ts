@@ -1,103 +1,227 @@
-import express, { Request, Response } from 'express';
-import mongodb, { Collection } from 'mongodb';
+import express, { Request, Response, text } from 'express';
+import { Collection, ObjectID } from 'mongodb';
 import { auth } from '../tools/auth';
 import { dbHandler } from '../tools/db';
 import Joi from 'joi';
 const router = express.Router();
 
-router.post(
-	'/:projectID',
-	auth('user'),
-	async (req: Request, res: Response) => {
-		//Validate the request
-		const { error } = Joi.object({
-			type: Joi.string().required().valid('bug', 'suggestion'),
-			title: Joi.string().required().min(2),
-			description: Joi.string().required().min(10),
-			severity: Joi.string()
-				.required()
-				.valid('low', 'medium', 'high', 'severe'),
-		}).validate(req.body);
-		if (error) {
-			return res.status(400).send(error.details[0].message);
+router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
+	//Validate the request
+	const { error } = Joi.object({
+		project: Joi.string().required().hex().min(24).max(24),
+		title: Joi.string().required(),
+		type: Joi.string().required().valid('bug', 'suggestion'),
+		severity: Joi.string()
+			.required()
+			.valid('low', 'medium', 'high', 'critical'),
+		description: Joi.string().required(),
+	}).validate(req.body);
+	if (error) {
+		return res.status(400).send(error.details[0].message);
+	}
+
+	const tickets: Collection = await dbHandler('tickets');
+	const projects: Collection = await dbHandler('projects');
+	const users: Collection = await dbHandler('users');
+
+	await tickets.insertOne({
+		project: new ObjectID(req.body.project),
+		title: req.body.title,
+		type: req.body.type,
+		severity: req.body.severity,
+		status: 'open',
+		createdBy: new ObjectID(req.user._id),
+		dateCreated: new Date(),
+		description: req.body.description,
+		usersAssigned: [],
+		comments: [],
+		history: [],
+	});
+
+	const usersAndRolesQuery: any = await projects.findOne(
+		{
+			_id: new ObjectID(req.body.project),
+		},
+		{
+			projection: { roles: 1, assignedUsers: 1 },
 		}
+	);
 
-		const projects: Collection = await dbHandler('projects');
+	// These two "for" loop blocks are to find out which users
+	// need a notification to inform of a new ticket
+	let roleIDsWithAssignTicket: string[] = [];
+	for (let i = 0; i < usersAndRolesQuery.roles.length; i++) {
+		for (let j = 0; j < usersAndRolesQuery.roles[i].permissions.length; j++) {
+			if (usersAndRolesQuery.roles[i].permissions[j] === 'assignTicket') {
+				roleIDsWithAssignTicket.push(usersAndRolesQuery.roles[i]._id);
+			}
+		}
+	}
+	let userIDsWithAssignTicket: string[] = [];
+	for (let i = 0; i < usersAndRolesQuery.assignedUsers.length; i++) {
+		for (let j = 0; j < roleIDsWithAssignTicket.length; j++) {
+			if (
+				new ObjectID(usersAndRolesQuery.assignedUsers[i].role).equals(
+					new ObjectID(roleIDsWithAssignTicket[j])
+				)
+			) {
+				userIDsWithAssignTicket.push(
+					usersAndRolesQuery.assignedUsers[i]._id
+				);
+			}
+		}
+	}
 
-		await projects.updateOne(
-			{ _id: new mongodb.ObjectID(req.params.projectID) },
+	for (const userID of userIDsWithAssignTicket) {
+		await users.updateOne(
+			{
+				_id: new ObjectID(userID),
+			},
 			{
 				$push: {
-					tickets: {
-						_id: new mongodb.ObjectID(),
-						type: req.body.type,
-						title: req.body.title,
-						createdBy: req.user.username,
+					notifications: {
+						_id: new ObjectID(),
+						title: 'New Ticket',
+						description: `A new ticket titled "${req.body.title}" has been submitted`,
+						read: false,
 						dateCreated: new Date(),
-						description: req.body.description,
-						severity: req.body.severity,
-						status: 'Open',
-						comments: [],
-						history: [],
+					},
+				},
+			}
+		);
+	}
+
+	res.status(201).send('Ticket submitted');
+});
+
+router.post(
+	'/:ticketID/user/:userID',
+	auth('assignTicket'),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+		const users: Collection = await dbHandler('users');
+
+		const ticket: any = await tickets.findOneAndUpdate(
+			{
+				_id: new ObjectID(req.params.ticketID),
+			},
+			{
+				$addToSet: { usersAssigned: new ObjectID(req.params.userID) },
+			},
+			{
+				projection: { title: 1 },
+			}
+		);
+
+		await users.updateOne(
+			{
+				_id: new ObjectID(req.params.userID),
+			},
+			{
+				$push: {
+					notifications: {
+						_id: new ObjectID(),
+						title: 'Added to Ticket',
+						description: `You were assigned the ticket "${ticket.value.title}"`,
+						read: false,
+						dateCreated: new Date(),
 					},
 				},
 			}
 		);
 
-		res.status(201).send('Ticket submitted');
+		res.status(200).send('User added to ticket');
+	}
+);
+
+router.delete(
+	'/:ticketID/user/:userID',
+	auth('assignTicket'),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+
+		await tickets.updateOne(
+			{
+				_id: new ObjectID(req.params.ticketID),
+			},
+			{
+				$pull: { usersAssigned: new ObjectID(req.params.userID) },
+			}
+		);
+
+		res.status(200).send('User removed from ticket');
 	}
 );
 
 router.post(
-	'/:projectID/:ticketID',
-	auth('user'),
+	'/:ticketID/comment',
+	auth('comment'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
-			text: Joi.string().required().min(10),
+			text: Joi.string().required(),
 		}).validate(req.body);
 		if (error) {
 			return res.status(400).send(error.details[0].message);
 		}
+		const tickets: Collection = await dbHandler('tickets');
+		const users: Collection = await dbHandler('users');
 
-		const projects: Collection = await dbHandler('projects');
-
-		await projects.findOneAndUpdate(
+		const ticket: any = await tickets.findOneAndUpdate(
 			{
-				_id: new mongodb.ObjectID(req.params.projectID),
-				'tickets._id': new mongodb.ObjectID(req.params.ticketID),
+				_id: new ObjectID(req.params.ticketID),
 			},
 			{
 				$push: {
-					'tickets.$.comments': {
-						createdBy: req.user.username,
-						dateCreated: new Date(),
+					comments: {
+						createdBy: req.user._id,
 						text: req.body.text,
+						dateCreated: new Date(),
 					},
 				},
+			},
+			{
+				projection: { title: 1, usersAssigned: 1 },
 			}
 		);
+
+		for (const user of ticket.value.usersAssigned) {
+			await users.updateOne(
+				{
+					_id: new ObjectID(user),
+				},
+				{
+					$push: {
+						notifications: {
+							_id: new ObjectID(),
+							title: 'Ticket Commented',
+							description: `A new comment was posted to the ticket "${ticket.value.title}"`,
+							read: false,
+							dateCreated: new Date(),
+						},
+					},
+				}
+			);
+		}
 
 		res.status(201).send('Comment added to ticket');
 	}
 );
 
 router.put(
-	'/:projectID/:ticketID',
-	auth('user'),
+	'/:ticketID',
+	auth('editTicket'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
-			type: Joi.string().min(2),
-			title: Joi.string().min(2),
-			description: Joi.string().min(10),
+			status: Joi.string().valid('in progress', 'need info', 'closed'),
 			severity: Joi.string().valid('low', 'medium', 'high', 'severe'),
 		}).validate(req.body);
 		if (error) {
 			return res.status(400).send(error.details[0].message);
 		}
 
-		const projects: Collection = await dbHandler('projects');
+		const tickets: Collection = await dbHandler('tickets');
 
 		let historyEntry: {
 			changes: Object[],
@@ -110,139 +234,64 @@ router.put(
 		};
 
 		for (const key in req.body) {
-			let oldValue = await projects.findOneAndUpdate(
+			let oldValue = await tickets.findOneAndUpdate(
 				{
-					_id: new mongodb.ObjectID(req.params.projectID),
-					'tickets._id': new mongodb.ObjectID(req.params.ticketID),
+					_id: new ObjectID(req.params.ticketID),
 				},
 				{
 					$set: {
-						[`tickets.$.${key}`]: req.body[key],
+						[key]: req.body[key],
 					},
 				},
 				{
-					projection: { 'tickets.$': 1 },
+					projection: { [key]: 1 },
 				}
 			);
 
 			historyEntry.changes.push({
 				propertyChanged: key,
-				oldValue: oldValue.value.tickets[0][key],
+				oldValue: oldValue.value[key],
 				newValue: req.body[key],
 			});
 		}
 
-		await projects.findOneAndUpdate(
+		const ticket: any = await tickets.findOneAndUpdate(
 			{
-				_id: new mongodb.ObjectID(req.params.projectID),
-				'tickets._id': new mongodb.ObjectID(req.params.ticketID),
+				_id: new ObjectID(req.params.ticketID),
 			},
 			{
 				$push: {
-					[`tickets.$.history`]: historyEntry,
+					history: historyEntry,
 				},
-			}
-		);
-
-		res.status(201).send('Ticket modified');
-	}
-);
-
-router.delete(
-	'/:projectID/:ticketID',
-	auth('user'),
-	async (req: Request, res: Response) => {
-		const projects: Collection = await dbHandler('projects');
-
-		await projects.updateOne(
-			{ _id: new mongodb.ObjectID(req.params.projectID) },
-			{
-				$pull: {
-					tickets: {
-						_id: new mongodb.ObjectID(req.params.ticketID),
-					},
-				},
-			}
-		);
-
-		res.status(200).send('Ticket deleted');
-	}
-);
-
-router.get('/:projectID', auth('user'), async (req: Request, res: Response) => {
-	const projects: Collection = await dbHandler('projects');
-
-	const query: any = await projects.findOne(
-		{
-			_id: new mongodb.ObjectID(req.params.projectID),
-		},
-		{ projection: { tickets: 1 } }
-	);
-
-	if (req.query.type) {
-		const filteredTickets = query.tickets.filter(
-			(el: { type: string }) => el.type === req.query.type
-		);
-		return res.status(200).send(filteredTickets);
-	}
-
-	res.status(200).send(query.tickets);
-});
-
-router.get(
-	'/severity/:projectID',
-	auth('statistics'),
-	async (req: Request, res: Response) => {
-		const projects: Collection = await dbHandler('projects');
-
-		const query: any = await projects.findOne(
-			{
-				_id: new mongodb.ObjectID(req.params.projectID),
 			},
-			{ projection: { tickets: 1 } }
+			{
+				projection: { createdBy: 1, title: 1 },
+			}
 		);
 
-		let statistic: { [key: string]: any } = {
-			low: 0,
-			medium: 0,
-			high: 0,
-			severe: 0,
-		};
-
-		for (const severity in statistic) {
-			statistic[severity] = query.tickets.filter(
-				(el: { severity: string }) => el.severity === severity
-			).length;
+		// If they changed status to need info
+		// then notify the user who created the ticket
+		if (req.body.status === 'need info') {
+			const users: Collection = await dbHandler('users');
+			await users.updateOne(
+				{
+					_id: new ObjectID(ticket.value.createdBy),
+				},
+				{
+					$push: {
+						notifications: {
+							_id: new ObjectID(),
+							title: 'Ticket Needs Info',
+							description: `A request for additional info was submitted on ticket "${ticket.value.title}"`,
+							read: false,
+							dateCreated: new Date(),
+						},
+					},
+				}
+			);
 		}
 
-		res.status(200).send(statistic);
-	}
-);
-
-router.get(
-	'/type/:projectID',
-	auth('statistics'),
-	async (req: Request, res: Response) => {
-		const projects: Collection = await dbHandler('projects');
-
-		const query: any = await projects.findOne(
-			{
-				_id: new mongodb.ObjectID(req.params.projectID),
-			},
-			{ projection: { tickets: 1 } }
-		);
-
-		let statistic: { [key: string]: any } = {};
-
-		statistic['bug'] = query.tickets.filter(
-			(el: { type: string }) => el.type === 'bug'
-		).length;
-
-		statistic['suggestion'] = query.tickets.filter(
-			(el: { type: string }) => el.type === 'suggestion'
-		).length;
-
-		res.status(200).send(statistic);
+		res.status(200).send('Ticket updated');
 	}
 );
 

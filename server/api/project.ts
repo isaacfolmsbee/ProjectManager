@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import mongodb, { Collection } from 'mongodb';
+import mongodb, { Collection, ObjectID } from 'mongodb';
 import { dbHandler } from '../tools/db';
 import { auth } from '../tools/auth';
 import Joi from 'joi';
@@ -9,6 +9,7 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
 		name: Joi.string().required().min(2),
+		description: Joi.string().required(),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -18,70 +19,291 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 
 	await projects.insertOne({
 		name: req.body.name,
-		tickets: [],
+		description: req.body.description,
+		assignedUsers: [],
+		roles: [
+			{
+				_id: new ObjectID(),
+				name: 'Project Admin',
+				permissions: ['projectAdmin'],
+			},
+		],
 	});
 
 	res.status(201).send('Project added to database');
 });
 
-router.get('/', auth(''), async (req: Request, res: Response) => {
-	const projects: Collection = await dbHandler('projects');
+router.post(
+	'/:projectID/user',
+	auth('editProjectUser'),
+	async (req: Request, res: Response) => {
+		//Validate the request
+		const { error } = Joi.object({
+			_id: Joi.string().required().hex().min(24).max(24),
+			role: Joi.string().required().hex().min(24).max(24),
+		}).validate(req.body);
+		if (error) {
+			return res.status(400).send(error.details[0].message);
+		}
 
-	// If they are admin, override and return all project names
-	if (req.user.role === 'admin') {
-		const query: any = await projects
-			.find({}, { projection: { name: 1 } })
-			.toArray();
+		const projects: Collection = await dbHandler('projects');
+		const users: Collection = await dbHandler('users');
 
-		return res.status(200).send(query);
-	}
-
-	// If they have no projects assigned then end
-	if (req.user.projects.length === 0) {
-		return res.sendStatus(400);
-	}
-
-	let projectNames = [];
-
-	for (const projectID of req.user.projects) {
-		const query: any = await projects.findOne(
+		const project: any = await projects.findOneAndUpdate(
 			{
-				_id: new mongodb.ObjectID(projectID),
+				_id: new mongodb.ObjectID(req.params.projectID),
 			},
-			{ projection: { name: 1 } }
+			{
+				$push: {
+					assignedUsers: {
+						_id: new ObjectID(req.body._id),
+						role: new ObjectID(req.body.role),
+					},
+				},
+			},
+			{
+				projection: { name: 1 },
+			}
 		);
 
-		projectNames.push(query);
+		// Give user a notification they were added
+		await users.updateOne(
+			{
+				_id: new mongodb.ObjectID(req.body._id),
+			},
+			{
+				$push: {
+					notifications: {
+						_id: new ObjectID(),
+						title: 'Added to Project',
+						description: `You were added to the project ${project.value.name}`,
+						read: false,
+						dateCreated: new Date(),
+					},
+				},
+			}
+		);
+
+		res.status(201).send('User added to project');
 	}
+);
 
-	res.status(200).send(projectNames);
-});
+router.put(
+	'/:projectID/user/:userID',
+	auth('editProjectUser'),
+	async (req: Request, res: Response) => {
+		//Validate the request
+		const { error } = Joi.object({
+			role: Joi.string().required().hex().min(24).max(24),
+		}).validate(req.body);
+		if (error) {
+			return res.status(400).send(error.details[0].message);
+		}
 
-router.put('/:projectID', auth('projectAdmin'), async (req: Request, res: Response) => {
-	//Validate the request
-	const { error } = Joi.object({
-		name: Joi.string().required().min(2),
-	}).validate(req.body);
-	if (error) {
-		return res.status(400).send(error.details[0].message);
+		const projects: Collection = await dbHandler('projects');
+
+		await projects.findOneAndUpdate(
+			{
+				_id: new mongodb.ObjectID(req.params.projectID),
+				'assignedUsers._id': new mongodb.ObjectID(req.params.userID),
+			},
+			{
+				$set: {
+					'assignedUsers.$': {
+						_id: new ObjectID(req.params.userID),
+						role: new ObjectID(req.body.role),
+					},
+				},
+			},
+			{
+				projection: { name: 1 },
+			}
+		);
+
+		res.status(200).send('User project role updated');
 	}
+);
 
-	const projects: Collection = await dbHandler('projects');
+router.delete(
+	'/:projectID/user/:userID',
+	auth('editProjectUser'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
 
-	await projects.updateOne(
-		{ _id: new mongodb.ObjectID(req.params.projectID) },
-		{ $set: { name: req.body.name } }
-	);
+		await projects.updateOne(
+			{ _id: new mongodb.ObjectID(req.params.projectID) },
+			{
+				$pull: {
+					assignedUsers: {
+						_id: new mongodb.ObjectID(req.params.userID),
+					},
+				},
+			}
+		);
 
-	res.status(201).send('Project name changed');
-});
+		res.status(200).send('User removed from project');
+	}
+);
 
-router.delete('/:projectID', auth('admin'), async (req: any, res: any) => {
-	const projects: Collection = await dbHandler('projects');
+router.post(
+	'/:projectID/role',
+	auth('editProjectRoles'),
+	async (req: Request, res: Response) => {
+		//Validate the request
+		const { error } = Joi.object({
+			name: Joi.string().required().min(2),
+			permissions: Joi.array().required().items(Joi.string()),
+		}).validate(req.body);
+		if (error) {
+			return res.status(400).send(error.details[0].message);
+		}
 
-	projects.deleteOne({ _id: new mongodb.ObjectID(req.params.projectID) });
+		const projects: Collection = await dbHandler('projects');
 
-	res.status(200).send('Project removed from database');
-});
+		await projects.updateOne(
+			{
+				_id: new mongodb.ObjectID(req.params.projectID),
+			},
+			{
+				$push: {
+					roles: {
+						_id: new ObjectID(),
+						name: req.body.name,
+						permissions: req.body.permissions,
+					},
+				},
+			}
+		);
+
+		res.status(201).send('Role added to project');
+	}
+);
+
+router.put(
+	'/:projectID/role/:roleID',
+	auth('editProjectRoles'),
+	async (req: Request, res: Response) => {
+		//Validate the request
+		const { error } = Joi.object({
+			name: Joi.string().required().min(2),
+			permissions: Joi.array().required().items(Joi.string()),
+		}).validate(req.body);
+		if (error) {
+			return res.status(400).send(error.details[0].message);
+		}
+
+		const projects: Collection = await dbHandler('projects');
+
+		await projects.findOneAndUpdate(
+			{
+				_id: new mongodb.ObjectID(req.params.projectID),
+				'roles._id': new mongodb.ObjectID(req.params.roleID),
+			},
+			{
+				$set: {
+					'roles.$': {
+						_id: new ObjectID(req.params.roleID),
+						name: req.body.name,
+						permissions: req.body.permissions,
+					},
+				},
+			}
+		);
+
+		res.status(200).send('Role updated');
+	}
+);
+
+router.delete(
+	'/:projectID/role/:roleID',
+	auth('editProjectRoles'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
+
+		await projects.updateOne(
+			{ _id: new mongodb.ObjectID(req.params.projectID) },
+			{
+				$pull: {
+					roles: {
+						_id: new mongodb.ObjectID(req.params.roleID),
+					},
+				},
+			}
+		);
+
+		res.status(200).send('Role deleted');
+	}
+);
+
+// router.get('/', auth(''), async (req: Request, res: Response) => {
+// 	const projects: Collection = await dbHandler('projects');
+
+// 	// If they are admin, override and return all project names
+// 	if (req.user.role === 'admin') {
+// 		const query: any = await projects
+// 			.find({}, { projection: { name: 1 } })
+// 			.toArray();
+
+// 		return res.status(200).send(query);
+// 	}
+
+// 	// If they have no projects assigned then end
+// 	if (req.user.projects.length === 0) {
+// 		return res.sendStatus(400);
+// 	}
+
+// 	let projectNames = [];
+
+// 	for (const projectID of req.user.projects) {
+// 		const query: any = await projects.findOne(
+// 			{
+// 				_id: new mongodb.ObjectID(projectID),
+// 			},
+// 			{ projection: { name: 1 } }
+// 		);
+
+// 		projectNames.push(query);
+// 	}
+
+// 	res.status(200).send(projectNames);
+// });
+
+router.put(
+	'/:projectID',
+	auth('editProject'),
+	async (req: Request, res: Response) => {
+		//Validate the request
+		const { error } = Joi.object({
+			name: Joi.string().min(2),
+			description: Joi.string(),
+		}).validate(req.body);
+		if (error) {
+			return res.status(400).send(error.details[0].message);
+		}
+
+		const projects: Collection = await dbHandler('projects');
+
+		for (const key in req.body) {
+			await projects.updateOne(
+				{ _id: new mongodb.ObjectID(req.params.projectID) },
+				{ $set: { [key]: req.body[key] } }
+			);
+		}
+
+		res.status(200).send('Project changed');
+	}
+);
+
+router.delete(
+	'/:projectID',
+	auth('admin'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
+
+		projects.deleteOne({ _id: new mongodb.ObjectID(req.params.projectID) });
+
+		res.status(200).send('Project removed from database');
+	}
+);
 
 export { router };
