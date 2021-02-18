@@ -1,9 +1,53 @@
 import express, { Request, Response, text } from 'express';
 import { Collection, ObjectID } from 'mongodb';
+import multer from 'multer';
+import path from 'path';
 import { auth } from '../tools/auth';
 import { dbHandler } from '../tools/db';
 import Joi from 'joi';
 const router = express.Router();
+
+// Setting storage engine
+const storage = multer.diskStorage({
+	destination: './public/uploads',
+	filename: function (req: Request, file, callback) {
+		callback(
+			null,
+			file.fieldname +
+				'-' +
+				new ObjectID().toHexString() +
+				path.extname(file.originalname)
+		);
+	},
+});
+
+// Init upload function
+const upload = multer({
+	storage: storage,
+	limits: { fileSize: 5000000 },
+	fileFilter: function (req: Request, file, callback) {
+		checkFileType(file, callback);
+	},
+}).single('ticketImg');
+
+// Check file type
+function checkFileType(
+	file: Express.Multer.File,
+	callback: multer.FileFilterCallback
+) {
+	// Allowed extentions
+	const fileTypes = /jpeg|jpg|png|gif/;
+	// Check extention
+	const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+	// Check the MIME type
+	const mimeType = fileTypes.test(file.mimetype);
+
+	if (extName && mimeType) {
+		return callback(null, true);
+	} else {
+		callback(Error.prototype);
+	}
+}
 
 router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 	//Validate the request
@@ -92,6 +136,28 @@ router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 	}
 
 	res.status(201).send('Ticket submitted');
+});
+
+router.post('/attachment/:ticketID', auth('createTicket'), async (req: Request, res: Response) => {
+	upload(req, res, async (err: any) => {
+		if (err) {
+			res.status(400).send(err.message);
+		} else if (req.file) {
+			const tickets: Collection = await dbHandler('tickets');
+
+			await tickets.updateOne(
+				{
+					_id: new ObjectID(req.params.ticketID),
+				},
+				{
+					$set: { attachment: req.file.filename }
+				}
+			);
+			res.status(201).send('Image attached to ticket');
+		} else {
+			res.status(400).send('Missing Image File')
+		}
+	});
 });
 
 router.post(
