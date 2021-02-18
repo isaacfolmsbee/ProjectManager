@@ -72,13 +72,17 @@ router.delete('/', auth(''), async (req: Request, res: Response) => {
 	res.status(200).send('Your account has been removed');
 });
 
-router.delete('/:userID', auth('admin'), async (req: Request, res: Response) => {
-	const users: Collection = await dbHandler('users');
+router.delete(
+	'/:userID',
+	auth('admin'),
+	async (req: Request, res: Response) => {
+		const users: Collection = await dbHandler('users');
 
-	await users.deleteOne({ _id: new mongodb.ObjectID(req.params.userID) });
+		await users.deleteOne({ _id: new mongodb.ObjectID(req.params.userID) });
 
-	res.status(200).send('User removed from database');
-});
+		res.status(200).send('User removed from database');
+	}
+);
 
 router.post('/login', async (req: Request, res: Response) => {
 	const users: Collection = await dbHandler('users');
@@ -163,5 +167,49 @@ router.post('/login', async (req: Request, res: Response) => {
 		.status(200)
 		.send('Successfully authenticated');
 });
+
+router.post(
+	'/notifications/read',
+	auth(''),
+	async (req: Request, res: Response) => {
+		const users: Collection = await dbHandler('users');
+
+		let modified = true;
+		while (modified) {
+			let query: any = await users.updateOne(
+				{
+					_id: new ObjectID(req.user._id),
+					'notifications.read': false,
+				},
+				{
+					$set: { 'notifications.$.read': true },
+				}
+			);
+
+			modified = query.result.nModified;
+		}
+
+		res.status(200).send('All notifications set to read');
+	}
+);
+
+router.delete(
+	'/notifications/delete',
+	auth(''),
+	async (req: Request, res: Response) => {
+		const users: Collection = await dbHandler('users');
+
+		await users.updateOne(
+			{
+				_id: new ObjectID(req.user._id),
+			},
+			{
+				$set: { notifications: [] },
+			}
+		);
+
+		res.status(200).send('All notifications deleted');
+	}
+);
 
 export { router };
