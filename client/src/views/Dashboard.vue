@@ -6,7 +6,7 @@
 		class="w-full shadow-md"
 		@changeProject="changeProject($event)" />
 
-	<ticket-container class="mt-3 w-full shadow-md">
+	<ticket-container v-if="tickets[0]._id" class="mt-3 w-full shadow-md">
 		<template v-slot:header>
 			<span class="inline-block text-lg pl-2 py-1 text-gray-light-50">
 				Recent Tickets
@@ -56,7 +56,20 @@ export default Vue.extend({
 				_id: '',
 				name: '',
 			},
-			tickets: [],
+			tickets: [{
+				_id: '',
+				comments: [],
+				createdBy: '',
+				dateCreated: '',
+				description: '',
+				history: [],
+				project: '',
+				severity: '',
+				status: '',
+				title: '',
+				type: '',
+				usersAssigned: [],
+			}],
 		}
 	},
 	async created() {
