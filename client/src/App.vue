@@ -1,8 +1,13 @@
 <template >
 <div id="app">
 	<div>
-		<TheNavbar @logout="logout" :JWT="user.JWT" :darkMode="darkMode" @changeTheme="darkMode = !darkMode" />
-		<router-view @login="login($event)" :JWT="user.JWT" class="pt-16 xl:pt-0 xl:px-36" />
+		<TheNavbar />
+		<router-view 
+			@login="login($event)" 
+			@logout="logout()" 
+			:projectList="userData.projects" 
+			:jwt='userData.JWT'
+			class="mt-16"/>
 	</div>
 </div>
 </template>
@@ -18,60 +23,43 @@ export default Vue.extend({
 	},
 	data() {
 		return {
-			darkMode: true,
-			user: {
+			userData: {
+				_id: '',
 				JWT: '',
-				role: '',
+				username: '',
+				projects: [],
+				notifications: [],
 			},
 		}
 	},
 	created() {
-		this.darkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+		const userData = sessionStorage.getItem('userdata');
 
-		const auth = sessionStorage.getItem('auth');
-		const role = sessionStorage.getItem('role');
-
-		this.user = {
-			JWT: auth || '',
-			role: role || '',
-		}
-	},
-	watch: {
-		darkMode: function () {
-			const html = document.getElementsByTagName('html')[0];
-			if (this.darkMode) {
-				html.setAttribute('class', 'dark');
-			} else {
-				html.setAttribute('class', '');
-			}
-			
-			
+		if (userData) {
+			this.userData = JSON.parse(userData);
 		}
 	},
 	methods: {
-		login(response: {
-			headers: {
-				auth: string;
-			};
-			data: {
-				role: string;
-			};
+		login(userdata: {
+			_id: '';
+				JWT: '';
+				username: '';
+				projects: [];
+				notifications: [];
 		}) {
-			sessionStorage.setItem('auth', response.headers.auth);
-			sessionStorage.setItem('role', response.data.role);
-			this.user = {
-				JWT: response.headers.auth,
-				role: response.data.role,
-			}
+			this.userData = userdata;
+			sessionStorage.setItem('userdata', JSON.stringify(userdata));
 			this.$router.push('/');
 		},
 		logout() {
-			sessionStorage.removeItem('auth');
-			sessionStorage.removeItem('role');
-			this.user = {
+			this.userData = {
+				_id: '',
 				JWT: '',
-				role: '',
+				username: '',
+				projects: [],
+				notifications: [],
 			};
+			sessionStorage.removeItem('userdata');
 			this.$router.push('/login');
 		}
 	}

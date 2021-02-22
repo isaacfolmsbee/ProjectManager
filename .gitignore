@@ -1,4 +1,5 @@
 /client/node_modules
+/client/public/uploads/*
 /server/node_modules
 /server/public
 /dist

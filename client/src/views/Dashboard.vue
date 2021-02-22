@@ -1,96 +1,79 @@
 <template>
-<div class="w-screen lg:w-11/12 lg:mx-auto">
-		<ProjectList 
-			:projects="projects" 
-			:selectedProject="selectedProject" 
-			@changeProject="changeProject($event)"
-			class="lg:px-2 py-2 lg:py-3 xl:py-6" />
+<div class="w-screen flex flex-col items-center pt-3 px-2">
+	<ProjectList 
+		:projects="projectList" 
+		:selectedProject="selectedProject.name"
+		class="w-full shadow-md"
+		@changeProject="changeProject($event)" />
 
-	<hr class="w-full dark:border-gray-600">
-
-	<div class="w-full overflow-x-auto flex lg:justify-center xl:justify-start p-2">
-		<StatList :stats="severity" />
-		<div class="hidden lg:inline ml-3">
-			<StatList :stats="type" />
-		</div>
-	</div>
-
-	<label for="tickets-wrapper" class="ml-2 text-xl dark:text-gray-50 mr-auto">Recent Tickets:</label>
-	<div id="tickets-wrapper" class="mt-2 w-11/12 max-w-sm lg:max-w-lg mx-auto">
+	<ticket-container class="mt-3 w-full shadow-md">
+		<template v-slot:header>
+			<span class="inline-block text-lg pl-2 py-1 text-gray-light-50">
+				Recent Tickets
+			</span>
+		</template>
+		<template v-slot:body>
 			<TicketItem 
 				v-for="ticket in tickets" 
 				:key="ticket._id" 
-				v-bind="ticket"
-				class="mb-2.5 bg-gray-50 dark:bg-gray-600 shadow-md" />
-	</div>
+				:ticket="ticket" 
+				class="mb-1 last:mb-0"/>
+		</template>
+	</ticket-container>
 </div>
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
-import StatList from '../components/StatList.vue';
-import TicketItem from '../components/TicketItem.vue';
+import Vue, { PropType } from 'vue';
 import ProjectList from '../components/ProjectList.vue';
-import { getProjectNames } from '../api/project';
-import { getTickets, getSeverityStat, getTypeStat } from '../api/ticket';
+import TicketContainer from '../components/TicketContainer.vue';
+import TicketItem from '../components/TicketItem.vue';
+import { getTickets } from '../api/ticket';
 
 export default Vue.extend({
 	name: 'Dashboard',
 	components: {
-		StatList,
-		TicketItem,
 		ProjectList,
+		TicketContainer,
+		TicketItem,
 	},
 	props: {
-		JWT: {
+		jwt: {
 			type: String,
 			required: true,
-		}
+		},
+		projectList: {
+			type: Array as PropType<Array<{
+				_id: '';
+				name: '';
+			}>>,
+			required: true,
+		},
 	},
 	data() {
 		return {
-			projects: [{
+			selectedProject: {
 				_id: '',
 				name: '',
-			}],
-			selectedProject: '',
-			severity: {
-				low: 0,
-				medium: 0,
-				high: 0,
-				severe: 0,
 			},
-			type: {
-				bug: 0,
-				suggestion: 0
-			},
-			tickets: [{
-				_id: '',
-				title: '',
-				createdBy: '',
-				dateCreated: '',
-				type: '',
-				severity: '',
-				description: '',
-			}],
+			tickets: [],
 		}
 	},
 	async created() {
-		window.scrollTo(0, 0);
-		this.projects = await getProjectNames(this.JWT);
-		this.selectedProject = this.projects[0].name;
-		this.severity = await getSeverityStat(this.projects[0]._id, this.JWT);
-		this.type = await getTypeStat(this.projects[0]._id, this.JWT);
-		this.tickets = await getTickets(this.projects[0]._id, this.JWT);
-
+		this.selectedProject = {
+			_id: this.projectList[0]._id,
+			name: this.projectList[0].name,
+		};
+		this.tickets = await getTickets(this.selectedProject._id, this.jwt);
 	},
 	methods: {
-		async changeProject(project: { _id: string; name: string }) {
-			this.selectedProject = project.name;
-			this.severity = await getSeverityStat(project._id, this.JWT);
-			this.type = await getTypeStat(project._id, this.JWT);
-			this.tickets = await getTickets(project._id, this.JWT);
+		async changeProject(project: { _id: string; name: string}) {
+			this.selectedProject = project;
+			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
+		},
+		async getTickets() {
+			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
 		}
 	}
-})
+});
 </script>

@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Setting storage engine
 const storage = multer.diskStorage({
-	destination: './public/uploads',
+	destination: '../client/public/uploads',
 	filename: function (req: Request, file, callback) {
 		callback(
 			null,
@@ -38,7 +38,9 @@ function checkFileType(
 	// Allowed extentions
 	const fileTypes = /jpeg|jpg|png|gif/;
 	// Check extention
-	const extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
+	const extName = fileTypes.test(
+		path.extname(file.originalname).toLowerCase()
+	);
 	// Check the MIME type
 	const mimeType = fileTypes.test(file.mimetype);
 
@@ -138,26 +140,67 @@ router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 	res.status(201).send('Ticket submitted');
 });
 
-router.post('/attachment/:ticketID', auth('createTicket'), async (req: Request, res: Response) => {
-	upload(req, res, async (err: any) => {
-		if (err) {
-			res.status(400).send(err.message);
-		} else if (req.file) {
-			const tickets: Collection = await dbHandler('tickets');
+router.post(
+	'/attachment/:ticketID',
+	auth('createTicket'),
+	async (req: Request, res: Response) => {
+		upload(req, res, async (err: any) => {
+			if (err) {
+				res.status(400).send(err.message);
+			} else if (req.file) {
+				const tickets: Collection = await dbHandler('tickets');
 
-			await tickets.updateOne(
-				{
-					_id: new ObjectID(req.params.ticketID),
-				},
-				{
-					$set: { attachment: req.file.filename }
-				}
-			);
-			res.status(201).send('Image attached to ticket');
-		} else {
-			res.status(400).send('Missing Image File')
-		}
-	});
+				await tickets.updateOne(
+					{
+						_id: new ObjectID(req.params.ticketID),
+					},
+					{
+						$set: { attachment: req.file.filename },
+					}
+				);
+				res.status(201).send('Image attached to ticket');
+			} else {
+				res.status(400).send('Missing Image File');
+			}
+		});
+	}
+);
+
+router.get('/:projectID', auth(''), async (req: Request, res: Response) => {
+	const tickets: Collection = await dbHandler('tickets');
+	const users: Collection = await dbHandler('users');
+	let response;
+	if (req.user.isAdmin || req.permissions.includes('assignTicket')) {
+		response = await tickets
+			.find({
+				project: new ObjectID(req.params.projectID),
+			})
+			.limit(10)
+			.toArray();
+	} else {
+		response = await tickets
+			.find({
+				project: new ObjectID(req.params.projectID),
+				usersAssigned: { $in: [new ObjectID(req.user._id)] },
+			})
+			.limit(10)
+			.toArray();
+	}
+
+	for (const ticket of response) {
+		let query = await users.findOne(
+			{
+				_id: new ObjectID(ticket.createdBy),
+			},
+			{
+				projection: { username: 1 }
+			}
+		);
+
+		ticket.createdBy = query.username;
+	}
+
+	res.status(200).send(response);
 });
 
 router.post(

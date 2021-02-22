@@ -12,5 +12,6 @@ declare namespace Express {
 				},
 			];
 		};
+		permissions: string[];
 	};
 };

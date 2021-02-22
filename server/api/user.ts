@@ -168,6 +168,52 @@ router.post('/login', async (req: Request, res: Response) => {
 		.send('Successfully authenticated');
 });
 
+router.get('/userdata', auth(''), async (req: Request, res: Response) => {
+	const users: Collection = await dbHandler('users');
+	const projects: Collection = await dbHandler('projects');
+
+	let projectsList = [];
+	for (const project of req.user.projects) {
+		let query = await projects.findOne(
+			{
+				_id: new ObjectID(project._id),
+			},
+			{
+				projection: { name: 1 },
+			}
+		)
+
+		projectsList.push({
+			_id: project._id,
+			name: query.name,
+			role: project.role,
+			permissions: project.permissions,
+		});
+	}
+
+	let query = await users.findOne(
+		{
+			_id: new ObjectID(req.user._id),
+		},
+		{
+			projection: { notifications: 1 },
+		}
+	)
+
+	const TOKEN_SECRET: any = process.env.TOKEN_SECRET;
+
+	// Create and assign a token
+	const token: string = jwt.sign(req.user, TOKEN_SECRET);
+
+	res.status(200).send({
+		_id: req.user._id,
+		JWT: token,
+		username: req.user.username,
+		projects: projectsList,
+		notifications: query.notifications,
+	});
+});
+
 router.post(
 	'/notifications/read',
 	auth(''),

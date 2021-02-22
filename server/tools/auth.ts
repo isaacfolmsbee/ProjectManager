@@ -42,6 +42,16 @@ export function auth(permission: string) {
 			return res.status(400).send('Invalid ID param');
 		}
 
+		for (let i = 0; i < req.user.projects.length; i++) {
+			if (
+				new ObjectID(req.user.projects[i]._id).equals(
+					new ObjectID(req.params.projectID)
+				)
+			) {
+				req.permissions = req.user.projects[i].permissions;
+			}
+		}
+
 		// If permission is empty than no need to check
 		if (permission === '') {
 			return next();
@@ -57,7 +67,10 @@ export function auth(permission: string) {
 		// Loop through their projects until you get to one that matches
 		// the projectID they are attempted to modify, once you get that
 		// loop through their permissions on the project to see
-		// if they have permission for this request
+		// if they have permission for this request.
+		// Additionally, while doing this push their project permissions onto
+		// the permissions field of Request to be used for any
+		//	future permission checking.
 		let hasProjectRole = false;
 		try {
 			for (let i = 0; i < req.user.projects.length; i++) {

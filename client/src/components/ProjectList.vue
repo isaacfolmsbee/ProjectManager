@@ -1,16 +1,17 @@
 <template>
-<div class="flex items-center">
-	<label for="project-bar" class="px-1 lg:font-bold text-2xl dark:text-gray-50">Project:</label>
-	<div id="project-bar" class="flex overflow-x-auto">
-		<h1 
+<div class="h-12 flex rounded-lg">
+	<span class="w-min px-3 bg-primary-400 rounded-tl-lg rounded-bl-lg font-bold text-lg leading-tight text-gray-light-50 flex items-center">
+		Select Project
+	</span>
+	<div class="bg-gray-dark-400 rounded-tr-lg rounded-br-lg flex flex-grow items-center overflow-y-auto text-2xl text-gray-light-50 whitespace-nowrap ">
+		<span 
 			v-for="project in projects" 
 			:key="project._id" 
-			@click="$emit('changeProject', project)" 
-			:class="{ 'bg-indigo-500 dark:bg-indigo-200 text-gray-50 dark:text-gray-800 font-bold': (project.name === selectedProject) }" 
-			class="px-1 mx-1 text-2xl rounded-lg cursor-pointer dark:text-gray-50 whitespace-nowrap">
-
+			class="px-2 cursor-pointer"
+			:class="{ 'font-bold text-primary-200': (project.name === selectedProject) }"
+			@click="$emit('changeProject', project)" >
 			{{ project.name }}
-		</h1>
+		</span>
 	</div>
 </div>
 </template>
@@ -31,8 +32,7 @@ export default Vue.extend({
 		selectedProject: {
 			type: String,
 			required: true,
-		}
+		},
 	}
-
 })
 </script>
