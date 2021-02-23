@@ -5,7 +5,7 @@
 	<div 
 		v-for="notification in notifications" 
 		:key="notification._id"
-		class="mb-3 bg-gray-light-50 rounded-lg p-1 relative" >
+		class="mb-3 bg-gray-light-50 rounded-lg p-1 relative w-full" >
 
 		<span @click="deleteNotification(notification._id)" class="absolute top-1 right-1 text-gray-dark-400 cursor-pointer text-sm">Delete</span>
 		<div class="flex flex-col">
