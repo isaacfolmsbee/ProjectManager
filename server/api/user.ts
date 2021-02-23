@@ -191,14 +191,10 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 		});
 	}
 
-	let query = await users.findOne(
-		{
-			_id: new ObjectID(req.user._id),
-		},
-		{
-			projection: { notifications: 1 },
-		}
-	);
+	let query = await users.countDocuments({
+		_id: new ObjectID(req.user._id),
+		notifications: { $elemMatch: { read: false }}
+	});
 
 	const TOKEN_SECRET: any = process.env.TOKEN_SECRET;
 
@@ -210,7 +206,7 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 		JWT: token,
 		username: req.user.username,
 		projects: projectsList,
-		notifications: query.notifications,
+		hasUnreadNotification: (query >= 1),
 	});
 });
 

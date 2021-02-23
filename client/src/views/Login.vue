@@ -1,5 +1,5 @@
 <template>
-<div class="fixed -mt-0 top-0 w-full h-full flex flex-col justify-center items-center bg-primary-400">
+<div class="fixed z-20 -mt-0 top-0 w-full h-full flex flex-col justify-center items-center bg-primary-400">
 	<h1 class="absolute top-5 text-3xl font-bold text-gray-light-50">Project Manager</h1>
 	<input type="text" v-model="email" placeholder="Email..."
 		class="w-5/6 max-w-xs h-12 mb-5 pl-2 text-xl bg-gray-light-50 rounded-lg -mt-32">

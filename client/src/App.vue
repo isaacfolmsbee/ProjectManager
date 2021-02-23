@@ -1,7 +1,11 @@
 <template >
 <div id="app">
 	<div>
-		<TheNavbar :jwt='userData.JWT' />
+		<TheNavbar 
+			:jwt='userData.JWT' 
+			:hasUnreadNotification="userData.hasUnreadNotification"
+			@readNotifications="userData.hasUnreadNotification = false" />
+
 		<router-view 
 			@login="login($event)" 
 			@logout="logout()" 
@@ -28,7 +32,7 @@ export default Vue.extend({
 				JWT: '',
 				username: '',
 				projects: [],
-				notifications: [],
+				hasUnreadNotification: false,
 			},
 		}
 	},
@@ -41,11 +45,11 @@ export default Vue.extend({
 	},
 	methods: {
 		login(userdata: {
-			_id: '';
-				JWT: '';
-				username: '';
-				projects: [];
-				notifications: [];
+			_id: string;
+			JWT: string;
+			username: string;
+			projects: [];
+			hasUnreadNotification: boolean;
 		}) {
 			this.userData = userdata;
 			sessionStorage.setItem('userdata', JSON.stringify(userdata));
@@ -57,7 +61,7 @@ export default Vue.extend({
 				JWT: '',
 				username: '',
 				projects: [],
-				notifications: [],
+				hasUnreadNotification: false,
 			};
 			sessionStorage.removeItem('userdata');
 			this.$router.push('/login');
