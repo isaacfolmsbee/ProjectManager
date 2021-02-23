@@ -31,6 +31,16 @@ export async function getTickets(projectID: string, jwt: string) {
 	return response.data;
 }
 
+export async function getAssignedTickets(projectID: string, jwt: string) {
+	const response = await axios.get(`${url}assigned/${projectID}`, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
 export async function postTicket(
 	ticket: {
 		project: string;

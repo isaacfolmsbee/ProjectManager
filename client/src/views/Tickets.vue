@@ -84,18 +84,37 @@
 		<textarea v-model="ticketDescription" class="rounded-lg resize-none pl-1 h-20" placeholder="Description..."></textarea>
 		<button class="mx-auto py-1 px-2 bg-primary-400 font-bold text-gray-light-50 mt-2 rounded-lg" @click="submitTicket">Post Ticket to {{ selectedProject.name }}</button>
 	</div>
+	<ticket-container class="w-full mt-3">
+		<template v-slot:header>
+			<div class="flex p-1 h-9">
+				<input v-model="query" class="rounded-lg pl-1 flex-grow" type="text" placeholder="Query...">
+				<button @click="filterTickets()" class="mx-2 px-2 bg-gray-dark-500 rounded-lg text-gray-light-50 font-bold">Search</button>
+			</div>
+		</template>
+		<template v-slot:body>
+			<TicketItem 
+				v-for="ticket in filteredTickets" 
+				:key="ticket._id" 
+				:ticket="ticket" 
+				class="mb-1 last:mb-0"/>
+		</template>
+	</ticket-container>
 </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import ProjectList from '../components/ProjectList.vue';
-import { postTicket, attachImageToTicket } from '../api/ticket'
+import TicketContainer from '../components/TicketContainer.vue';
+import TicketItem from '../components/TicketItem.vue';
+import { postTicket, attachImageToTicket, getAssignedTickets } from '../api/ticket'
 
 export default Vue.extend({
 	name: "Tickets",
 	components: {
 		ProjectList,
+		TicketContainer,
+		TicketItem,
 	},
 	props: {
 		jwt: {
@@ -122,13 +141,18 @@ export default Vue.extend({
 				name: '',
 			},
 			activeSelector: '',
+			tickets: null,
+			filteredTickets: null,
+			query: '',
 		}
 	},
-	created() {
+	async created() {
 		this.selectedProject = {
 			_id: this.projectList[0]._id,
 			name: this.projectList[0].name,
 		};
+		this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+		this.filteredTickets = this.tickets;
 	},
 	computed: {
 		attachFileLabel(): string {
@@ -199,7 +223,27 @@ export default Vue.extend({
 		},
 		async changeProject(project: { _id: string; name: string}) {
 			this.selectedProject = project;
+			this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+			this.filteredTickets = this.tickets;
 		},
+		filterTickets() {
+			if (!this.query) {
+				this.filteredTickets = this.tickets;
+			} else {
+				this.filteredTickets = this.tickets.filter(
+					(ticket: {
+						title: string;
+						description: string;
+						severity: string;
+						type: string;
+					})  => ticket.title.toLowerCase().includes(this.query.toLowerCase()) ||
+								ticket.description.toLowerCase().includes(this.query.toLowerCase()) ||
+								ticket.severity.toLowerCase().includes(this.query.toLowerCase()) ||
+								ticket.type.toLowerCase().includes(this.query.toLowerCase())
+							
+				);
+			}
+		}
 	}
 })
 </script>
