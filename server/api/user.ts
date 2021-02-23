@@ -181,7 +181,7 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 			{
 				projection: { name: 1 },
 			}
-		)
+		);
 
 		projectsList.push({
 			_id: project._id,
@@ -198,7 +198,7 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 		{
 			projection: { notifications: 1 },
 		}
-	)
+	);
 
 	const TOKEN_SECRET: any = process.env.TOKEN_SECRET;
 
@@ -212,6 +212,20 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 		projects: projectsList,
 		notifications: query.notifications,
 	});
+});
+
+router.get('/notifications', auth(''), async (req: Request, res: Response) => {
+	const users: Collection = await dbHandler('users');
+
+	const query = await users.findOne(
+		{
+			_id: new ObjectID(req.user._id),
+		},
+		{
+			projection: { notifications: 1 },
+		}
+	);
+	res.status(200).send(query.notifications);
 });
 
 router.post(
@@ -255,6 +269,27 @@ router.delete(
 		);
 
 		res.status(200).send('All notifications deleted');
+	}
+);
+
+router.delete(
+	'/notification/:notificationID',
+	auth(''),
+	async (req: Request, res: Response) => {
+		const users: Collection = await dbHandler('users');
+
+		await users.updateOne(
+			{
+				_id: new ObjectID(req.user._id),
+			},
+			{
+				$pull: {
+					notifications: { _id: new ObjectID(req.params.notificationID) },
+				},
+			}
+		);
+
+		res.status(200).send('Notification deleted');
 	}
 );
 

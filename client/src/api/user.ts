@@ -26,3 +26,43 @@ export async function login(email: string, password: string) {
 
 	return userObject.data;
 }
+
+export async function readNotifications(jwt: string) {
+	const response = await axios.post(url + 'notifications/read', {}, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function getNotifications(jwt: string) {
+	const response = await axios.get(url + 'notifications', {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function deleteNotifications(jwt: string) {
+	const response = await axios.delete(url + 'notifications/delete', {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function deleteNotification(notificationID: string, jwt: string) {
+	const response = await axios.delete(url + 'notification/' + notificationID, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}

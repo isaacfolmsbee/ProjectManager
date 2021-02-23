@@ -1,7 +1,7 @@
 <template >
 <div id="app">
 	<div>
-		<TheNavbar />
+		<TheNavbar :jwt='userData.JWT' />
 		<router-view 
 			@login="login($event)" 
 			@logout="logout()" 

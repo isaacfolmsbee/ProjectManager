@@ -31,6 +31,39 @@ export async function getTickets(projectID: string, jwt: string) {
 	return response.data;
 }
 
+export async function postTicket(
+	ticket: {
+		project: string;
+		title: string;
+		type: string;
+		severity: string;
+		description: string;
+	},
+	jwt: string
+) {
+	const response = await axios.post(url, ticket, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function attachImageToTicket(
+	ticketID: string,
+	formData: FormData,
+	jwt: string
+) {
+	const response = await axios.post(url + 'attachment/' + ticketID, formData, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
 // export async function getSeverityStat(projectID: string, jwt: string) {
 // 	const response = await axios.get(`${url}severity/${projectID}`, {
 // 		headers: {

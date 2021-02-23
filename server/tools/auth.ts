@@ -37,6 +37,7 @@ export function auth(permission: string) {
 			userID: Joi.string().hex().min(24).max(24),
 			roleID: Joi.string().hex().min(24).max(24),
 			ticketID: Joi.string().hex().min(24).max(24),
+			notificationID: Joi.string().hex().min(24).max(24),
 		}).validate(req.params);
 		if (error) {
 			return res.status(400).send('Invalid ID param');

@@ -70,7 +70,9 @@ router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 	const projects: Collection = await dbHandler('projects');
 	const users: Collection = await dbHandler('users');
 
+	let ticketID = new ObjectID();
 	await tickets.insertOne({
+		_id: ticketID,
 		project: new ObjectID(req.body.project),
 		title: req.body.title,
 		type: req.body.type,
@@ -137,7 +139,7 @@ router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 		);
 	}
 
-	res.status(201).send('Ticket submitted');
+	res.status(201).send(ticketID.toHexString());
 });
 
 router.post(
@@ -193,7 +195,7 @@ router.get('/:projectID', auth(''), async (req: Request, res: Response) => {
 				_id: new ObjectID(ticket.createdBy),
 			},
 			{
-				projection: { username: 1 }
+				projection: { username: 1 },
 			}
 		);
 
