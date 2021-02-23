@@ -217,7 +217,99 @@ router.get(
 				project: new ObjectID(req.params.projectID),
 				usersAssigned: { $in: [new ObjectID(req.user._id)] },
 			})
-			.limit(10)
+			.toArray();
+
+		for (const ticket of response) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(ticket.createdBy),
+				},
+				{
+					projection: { username: 1 },
+				}
+			);
+
+			ticket.createdBy = query.username;
+		}
+
+		res.status(200).send(response);
+	}
+);
+
+router.get(
+	'/unassigned/:projectID',
+	auth('assignTicket'),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+		const users: Collection = await dbHandler('users');
+
+		let response = await tickets
+			.find({
+				project: new ObjectID(req.params.projectID),
+				usersAssigned: { $size: 0 },
+			})
+			.toArray();
+
+		for (const ticket of response) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(ticket.createdBy),
+				},
+				{
+					projection: { username: 1 },
+				}
+			);
+
+			ticket.createdBy = query.username;
+		}
+
+		res.status(200).send(response);
+	}
+);
+
+router.get(
+	'/active/:projectID',
+	auth('assignTicket'),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+		const users: Collection = await dbHandler('users');
+
+		let response = await tickets
+			.find({
+				project: new ObjectID(req.params.projectID),
+				status: { $ne: 'closed' },
+			})
+			.toArray();
+
+		for (const ticket of response) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(ticket.createdBy),
+				},
+				{
+					projection: { username: 1 },
+				}
+			);
+
+			ticket.createdBy = query.username;
+		}
+
+		res.status(200).send(response);
+	}
+);
+
+router.get(
+	'/closed/:projectID',
+	auth('assignTicket'),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+		const users: Collection = await dbHandler('users');
+
+		let response = await tickets
+			.find({
+				project: new ObjectID(req.params.projectID),
+				status: { $eq: 'closed' },
+			})
 			.toArray();
 
 		for (const ticket of response) {

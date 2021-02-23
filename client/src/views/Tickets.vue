@@ -90,6 +90,33 @@
 				<input v-model="query" class="rounded-lg pl-1 flex-grow" type="text" placeholder="Query...">
 				<button @click="filterTickets()" class="mx-2 px-2 bg-gray-dark-500 rounded-lg text-gray-light-50 font-bold">Search</button>
 			</div>
+			<hr>
+			<div class="flex whitespace-nowrap overflow-x-auto pl-1 py-0.5">
+				<button 
+					:class="[(selectedFilter === 'Your Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']" 
+					class="button"
+					@click="getFilteredTickets('Your Tickets')" >
+					Your Tickets
+				</button>
+				<button 
+					:class="[(selectedFilter === 'Unassigned Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']"
+					class="button"
+					@click="getFilteredTickets('Unassigned Tickets')" >
+					Unassigned Tickets
+				</button>
+				<button 
+					:class="[(selectedFilter === 'Active Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']"
+					class="button"
+					@click="getFilteredTickets('Active Tickets')" >
+					Active Tickets
+				</button>
+				<button 
+					:class="[(selectedFilter === 'Closed Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']"
+					class="button"
+					@click="getFilteredTickets('Closed Tickets')" >
+					Closed Tickets
+				</button>
+			</div>
 		</template>
 		<template v-slot:body>
 			<TicketItem 
@@ -107,7 +134,12 @@ import Vue, { PropType } from 'vue';
 import ProjectList from '../components/ProjectList.vue';
 import TicketContainer from '../components/TicketContainer.vue';
 import TicketItem from '../components/TicketItem.vue';
-import { postTicket, attachImageToTicket, getAssignedTickets } from '../api/ticket'
+import { postTicket, 
+	attachImageToTicket, 
+	getAssignedTickets, 
+	getUnassignedTickets, 
+	getActiveTickets, 
+	getClosedTickets } from '../api/ticket'
 
 export default Vue.extend({
 	name: "Tickets",
@@ -131,6 +163,7 @@ export default Vue.extend({
 	},
 	data() {
 		return {
+			selectedFilter: 'Your Tickets',
 			ticketTitle: '',
 			ticketDescription: '',
 			typeSelected: '',
@@ -151,7 +184,7 @@ export default Vue.extend({
 			_id: this.projectList[0]._id,
 			name: this.projectList[0].name,
 		};
-		this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+		await this.updateTickets();
 		this.filteredTickets = this.tickets;
 	},
 	computed: {
@@ -223,7 +256,33 @@ export default Vue.extend({
 		},
 		async changeProject(project: { _id: string; name: string}) {
 			this.selectedProject = project;
-			this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+			await this.updateTickets();
+			this.filteredTickets = this.tickets;
+		},
+		async updateTickets() {
+			if (this.selectedFilter === 'Your Tickets') {
+				this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+			} else if (this.selectedFilter === 'Unassigned Tickets') {
+				this.tickets = await getUnassignedTickets(this.selectedProject._id, this.jwt);
+			} else if (this.selectedFilter === 'Active Tickets') {
+				this.tickets = await getActiveTickets(this.selectedProject._id, this.jwt);
+			} else {
+				this.tickets = await getClosedTickets(this.selectedProject._id, this.jwt);
+			}
+			this.filteredTickets = this.tickets;
+		},
+		async getFilteredTickets(action: string) {
+			this.selectedFilter = action;
+
+			if (action === 'Your Tickets') {
+				this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+			} else if (action === 'Unassigned Tickets') {
+				this.tickets = await getUnassignedTickets(this.selectedProject._id, this.jwt);
+			} else if (action === 'Active Tickets') {
+				this.tickets = await getActiveTickets(this.selectedProject._id, this.jwt);
+			} else {
+				this.tickets = await getClosedTickets(this.selectedProject._id, this.jwt);
+			}
 			this.filteredTickets = this.tickets;
 		},
 		filterTickets() {
@@ -247,3 +306,9 @@ export default Vue.extend({
 	}
 })
 </script>
+
+<style lang="postcss" scoped>
+.button {
+	@apply mx-2 text-lg;
+}
+</style>

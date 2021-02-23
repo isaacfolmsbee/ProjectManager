@@ -3,7 +3,7 @@
 	<span class="w-min px-3 bg-primary-400 rounded-tl-lg rounded-bl-lg font-bold text-lg leading-tight text-gray-light-50 flex items-center">
 		Select Project
 	</span>
-	<div class="bg-gray-dark-400 rounded-tr-lg rounded-br-lg flex flex-grow items-center overflow-y-auto text-2xl text-gray-light-50 whitespace-nowrap ">
+	<div class="bg-gray-dark-400 rounded-tr-lg rounded-br-lg flex flex-grow items-center overflow-x-auto text-2xl text-gray-light-50 whitespace-nowrap ">
 		<span 
 			v-for="project in projects" 
 			:key="project._id" 

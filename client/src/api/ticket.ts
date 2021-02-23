@@ -41,6 +41,36 @@ export async function getAssignedTickets(projectID: string, jwt: string) {
 	return response.data;
 }
 
+export async function getUnassignedTickets(projectID: string, jwt: string) {
+	const response = await axios.get(`${url}unassigned/${projectID}`, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function getActiveTickets(projectID: string, jwt: string) {
+	const response = await axios.get(`${url}active/${projectID}`, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function getClosedTickets(projectID: string, jwt: string) {
+	const response = await axios.get(`${url}closed/${projectID}`, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
 export async function postTicket(
 	ticket: {
 		project: string;
