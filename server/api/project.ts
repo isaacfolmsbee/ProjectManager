@@ -33,6 +33,49 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 	res.status(201).send('Project added to database');
 });
 
+router.get(
+	'/unassigned/:projectID',
+	auth('editProjectUser'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
+		const users: Collection = await dbHandler('users');
+
+		let unassignedUsers = await users
+			.find(
+				{},
+				{
+					projection: { _id: 1, username: 1 },
+				}
+			)
+			.toArray();
+
+		let alreadyAssignedUsers = await projects.findOne(
+			{
+				_id: new ObjectID(req.params.projectID),
+			},
+			{
+				projection: { assignedUsers: 1 },
+			}
+		);
+
+		alreadyAssignedUsers = alreadyAssignedUsers.assignedUsers;
+
+		for (let i = 0; i < unassignedUsers.length; i++) {
+			for (const assignedUser of alreadyAssignedUsers) {
+				if (
+					new ObjectID(unassignedUsers[i]._id).equals(
+						new ObjectID(assignedUser._id)
+					)
+				) {
+					unassignedUsers.splice(i, 1);
+				}
+			}
+		}
+
+		res.status(200).send(unassignedUsers);
+	}
+);
+
 router.post(
 	'/:projectID/user',
 	auth('editProjectUser'),
@@ -176,6 +219,25 @@ router.post(
 		);
 
 		res.status(201).send('Role added to project');
+	}
+);
+
+router.get(
+	'/:projectID/role',
+	auth('editProjectRoles'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
+
+		const query = await projects.findOne(
+			{
+				_id: new ObjectID(req.params.projectID)
+			},
+			{
+				projection: { roles: 1 }
+			}
+		)
+
+		res.status(201).send(query.roles);
 	}
 );
 
