@@ -232,10 +232,6 @@ export default Vue.extend({
 			this.FILE = event.target.files[0];
 		},
 		async submitTicket() {
-			const formData = new FormData();
-			
-			formData.append('ticketImg', this.FILE, this.FILE.name);
-
 			const ticketID = await postTicket(
 			{
 				project: this.selectedProject._id,
@@ -245,8 +241,12 @@ export default Vue.extend({
 				description: this.ticketDescription,
 			}, 
 			this.jwt);
-
-			await attachImageToTicket(ticketID, formData, this.jwt);
+			
+			if (this.FILE) {
+				const formData = new FormData();
+				formData.append('ticketImg', this.FILE, this.FILE.name);
+				await attachImageToTicket(ticketID, formData, this.jwt);
+			}
 
 			this.ticketTitle = '';
 			this.typeSelected = '';
