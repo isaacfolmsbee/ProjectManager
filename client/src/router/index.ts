@@ -23,6 +23,15 @@ const routes: Array<RouteConfig> = [
 		},
 	},
 	{
+		path: '/ticket',
+		name: 'Ticket',
+		component: () => import('../views/Ticket.vue'),
+		meta: {
+			requiresAuth: true,
+			isUser: true,
+		},
+	},
+	{
 		path: '/login',
 		name: 'Login',
 		component: () => import('../views/Login.vue'),

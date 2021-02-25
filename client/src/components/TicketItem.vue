@@ -2,9 +2,11 @@
 <div class="bg-gray-light-50 rounded-lg p-1">
 	<div class="w-full flex">
 		<div class="flex flex-col flex-grow border-r">
-			<span class="font-bold">
+			<router-link 
+				:to="{path:'/ticket', query:{id: ticket._id}}"
+				class="font-bold" >
 				{{ ticket.title }}
-			</span>
+			</router-link>
 			<span class="text-xs text-gray-dark-200">
 				{{ ticket.createdBy }} / {{ dateFormatted }}
 			</span>
@@ -40,9 +42,9 @@ export default Vue.extend({
 		}
 	},
 	computed: {
-		dateFormatted: function (): string {
+		dateFormatted(): string {
 			return this.ticket.dateCreated.substr(0, 10);
-		}
+		},
 	}
 })
 </script>

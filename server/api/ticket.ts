@@ -206,6 +206,121 @@ router.get('/:projectID', auth(''), async (req: Request, res: Response) => {
 });
 
 router.get(
+	'/ticket/:ticketID',
+	auth(''),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+		const users: Collection = await dbHandler('users');
+
+		let response = await tickets.findOne({
+			_id: new ObjectID(req.params.ticketID),
+		});
+
+		let query = await users.findOne(
+			{
+				_id: new ObjectID(response.createdBy),
+			},
+			{
+				projection: { username: 1 },
+			}
+		);
+		response.createdBy = query.username;
+
+		for (const comment of response.comments) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(comment.createdBy),
+				},
+				{
+					projection: { username: 1 },
+				}
+			);
+			comment.createdBy = query.username;
+		}
+
+		for (let i = 0; i < response.usersAssigned.length; i++) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(response.usersAssigned[i]),
+				},
+				{
+					projection: { username: 1 },
+				}
+			);
+			response.usersAssigned[i] = {
+				_id: response.usersAssigned[i],
+				name: query.username,
+			};
+		}
+
+		res.status(200).send(response);
+	}
+);
+
+router.get(
+	'/eligibleusers/:ticketID',
+	auth(''),
+	async (req: Request, res: Response) => {
+		const tickets: Collection = await dbHandler('tickets');
+		const projects: Collection = await dbHandler('projects');
+		const users: Collection = await dbHandler('users');
+
+		let ticket = await tickets.findOne({
+			_id: new ObjectID(req.params.ticketID),
+		});
+
+		let project = await projects.findOne({
+			_id: new Object(ticket.project),
+		});
+
+		let eligibleUsers = project.assignedUsers;
+
+		// Filter out users already assigned
+		for (const user of ticket.usersAssigned) {
+			for (let i = 0; i < eligibleUsers.length; i++) {
+				if (new ObjectID(eligibleUsers[i]._id).equals(new ObjectID(user))) {
+					eligibleUsers.splice(i, 1);
+				}
+			}
+		}
+
+		// Filter out users who can't edit tickets
+		for (let i = 0; i < eligibleUsers.length; i++) {
+			let isEligible = false;
+			for (let j = 0; j < project.roles.length; j++) {
+				if (
+					new ObjectID(project.roles[j]._id).equals(
+						new ObjectID(eligibleUsers[i].role)
+					)
+				) {
+					isEligible = project.roles[j].permissions.includes('editTicket')
+						? true
+						: false;
+				}
+			}
+			if (!isEligible) {
+				eligibleUsers.splice(i, 1);
+			}
+		}
+
+		// Add name field to eligibleUsers
+		for (let i = 0; i < eligibleUsers.length; i++) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(eligibleUsers[i]._id),
+				},
+				{
+					projection: { username: 1 },
+				}
+			);
+			eligibleUsers[i].name = query.username;
+		}
+
+		res.status(200).send(eligibleUsers);
+	}
+);
+
+router.get(
 	'/assigned/:projectID',
 	auth(''),
 	async (req: Request, res: Response) => {
