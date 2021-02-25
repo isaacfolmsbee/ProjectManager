@@ -55,6 +55,14 @@ const routes: Array<RouteConfig> = [
 			guest: true,
 		},
 	},
+	{
+		path: '/projects',
+		name: 'ProjectsManage',
+		component: () => import('../views/ProjectsManage.vue'),
+		meta: {
+			guest: true,
+		},
+	},
 	// {
 	// 	path: '/users',
 	// 	name: 'Users',
