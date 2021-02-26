@@ -76,6 +76,41 @@ router.get(
 	}
 );
 
+router.get(
+	'/assigned/:projectID',
+	auth('editProjectUser'),
+	async (req: Request, res: Response) => {
+		const projects: Collection = await dbHandler('projects');
+		const users: Collection = await dbHandler('users');
+
+		let query = await projects.findOne(
+			{
+				_id: new ObjectID(req.params.projectID),
+			},
+			{
+				projection: { assignedUsers: 1 },
+			}
+		);
+
+		let assignedUsers = query.assignedUsers;
+
+		for (const user of assignedUsers) {
+			let query = await users.findOne(
+				{
+					_id: new ObjectID(user._id),
+				},
+				{
+					projection: { username: 1 }
+				}
+			);
+			user.username = query.username;
+		}
+
+
+		res.status(200).send(assignedUsers);
+	}
+);
+
 router.post(
 	'/:projectID/user',
 	auth('editProjectUser'),

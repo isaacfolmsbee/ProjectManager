@@ -22,6 +22,16 @@ export async function getUnassignedUsers(projectID: string, jwt: string) {
 	return response.data;
 }
 
+export async function getAssigned(projectID: string, jwt: string) {
+	const response = await axios.get(url + 'assigned/' + projectID, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
 export async function getRoles(projectID: string, jwt: string) {
 	const response = await axios.get(url + projectID + '/role', {
 		headers: {
@@ -39,6 +49,30 @@ export async function addUserToProject(projectID: string, userID: string, roleID
 			role: roleID,
 		},
 		{
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function editProjectUser(projectID: string, userID: string, roleID: string, jwt: string) {
+	const response = await axios.put(`${url}${projectID}/user/${userID}`,
+		{
+			role: roleID,
+		},
+		{
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function removeUserFromProject(projectID: string, userID: string, jwt: string) {
+	const response = await axios.delete(`${url}${projectID}/user/${userID}`, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
