@@ -95,3 +95,33 @@ export async function postProject(name: string, description: string, jwt: string
 
 	return response.data;
 }
+
+export async function postProjectRole(projectID: string, name: string, permissions: string[], jwt: string) {
+	const response = await axios.post(`${url}${projectID}/role`,
+		{
+			name,
+			permissions,
+		},
+		{
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
+
+export async function editProjectRole(projectID: string, roleID: string, name: string, permissions: string[], jwt: string) {
+	const response = await axios.put(`${url}${projectID}/role/${roleID}`,
+		{
+			name,
+			permissions,
+		},
+		{
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
