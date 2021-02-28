@@ -72,18 +72,6 @@ router.delete('/', auth(''), async (req: Request, res: Response) => {
 	res.status(200).send('Your account has been removed');
 });
 
-router.delete(
-	'/:userID',
-	auth('admin'),
-	async (req: Request, res: Response) => {
-		const users: Collection = await dbHandler('users');
-
-		await users.deleteOne({ _id: new mongodb.ObjectID(req.params.userID) });
-
-		res.status(200).send('User removed from database');
-	}
-);
-
 router.post('/login', async (req: Request, res: Response) => {
 	const users: Collection = await dbHandler('users');
 
@@ -250,7 +238,7 @@ router.post(
 );
 
 router.delete(
-	'/notifications/delete',
+	'/notifications',
 	auth(''),
 	async (req: Request, res: Response) => {
 		const users: Collection = await dbHandler('users');
@@ -269,7 +257,7 @@ router.delete(
 );
 
 router.delete(
-	'/notification/:notificationID',
+	'/notifications/:notificationID',
 	auth(''),
 	async (req: Request, res: Response) => {
 		const users: Collection = await dbHandler('users');
@@ -286,6 +274,18 @@ router.delete(
 		);
 
 		res.status(200).send('Notification deleted');
+	}
+);
+
+router.delete(
+	'/:userID',
+	auth('admin'),
+	async (req: Request, res: Response) => {
+		const users: Collection = await dbHandler('users');
+
+		await users.deleteOne({ _id: new mongodb.ObjectID(req.params.userID) });
+
+		res.status(200).send('User removed from database');
 	}
 );
 
