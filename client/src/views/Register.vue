@@ -1,21 +1,38 @@
 <template>
-<div class="fixed -mt-0 top-0 w-full h-full flex flex-col justify-center items-center bg-primary-400">
-	<h1 class="absolute top-5 text-3xl font-bold text-gray-light-50">Project Manager</h1>
-	<input type="text" v-model="username" placeholder="Username..."
-		class="w-5/6 max-w-xs h-12 mb-5 pl-2 text-xl bg-gray-light-50 rounded-lg -mt-24">
-	<input type="text" v-model="email" placeholder="Email..."
-		class="w-5/6 max-w-xs h-12 mb-5 pl-2 text-xl bg-gray-light-50 rounded-lg">
-	<input type="password" v-model="password" placeholder="Password..."
-		class="w-5/6 max-w-xs h-12 mb-5 pl-2 text-xl bg-gray-light-50 rounded-lg">
-		<input type="password" v-model="confirmPassword" placeholder="Confirm Password..."
-		class="w-5/6 max-w-xs h-12 mb-5 pl-2 text-xl bg-gray-light-50 rounded-lg">
-	<button @click="register()" class="font-bold text-3xl text-gray-light-50 py-2 px-4 rounded-xl shadow-md bg-gray-dark-500">Register</button>
-	<div class="flex text-lg mt-2">
-		<p class="text-gray-dark-600">Already have an account?</p><router-link to="/login" class="pl-1.5 text-gray-light-50 text">Login</router-link>
-	</div>
-	<div class="flex text-lg mt-2">
-		<p class="text-gray-dark-600">Sign in as a</p><router-link to="/register" class="pl-1.5 text-gray-light-50 text">Demo User</router-link>
-	</div>
+<div class="w-full px-5 h-full fixed z-20 -mt-0 bg-gray-light-100 flex flex-col justify-center items-center">
+	<h1 class="absolute top-5 font-bold text-2xl text-gray-dark-400">Project Manager</h1>
+	<h2 class="text-gray-dark-300 text-2xl">Register New Account</h2>
+	<input 
+		class="input" 
+		type="text" 
+		placeholder="Username..."
+		v-model="username" >
+	<input 
+		class="input" 
+		type="text" 
+		placeholder="Email..."
+		v-model="email" >
+	<input 
+		class="input" 
+		type="password" 
+		placeholder="Password..."
+		v-model="password" >
+	<input 
+		class="input" 
+		type="password" 
+		placeholder="Confirm Password..."
+		v-model="password" >
+	<button 
+		class="mt-3 py-1 px-4 bg-gray-dark-400 text-2xl text-gray-light-100 focus:bg-gray-dark-600"
+		@click="register()" >Register</button>
+	<span class="text-gray-dark-300 mt-3">
+		Already have an account? 
+		<router-link to="/login" class="text-gray-dark-900 cursor-pointer">Login</router-link>
+	</span>
+	<span class="text-gray-dark-300 mt-0.5">
+		Sign in as a 
+		<router-link to="/register" class="text-gray-dark-900 cursor-pointer">Demo User</router-link>
+	</span>
 </div>
 </template>
 <script lang="ts">
@@ -41,3 +58,9 @@ export default Vue.extend({
 	}
 })
 </script>
+
+<style lang="postcss" scoped>
+.input {
+	@apply w-11/12 max-w-xs mt-3 py-2 pl-2 border-b bg-gray-light-100 border-gray-dark-200 focus:outline-none focus:bg-gray-light-300 placeholder-gray-dark-100 text-xl transition-colors duration-300 rounded-none;
+}
+</style>
