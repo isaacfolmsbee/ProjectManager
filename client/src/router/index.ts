@@ -4,15 +4,15 @@ import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-	// {
-	// 	path: '/',
-	// 	name: 'Dashboard',
-	// 	component: () => import('../views/Dashboard.vue'),
-	// 	meta: {
-	// 		requiresAuth: true,
-	// 		isUser: true,
-	// 	},
-	// },
+	{
+		path: '/',
+		name: 'Dashboard',
+		component: () => import('../views/Dashboard.vue'),
+		meta: {
+			requiresAuth: true,
+			isUser: true,
+		},
+	},
 	// {
 	// 	path: '/tickets',
 	// 	name: 'Tickets',

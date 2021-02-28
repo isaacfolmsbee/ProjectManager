@@ -4,18 +4,6 @@ module.exports = {
 	theme: {
 		extend: {},
 		colors: {
-			'primary': {
-				'50': '#9cacd8',
-				'100': '#98a9d7',
-				'200': '#899dd1',
-				'300': '#778dca',
-				'400': '#617bc2',
-				'500': '#4b68b9',
-				'600': '#3b5397',
-				'700': '#2f4379',
-				'800': '#283967',
-				'900': '#273763',
-		  },
 		  'gray-dark': {
 				'50': '#808080',
 				'100': '#7a7a7a',
@@ -44,6 +32,7 @@ module.exports = {
 	},
 	variants: {
 		extend: {
+			'backgroundColor': ['even'],
 			'rotate': ['group-hover'],
 			'margin': ['last', 'first'],
 		},

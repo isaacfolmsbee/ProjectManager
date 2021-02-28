@@ -22,7 +22,7 @@ const url = 'api/ticket/';
 // }
 
 export async function getTicket(ticketID: string, jwt: string) {
-	const response = await axios.get(url + 'ticket/' + ticketID, {
+	const response = await axios.get(url + ticketID, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -32,7 +32,7 @@ export async function getTicket(ticketID: string, jwt: string) {
 }
 
 export async function getTickets(projectID: string, jwt: string) {
-	const response = await axios.get(url + projectID, {
+	const response = await axios.get(url + 'project/' + projectID, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -119,7 +119,7 @@ export async function attachImageToTicket(
 	formData: FormData,
 	jwt: string
 ) {
-	const response = await axios.post(url + 'attachment/' + ticketID, formData, {
+	const response = await axios.post(url + ticketID + '/attachment', formData, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},

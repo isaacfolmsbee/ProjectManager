@@ -1,14 +1,14 @@
 <template>
-<div class="h-12 flex rounded-lg">
-	<span class="w-min px-3 bg-primary-400 rounded-tl-lg rounded-bl-lg font-bold text-lg leading-tight text-gray-light-50 flex items-center">
+<div class="py-2 flex flex-col">
+	<h2 class="pl-2 font-bold text-xl text-gray-dark-400">
 		Select Project
-	</span>
-	<div class="bg-gray-dark-400 rounded-tr-lg rounded-br-lg flex flex-grow items-center overflow-x-auto text-2xl text-gray-light-50 whitespace-nowrap ">
+	</h2>
+	<div class="w-full flex items-center overflow-x-auto text-xl text-gray-dark-400 whitespace-nowrap ">
 		<span 
 			v-for="project in projects" 
 			:key="project._id" 
-			class="px-2 cursor-pointer"
-			:class="{ 'font-bold text-primary-200': (project.name === selectedProject) }"
+			class="py-0.5 px-2 cursor-pointer"
+			:class="{ 'bg-gray-dark-400 text-gray-light-100': (project.name === selectedProject) }"
 			@click="$emit('changeProject', project)" >
 			{{ project.name }}
 		</span>

@@ -1,32 +1,24 @@
 <template>
-<div class="w-screen flex flex-col items-center pt-3 px-2">
+<div class="w-screen flex flex-col">
 	<ProjectList 
 		:projects="projectList" 
 		:selectedProject="selectedProject.name"
-		class="w-full shadow-md"
+		class="w-full bg-gray-light-300"
 		@changeProject="changeProject($event)" />
 
-	<ticket-container v-if="tickets[0]._id" class="mt-3 w-full shadow-md">
-		<template v-slot:header>
-			<span class="inline-block text-lg pl-2 py-1 text-gray-light-50">
-				Recent Tickets
-			</span>
-		</template>
-		<template v-slot:body>
-			<TicketItem 
-				v-for="ticket in tickets" 
-				:key="ticket._id" 
-				:ticket="ticket" 
-				class="mb-1 last:mb-0"/>
-		</template>
-	</ticket-container>
+	<h2 class="my-2 pl-1.5 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
+
+	<TicketItem 
+		v-for="ticket in tickets" 
+		:key="ticket._id" 
+		:ticket="ticket" 
+		class="even:bg-gray-light-300"/>
 </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import ProjectList from '../components/ProjectList.vue';
-import TicketContainer from '../components/TicketContainer.vue';
 import TicketItem from '../components/TicketItem.vue';
 import { getTickets } from '../api/ticket';
 
@@ -34,7 +26,6 @@ export default Vue.extend({
 	name: 'Dashboard',
 	components: {
 		ProjectList,
-		TicketContainer,
 		TicketItem,
 	},
 	props: {
