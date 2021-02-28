@@ -1,5 +1,5 @@
 <template>
-<div class="fixed top-16 w-full h-full flex flex-col bg-gray-light-10">	
+<div class="fixed top-16 w-full h-full flex flex-col bg-gray-light-100">	
 	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer mr-auto ml-1 my-2 text-gray-dark-300">Delete all</span>
 	<span v-else class="font-bold text-gray-dark-400 mt-14 mx-auto text-xl">No notifications</span>
 	<div 

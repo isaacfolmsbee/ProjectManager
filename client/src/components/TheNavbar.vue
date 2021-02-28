@@ -1,5 +1,5 @@
 <template>
-<div class="fixed top-0 w-screen h-16 flex border-b border-gray-dark-400 items-center z-10">
+<div class="fixed top-0 w-screen h-16 flex bg-gray-light-100 border-b border-gray-dark-400 items-center z-10">
 	<div class="absolute left-3">
 		<div :class="{ 'flex': doNotificationPing, 'hidden': !doNotificationPing }" class="absolute left-1.5 top-0.5 items-center justify-center">
 			<span class="animate-ping opacity-75 absolute w-1.5 h-1.5 rounded-full bg-gray-light-50"></span>
