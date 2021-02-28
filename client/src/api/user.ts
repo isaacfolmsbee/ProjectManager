@@ -48,7 +48,7 @@ export async function getNotifications(jwt: string) {
 }
 
 export async function deleteNotifications(jwt: string) {
-	const response = await axios.delete(url + 'notifications/delete', {
+	const response = await axios.delete(url + 'notifications', {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -58,7 +58,7 @@ export async function deleteNotifications(jwt: string) {
 }
 
 export async function deleteNotification(notificationID: string, jwt: string) {
-	const response = await axios.delete(url + 'notification/' + notificationID, {
+	const response = await axios.delete(url + 'notifications/' + notificationID, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},

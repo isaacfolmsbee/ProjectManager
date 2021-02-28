@@ -1,18 +1,18 @@
 <template>
-<div class="fixed top-16 w-full h-full flex flex-col items-center bg-primary-400 px-3">	
-	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer mr-auto ml-1 my-2 text-gray-dark-600">Delete all</span>
-	<span v-else class="font-bold mt-28 text-xl">No notifications</span>
+<div class="fixed top-16 w-full h-full flex flex-col bg-gray-light-10">	
+	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer mr-auto ml-1 my-2 text-gray-dark-300">Delete all</span>
+	<span v-else class="font-bold text-gray-dark-400 mt-14 mx-auto text-xl">No notifications</span>
 	<div 
 		v-for="notification in notifications" 
 		:key="notification._id"
-		class="mb-3 bg-gray-light-50 rounded-lg p-1 relative w-full" >
+		class="mb-1 px-1.5 pb-1 relative w-full border-b-8 border-gray-light-300" >
 
-		<span @click="deleteNotification(notification._id)" class="absolute top-1 right-1 text-gray-dark-400 cursor-pointer text-sm">Delete</span>
+		<span @click="deleteNotification(notification._id)" class="absolute top-1 right-2 text-gray-dark-300 cursor-pointer text-xs">Delete</span>
 		<div class="flex flex-col">
-			<span class="font-bold">{{ notification.title }}</span>
-			<span class="text-xs text-gray-dark-200">{{ notification.dateCreated }}</span>
+			<span class="font-bold text-gray-dark-400">{{ notification.title }}</span>
+			<span class="text-xs text-gray-dark-200">{{ notification.dateCreated.substr(0, 10) }}</span>
 		</div>
-		<span>{{ notification.description }}</span>
+		<span class="text-gray-dark-400">{{ notification.description }}</span>
 	</div>
 </div>
 </template>
@@ -49,7 +49,11 @@ export default Vue.extend({
 		},
 		async deleteNotification(notificationID: string) {
 			await deleteNotification(notificationID, this.jwt);
-			this.notifications = await getNotifications(this.jwt);
+			for (let i = 0; i < this.notifications.length; i++) {
+				if (this.notifications[i]._id === notificationID) {
+					this.notifications.splice(i, 1);
+				}	
+			}
 		},
 	}
 })

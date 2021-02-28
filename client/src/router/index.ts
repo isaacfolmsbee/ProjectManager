@@ -4,33 +4,33 @@ import VueRouter, { RouteConfig } from 'vue-router';
 Vue.use(VueRouter);
 
 const routes: Array<RouteConfig> = [
-	{
-		path: '/',
-		name: 'Dashboard',
-		component: () => import('../views/Dashboard.vue'),
-		meta: {
-			requiresAuth: true,
-			isUser: true,
-		},
-	},
-	{
-		path: '/tickets',
-		name: 'Tickets',
-		component: () => import('../views/Tickets.vue'),
-		meta: {
-			requiresAuth: true,
-			isUser: true,
-		},
-	},
-	{
-		path: '/ticket',
-		name: 'Ticket',
-		component: () => import('../views/Ticket.vue'),
-		meta: {
-			requiresAuth: true,
-			isUser: true,
-		},
-	},
+	// {
+	// 	path: '/',
+	// 	name: 'Dashboard',
+	// 	component: () => import('../views/Dashboard.vue'),
+	// 	meta: {
+	// 		requiresAuth: true,
+	// 		isUser: true,
+	// 	},
+	// },
+	// {
+	// 	path: '/tickets',
+	// 	name: 'Tickets',
+	// 	component: () => import('../views/Tickets.vue'),
+	// 	meta: {
+	// 		requiresAuth: true,
+	// 		isUser: true,
+	// 	},
+	// },
+	// {
+	// 	path: '/ticket',
+	// 	name: 'Ticket',
+	// 	component: () => import('../views/Ticket.vue'),
+	// 	meta: {
+	// 		requiresAuth: true,
+	// 		isUser: true,
+	// 	},
+	// },
 	{
 		path: '/login',
 		name: 'Login',
@@ -47,22 +47,22 @@ const routes: Array<RouteConfig> = [
 			guest: true,
 		},
 	},
-	{
-		path: '/logout',
-		name: 'Logout',
-		component: () => import('../views/Logout.vue'),
-		meta: {
-			guest: true,
-		},
-	},
-	{
-		path: '/projects',
-		name: 'ProjectsManage',
-		component: () => import('../views/ProjectsManage.vue'),
-		meta: {
-			guest: true,
-		},
-	},
+	// {
+	// 	path: '/logout',
+	// 	name: 'Logout',
+	// 	component: () => import('../views/Logout.vue'),
+	// 	meta: {
+	// 		guest: true,
+	// 	},
+	// },
+	// {
+	// 	path: '/projects',
+	// 	name: 'ProjectsManage',
+	// 	component: () => import('../views/ProjectsManage.vue'),
+	// 	meta: {
+	// 		guest: true,
+	// 	},
+	// },
 	// {
 	// 	path: '/users',
 	// 	name: 'Users',
