@@ -2,7 +2,6 @@ import express, { Request, Response } from 'express';
 import mongodb, { Collection, ObjectID } from 'mongodb';
 import { dbHandler } from '../tools/db';
 import { auth } from '../tools/auth';
-import Joi from 'joi';
 const router = express.Router();
 
 router.get('/type', auth('statistics'), async (req: Request, res: Response) => {

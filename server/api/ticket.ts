@@ -143,7 +143,7 @@ router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 });
 
 router.post(
-	'/attachment/:ticketID',
+	'/:ticketID/attachment',
 	auth('createTicket'),
 	async (req: Request, res: Response) => {
 		upload(req, res, async (err: any) => {
@@ -168,7 +168,7 @@ router.post(
 	}
 );
 
-router.get('/:projectID', auth(''), async (req: Request, res: Response) => {
+router.get('/project/:projectID', auth(''), async (req: Request, res: Response) => {
 	const tickets: Collection = await dbHandler('tickets');
 	const users: Collection = await dbHandler('users');
 	let response;
@@ -206,7 +206,7 @@ router.get('/:projectID', auth(''), async (req: Request, res: Response) => {
 });
 
 router.get(
-	'/ticket/:ticketID',
+	'/:ticketID',
 	auth(''),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');

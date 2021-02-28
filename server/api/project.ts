@@ -34,7 +34,7 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 });
 
 router.get(
-	'/unassigned/:projectID',
+	'/:projectID/unassigned',
 	auth('editProjectUser'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
@@ -77,7 +77,7 @@ router.get(
 );
 
 router.get(
-	'/assigned/:projectID',
+	'/:projectID/assigned',
 	auth('editProjectUser'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
@@ -331,39 +331,6 @@ router.delete(
 		res.status(200).send('Role deleted');
 	}
 );
-
-// router.get('/', auth(''), async (req: Request, res: Response) => {
-// 	const projects: Collection = await dbHandler('projects');
-
-// 	// If they are admin, override and return all project names
-// 	if (req.user.role === 'admin') {
-// 		const query: any = await projects
-// 			.find({}, { projection: { name: 1 } })
-// 			.toArray();
-
-// 		return res.status(200).send(query);
-// 	}
-
-// 	// If they have no projects assigned then end
-// 	if (req.user.projects.length === 0) {
-// 		return res.sendStatus(400);
-// 	}
-
-// 	let projectNames = [];
-
-// 	for (const projectID of req.user.projects) {
-// 		const query: any = await projects.findOne(
-// 			{
-// 				_id: new mongodb.ObjectID(projectID),
-// 			},
-// 			{ projection: { name: 1 } }
-// 		);
-
-// 		projectNames.push(query);
-// 	}
-
-// 	res.status(200).send(projectNames);
-// });
 
 router.put(
 	'/:projectID',

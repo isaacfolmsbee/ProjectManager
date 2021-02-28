@@ -24,6 +24,11 @@ router.post('/', async (req: Request, res: Response) => {
 	const emailExists: any = await users.findOne({ email: req.body.email });
 	if (emailExists) {
 		return res.status(400).send('Email in use');
+	} else {
+		const usernameExists: any = await users.findOne({ username: req.body.username });
+		if (usernameExists) {
+			return res.status(400).send('Username in use');
+		}
 	}
 
 	// Hash the password
