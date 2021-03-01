@@ -32,7 +32,7 @@ module.exports = {
 	},
 	variants: {
 		extend: {
-			'backgroundColor': ['even'],
+			'backgroundColor': ['even', 'odd'],
 			'rotate': ['group-hover'],
 			'margin': ['last', 'first'],
 		},

@@ -1,139 +1,88 @@
 <template>
-<div class="w-screen flex flex-col items-center pt-3 px-2">
+<div class="w-screen flex flex-col">
 	<ProjectList 
 		:projects="projectList" 
 		:selectedProject="selectedProject.name"
-		class="w-full shadow-md"
+		class="w-full bg-gray-light-300"
 		@changeProject="changeProject($event)" />
 
-	<div class="flex flex-col bg-gray-dark-400 w-full rounded-lg p-1 mt-3 shadow-md">
+	<div class="flex flex-col px-1.5">
+		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
 		<div class="flex h-8">
-			<input v-model="ticketTitle" type="text" placeholder="Title..." class="flex-grow mr-2 pl-1 rounded-lg">
 			<input 
-				class="hidden" 
-				type="file" 
-				@change="onFileSelected"
-				ref="fileInput" >
-
-			<button @click="triggerImageInput()" class="w-18 px-1 bg-gray-light-50 rounded-lg overflow-ellipsis">{{ attachFileLabel }}</button>
+				v-model="ticket.title" 
+				type="text" 
+				placeholder="Title..." 
+				class="flex-grow mr-2 pl-1 bg-gray-dark-400 text-gray-light-100 rounded-none" >
+			<input 
+					class="hidden" 
+					type="file" 
+					@change="onFileSelected"
+					ref="fileInput" >
+			<button @click="triggerImageInput()" class="w-18 px-2 text-sm bg-gray-dark-400 text-gray-light-100 overflow-ellipsis">{{ attachFileLabel }}</button>
 		</div>
-		<div class="relative flex mt-2">
-			<div class="w-1/2 mr-1">
-				<div id="select-box" class="relative flex flex-col">
-					<div 
-						id="options-container" 
-						class="absolute top-9 w-full max-h-0 opacity-0 order-1 bg-primary-400 text-gray-light-50 transition-all duration-500 rounded-lg overflow-hidden"
-						:class="{ 'max-h-screen opacity-100': (activeSelector ==  'type') }" >
-
-						<div id="option" class="py-1 px-2 cursor-pointer" @click="selectTypeValue('bug')">
-							<input type="radio" id="bug" name="category" class="hidden">
-							<label for="bug" class="cursor-pointer">bug</label>
-						</div>
-						<div id="option" class="py-1 px-2 cursor-pointer" @click="selectTypeValue('suggestion')">
-							<input type="radio" id="suggestion" name="category" class="hidden">
-							<label for="suggestion" class="cursor-pointer">suggestion</label>
-						</div>
-					</div>
-					<div id="selected" @click="toggleSelector('type')" class="cursor-pointer relative bg-primary-400 mb-2 rounded-lg text-gray-light-50 py-1 px-2">
-						<span v-if="typeSelected">
-							{{ typeSelected }}
-						</span>
-						<span v-else>
-							Select Type
-						</span>
-						<svg :class="{ '-rotate-90': (activeSelector ==  'type') }" class="absolute top-0 right-0 w-8 h-8 text-gray-light-50 fill-current transform rotate-90 transition-transform duration-500" viewBox="0 0 24 24"><path d="M6.5 17.5l8.25-5.5L6.5 6.5l1-1.5L18 12L7.5 19z"></path></svg>
-					</div>
-				</div>
-			</div>
-			<div class="w-1/2 ml-1">
-				<div id="select-box" class="relative flex flex-col">
-					<div 
-						id="options-container" 
-						class="absolute top-9 w-full max-h-0 opacity-0 order-1 bg-primary-400 text-gray-light-50 transition-all duration-500 rounded-lg overflow-hidden"
-						:class="{ 'max-h-screen opacity-100': (activeSelector ==  'severity') }" >
-
-						<div id="option" class="py-1 px-2 cursor-pointer" @click="selectSeverityValue('low')">
-							<input type="radio" id="low" name="category" class="hidden">
-							<label for="low" class="cursor-pointer">low</label>
-						</div>
-						<div id="option" class="py-1 px-2 cursor-pointer" @click="selectSeverityValue('medium')">
-							<input type="radio" id="medium" name="category" class="hidden">
-							<label for="medium" class="cursor-pointer">medium</label>
-						</div>
-						<div id="option" class="py-1 px-2 cursor-pointer" @click="selectSeverityValue('high')">
-							<input type="radio" id="high" name="category" class="hidden">
-							<label for="high" class="cursor-pointer">high</label>
-						</div>
-						<div id="option" class="py-1 px-2 cursor-pointer" @click="selectSeverityValue('critical')">
-							<input type="radio" id="critical" name="category" class="hidden">
-							<label for="critical" class="cursor-pointer">critical</label>
-						</div>
-					</div>
-					<div id="selected" @click="toggleSelector('severity')" class="cursor-pointer relative bg-primary-400 mb-2 rounded-lg text-gray-light-50 py-1 px-2">
-						<span v-if="severitySelected">
-							{{ severitySelected }}
-						</span>
-						<span v-else>
-							Select Severity
-						</span>
-						<svg :class="{ '-rotate-90': (activeSelector ==  'severity') }" class="absolute top-0 right-0 w-8 h-8 text-gray-light-50 fill-current transform rotate-90 transition-transform duration-500" viewBox="0 0 24 24"><path d="M6.5 17.5l8.25-5.5L6.5 6.5l1-1.5L18 12L7.5 19z"></path></svg>
-					</div>
-				</div>
-			</div>
+		<div class="flex mt-2">
+			<SelectorInput 
+				v-model="ticket.type"
+				:name="'type'" 
+				:options="typeOptions"
+				class="w-1/2 mr-1" />
+			<SelectorInput 
+				v-model="ticket.severity"
+				:name="'severity'" 
+				:options="severityOptions"
+				class="w-1/2 ml-1" />
 		</div>
-		<textarea v-model="ticketDescription" class="rounded-lg resize-none pl-1 h-20" placeholder="Description..."></textarea>
-		<button class="mx-auto py-1 px-2 bg-primary-400 font-bold text-gray-light-50 mt-2 rounded-lg" @click="submitTicket">Post Ticket to {{ selectedProject.name }}</button>
+		<textarea v-model="ticket.description" class="w-full mt-2 resize-none pl-1 h-20 bg-gray-dark-400 text-gray-light-100 rounded-none" placeholder="Description..."></textarea>
+		<button class="mx-auto py-1 px-2 bg-gray-dark-400 font-bold text-gray-light-100 mt-2" @click="submitTicket()">Post Ticket to {{ selectedProject.name }}</button>
 	</div>
-	<ticket-container class="w-full mt-3">
-		<template v-slot:header>
-			<div class="flex p-1 h-9">
-				<input v-model="query" class="rounded-lg pl-1 flex-grow" type="text" placeholder="Query...">
-				<button @click="filterTickets()" class="mx-2 px-2 bg-gray-dark-500 rounded-lg text-gray-light-50 font-bold">Search</button>
-			</div>
-			<hr>
-			<div class="flex whitespace-nowrap overflow-x-auto pl-1 py-0.5">
+	<div class="bg-gray-light-300 mt-2">
+		<h2 class="my-2 pl-1.5 font-bold text-xl text-gray-dark-400">Sort Through Tickets</h2>
+		<div class="flex px-1.5 h-7">
+			<input v-model="query" class="pl-1 flex-grow bg-gray-dark-400 text-gray-light-100 rounded-none" type="text" placeholder="Query...">
+			<button @click="filterTickets()" class="ml-2 px-2 bg-gray-dark-400 text-gray-light-100 font-bold">Search</button>
+		</div>
+		<hr class="mt-1.5 border-gray-dark-400">
+		<div class="flex whitespace-nowrap overflow-x-auto pl-1 mt-1.5 pb-1.5">
 				<button 
-					:class="[(selectedFilter === 'Your Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']" 
+					:class="[(selectedFilter === 'Your Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']" 
 					class="button"
 					@click="getFilteredTickets('Your Tickets')" >
 					Your Tickets
 				</button>
 				<button 
-					:class="[(selectedFilter === 'Unassigned Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']"
+					:class="[(selectedFilter === 'Unassigned Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']"
 					class="button"
 					@click="getFilteredTickets('Unassigned Tickets')" >
 					Unassigned Tickets
 				</button>
 				<button 
-					:class="[(selectedFilter === 'Active Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']"
+					:class="[(selectedFilter === 'Active Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']"
 					class="button"
 					@click="getFilteredTickets('Active Tickets')" >
 					Active Tickets
 				</button>
 				<button 
-					:class="[(selectedFilter === 'Closed Tickets') ? 'text-gray-dark-600 font-bold' : 'text-gray-light-50']"
+					:class="[(selectedFilter === 'Closed Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']"
 					class="button"
 					@click="getFilteredTickets('Closed Tickets')" >
 					Closed Tickets
 				</button>
 			</div>
-		</template>
-		<template v-slot:body>
-			<TicketItem 
-				v-for="ticket in filteredTickets" 
-				:key="ticket._id" 
-				:ticket="ticket" 
-				class="mb-1 last:mb-0"/>
-		</template>
-	</ticket-container>
+	</div>
+	<TicketItem 
+		v-for="ticket in filteredTickets" 
+		:key="ticket._id" 
+		:ticket="ticket" 
+		class="odd:bg-gray-light-300"/>
 </div>
 </template>
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
 import ProjectList from '../components/ProjectList.vue';
-import TicketContainer from '../components/TicketContainer.vue';
 import TicketItem from '../components/TicketItem.vue';
+import SelectorInput from '../components/SelectorInput.vue';
 import { postTicket, 
 	attachImageToTicket, 
 	getAssignedTickets, 
@@ -145,8 +94,8 @@ export default Vue.extend({
 	name: "Tickets",
 	components: {
 		ProjectList,
-		TicketContainer,
 		TicketItem,
+		SelectorInput,
 	},
 	props: {
 		jwt: {
@@ -163,11 +112,23 @@ export default Vue.extend({
 	},
 	data() {
 		return {
+			ticket: {
+				title: '',
+				type: '',
+				severity: '',
+				description: ''
+			},
 			selectedFilter: 'Your Tickets',
-			ticketTitle: '',
-			ticketDescription: '',
-			typeSelected: '',
-			severitySelected: '',
+			typeOptions: [
+				'suggestion',
+				'bug',
+			],
+			severityOptions: [
+				'low',
+				'medium',
+				'high',
+				'critical',
+			],
 			FILE: null,
 			selectedProject: {
 				_id: '',
@@ -219,14 +180,6 @@ export default Vue.extend({
 				}
 			}
 		},
-		selectTypeValue(value: string) {
-			this.typeSelected = value;
-			this.activeSelector = '';
-		},
-		selectSeverityValue(value: string) {
-			this.severitySelected = value;
-			this.activeSelector = '';
-		},
 		// eslint-disable-next-line
 		onFileSelected(event: any) {
 			this.FILE = event.target.files[0];
@@ -235,10 +188,10 @@ export default Vue.extend({
 			const ticketID = await postTicket(
 			{
 				project: this.selectedProject._id,
-				title: this.ticketTitle,
-				type: this.typeSelected,
-				severity: this.severitySelected,
-				description: this.ticketDescription,
+				title: this.ticket.title,
+				type: this.ticket.type,
+				severity: this.ticket.severity,
+				description: this.ticket.description,
 			}, 
 			this.jwt);
 			
@@ -246,13 +199,15 @@ export default Vue.extend({
 				const formData = new FormData();
 				formData.append('ticketImg', this.FILE, this.FILE.name);
 				await attachImageToTicket(ticketID, formData, this.jwt);
+				this.FILE = null;
 			}
 
-			this.ticketTitle = '';
-			this.typeSelected = '';
-			this.severitySelected = '';
-			this.ticketDescription = '';
-			
+			this.ticket = {
+				title: '',
+				type: '',
+				severity: '',
+				description: ''
+			};
 		},
 		async changeProject(project: { _id: string; name: string}) {
 			this.selectedProject = project;
@@ -309,6 +264,6 @@ export default Vue.extend({
 
 <style lang="postcss" scoped>
 .button {
-	@apply mx-2 text-lg;
+	@apply mx-0.5 text-lg px-1.5 leading-none py-1;
 }
 </style>
