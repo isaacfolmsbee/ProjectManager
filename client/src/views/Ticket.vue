@@ -12,7 +12,7 @@
 			</div>
 			<div class="ml-auto mr-1 leading-none">
 				<span 
-					v-if="ticket.history"
+					v-if="ticket.history.length >= 1"
 					@click="isHistoryOpen = true"
 					class="text-gray-dark-900 text-xs cursor-pointer" >
 					
