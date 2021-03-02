@@ -40,12 +40,21 @@ export default Vue.extend({
 		options: {
 			type: Array as PropType<Array<string>>,
 			required: true,
+		},
+		startingValue: {
+			type: String,
+			required: false,
 		}
 	},
 	data() {
 		return {
 			isOpen: false,
 			selectedValue: '',
+		}
+	},
+	created() {
+		if (this.startingValue) {
+			this.selectedValue = this.startingValue;
 		}
 	},
 	methods: {
