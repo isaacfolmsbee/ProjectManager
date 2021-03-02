@@ -2,18 +2,8 @@ import axios from 'axios';
 
 const url = 'api/project/';
 
-export async function getProjectNames(jwt: string) {
-	const response = await axios.get(url, {
-		headers: {
-			Authorization: 'Bearer ' + jwt,
-		},
-	});
-
-	return response.data;
-}
-
 export async function getUnassignedUsers(projectID: string, jwt: string) {
-	const response = await axios.get(url + 'unassigned/' + projectID, {
+	const response = await axios.get(url + projectID + '/unassigned', {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -23,7 +13,7 @@ export async function getUnassignedUsers(projectID: string, jwt: string) {
 }
 
 export async function getAssigned(projectID: string, jwt: string) {
-	const response = await axios.get(url + 'assigned/' + projectID, {
+	const response = await axios.get(url + projectID + '/assigned' , {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},

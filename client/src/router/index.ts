@@ -47,40 +47,22 @@ const routes: Array<RouteConfig> = [
 			guest: true,
 		},
 	},
-	// {
-	// 	path: '/logout',
-	// 	name: 'Logout',
-	// 	component: () => import('../views/Logout.vue'),
-	// 	meta: {
-	// 		guest: true,
-	// 	},
-	// },
-	// {
-	// 	path: '/projects',
-	// 	name: 'ProjectsManage',
-	// 	component: () => import('../views/ProjectsManage.vue'),
-	// 	meta: {
-	// 		guest: true,
-	// 	},
-	// },
-	// {
-	// 	path: '/users',
-	// 	name: 'Users',
-	// 	component: () => import('../views/Users.vue'),
-	// 	meta: {
-	// 		requiresAuth: true,
-	// 		isAdmin: true,
-	// 	},
-	// },
-	// {
-	// 	path: '/statistics',
-	// 	name: 'Statistics',
-	// 	component: () => import('../views/Statistics.vue'),
-	// 	meta: {
-	// 		requiresAuth: true,
-	// 		isStatistics: true,
-	// 	},
-	// },
+	{
+		path: '/logout',
+		name: 'Logout',
+		component: () => import('../views/Logout.vue'),
+		meta: {
+			guest: true,
+		},
+	},
+	{
+		path: '/projects',
+		name: 'Projects',
+		component: () => import('../views/Projects.vue'),
+		meta: {
+			guest: true,
+		},
+	},
 ];
 
 const router = new VueRouter({
