@@ -7,7 +7,7 @@
 		@changeProject="changeProject($event)" />
 
 	<div class="flex flex-col px-1.5">
-		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
+		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Post a New Ticket</h2>
 		<div class="flex h-8">
 			<input 
 				v-model="ticket.title" 
