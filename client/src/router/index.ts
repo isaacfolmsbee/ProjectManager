@@ -22,15 +22,15 @@ const routes: Array<RouteConfig> = [
 			isUser: true,
 		},
 	},
-	// {
-	// 	path: '/ticket',
-	// 	name: 'Ticket',
-	// 	component: () => import('../views/Ticket.vue'),
-	// 	meta: {
-	// 		requiresAuth: true,
-	// 		isUser: true,
-	// 	},
-	// },
+	{
+		path: '/ticket',
+		name: 'Ticket',
+		component: () => import('../views/Ticket.vue'),
+		meta: {
+			requiresAuth: true,
+			isUser: true,
+		},
+	},
 	{
 		path: '/login',
 		name: 'Login',
