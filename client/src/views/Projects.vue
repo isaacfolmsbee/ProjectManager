@@ -3,7 +3,7 @@
 	<div class="flex flex-col px-1.5">
 		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Post a New Project</h2>
 		<input 
-			class="rounded-none w-full pl-1 h-7 bg-gray-dark-400 text-gray-light-100"
+			class="rounded-none w-full pl-1 h-8 bg-gray-dark-400 text-gray-light-100"
 			type="text" 
 			placeholder="Project Name..."
 			v-model="project.name" >
@@ -27,7 +27,7 @@
 		<h2 class="mt-2 font-bold text-xl text-gray-dark-400">Assign User to Project</h2>
 		<div class="flex">
 			<div class="w-1/2 mr-1">
-				<span class="text-gray-dark-400 text-xs">Project Role</span>
+				<span class="text-gray-dark-400 text-xs">User</span>
 				<div class="flex flex-col p-1 bg-gray-dark-400 w-full h-32">
 					<span
 						v-for="user in unassignedUsers"
@@ -40,7 +40,7 @@
 				</div>
 			</div>
 			<div class="w-1/2 ml-1">
-				<span class="text-gray-dark-400 text-xs">User</span>
+				<span class="text-gray-dark-400 text-xs">Project Role</span>
 				<div class="flex flex-col bg-gray-dark-400 w-full h-32 px-1">
 					<span
 						v-for="role in projectRoles"
@@ -105,7 +105,7 @@
 	<div class="flex flex-col px-1.5">
 		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Create a Project Role</h2>
 		<input 
-			class="rounded-none w-full pl-1 h-7 bg-gray-dark-400 text-gray-light-100"
+			class="rounded-none w-full pl-1 h-8 bg-gray-dark-400 text-gray-light-100"
 			type="text" 
 			placeholder="Role Name..."
 			v-model="roleName" >
@@ -161,7 +161,7 @@
 			</span>
 		</div>
 		<input 
-			class="rounded-none w-full pl-1 h-7 bg-gray-dark-400 text-gray-light-100"
+			class="rounded-none w-full pl-1 h-8 bg-gray-dark-400 text-gray-light-100"
 			type="text" 
 			placeholder="Role Name..."
 			v-model="editRole.name" >
