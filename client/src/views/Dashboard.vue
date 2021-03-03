@@ -4,18 +4,18 @@
 		<ProjectList 
 			:projects="projectList" 
 			:selectedProject="selectedProject.name"
-			class="w-full bg-gray-light-300"
+			class="w-full border-b md:border-b-0 border-gray-light-300 md:bg-gray-light-200"
 			@changeProject="changeProject($event)" />
 	</div>
 
-	<div class="bg-gray-light-300 mt-2 lg:mt-0 md:px-1.5 lg:w-1/2 lg:ml-2">
+	<div class=" md:bg-gray-light-200 md:mt-2 lg:mt-0 md:px-1.5 lg:w-1/2 lg:ml-2">
 		<h2 class="py-2 pl-1.5 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
 
 		<TicketItem 
 			v-for="ticket in tickets" 
 			:key="ticket._id" 
 			:ticket="ticket" 
-			class="border-b last:border-b-0 border-gray-light-600"/>
+			class="border-b last:border-b-0 border-gray-light-300 md:border-gray-light-400"/>
 	</div>
 </div>
 </template>

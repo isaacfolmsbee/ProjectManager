@@ -3,23 +3,23 @@
 	<ProjectList 
 		:projects="projectList" 
 		:selectedProject="selectedProject.name"
-		class="w-full bg-gray-light-300"
+		class="w-full md:bg-gray-light-300 border-b border-gray-light-300"
 		@changeProject="changeProject($event)" />
 
-	<div class="flex flex-col px-1.5">
+	<div class="border-b border-gray-light-300  flex flex-col px-1.5">
 		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Post a New Ticket</h2>
 		<div class="flex h-8">
 			<input 
 				v-model="ticket.title" 
 				type="text" 
 				placeholder="Title..." 
-				class="flex-grow mr-2 pl-1 bg-gray-dark-400 text-gray-light-100 rounded-none" >
+				class="flex-grow mr-2 pl-1 bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100 rounded-none" >
 			<input 
 					class="hidden" 
 					type="file" 
 					@change="onFileSelected"
 					ref="fileInput" >
-			<button @click="triggerImageInput()" class="w-18 px-2 text-sm bg-gray-dark-400 text-gray-light-100 overflow-ellipsis">{{ attachFileLabel }}</button>
+			<button @click="triggerImageInput()" class="w-18 px-2 text-sm bg-gray-light-400 text-gray-dark-400 overflow-ellipsis">{{ attachFileLabel }}</button>
 		</div>
 		<div class="flex mt-2">
 			<SelectorInput 
@@ -33,48 +33,49 @@
 				:options="severityOptions"
 				class="w-1/2 ml-1" />
 		</div>
-		<textarea v-model="ticket.description" class="w-full mt-2 resize-none pl-1 h-20 bg-gray-dark-400 text-gray-light-100 rounded-none" placeholder="Description..."></textarea>
-		<button class="mx-auto py-1 px-2 bg-gray-dark-400 font-bold text-gray-light-100 mt-2" @click="submitTicket()">Post Ticket to {{ selectedProject.name }}</button>
+		<textarea v-model="ticket.description" class="w-full mt-2 resize-none pl-1 h-20 bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100 rounded-none" placeholder="Description..."></textarea>
+		<button class="mx-auto py-1 px-2 bg-gray-light-400 font-bold text-gray-dark-400 my-2" @click="submitTicket()">Post Ticket to {{ selectedProject.name }}</button>
 	</div>
-	<div class="bg-gray-light-300 mt-2">
+	<div>
 		<h2 class="my-2 pl-1.5 font-bold text-xl text-gray-dark-400">Sort Through Tickets</h2>
 		<div class="flex px-1.5 h-7">
-			<input v-model="query" class="pl-1 flex-grow bg-gray-dark-400 text-gray-light-100 rounded-none" type="text" placeholder="Query...">
-			<button @click="filterTickets()" class="ml-2 px-2 bg-gray-dark-400 text-gray-light-100 font-bold">Search</button>
+			<input v-model="query" class="pl-1 flex-grow bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100 rounded-none" type="text" placeholder="Query...">
+			<button @click="filterTickets()" class="ml-2 px-2 bg-gray-light-400 text-gray-dark-400 font-bold">Search</button>
 		</div>
-		<hr class="mt-1.5 border-gray-dark-400">
+		<hr class="mt-1.5 border-gray-light-400">
 		<div class="flex whitespace-nowrap overflow-x-auto pl-1 mt-1.5 pb-1.5">
-				<button 
-					:class="[(selectedFilter === 'Your Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']" 
-					class="button"
-					@click="getFilteredTickets('Your Tickets')" >
-					Your Tickets
-				</button>
-				<button 
-					:class="[(selectedFilter === 'Unassigned Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']"
-					class="button"
-					@click="getFilteredTickets('Unassigned Tickets')" >
-					Unassigned Tickets
-				</button>
-				<button 
-					:class="[(selectedFilter === 'Active Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']"
-					class="button"
-					@click="getFilteredTickets('Active Tickets')" >
-					Active Tickets
-				</button>
-				<button 
-					:class="[(selectedFilter === 'Closed Tickets') ? 'text-gray-light-100 bg-gray-dark-400' : 'text-gray-dark-400']"
-					class="button"
-					@click="getFilteredTickets('Closed Tickets')" >
-					Closed Tickets
-				</button>
-			</div>
+			<button 
+				:class="{'font-bold bg-gray-light-300': (selectedFilter === 'Your Tickets')}"
+				class="button"
+				@click="getFilteredTickets('Your Tickets')" >
+				Your Tickets
+			</button>
+			<button 
+				:class="{'font-bold bg-gray-light-300': (selectedFilter === 'Unassigned Tickets')}"
+				class="button"
+				@click="getFilteredTickets('Unassigned Tickets')" >
+				Unassigned Tickets
+			</button>
+			<button 
+				:class="{'font-bold bg-gray-light-300': (selectedFilter === 'Active Tickets')}"
+				class="button"
+				@click="getFilteredTickets('Active Tickets')" >
+				Active Tickets
+			</button>
+			<button 
+				:class="{'font-bold bg-gray-light-300': (selectedFilter === 'Closed Tickets')}"
+				class="button"
+				@click="getFilteredTickets('Closed Tickets')" >
+				Closed Tickets
+			</button>
+		</div>
+		<hr class="border-gray-light-400">
+		<TicketItem 
+			v-for="ticket in filteredTickets" 
+			:key="ticket._id" 
+			:ticket="ticket" 
+			class="border-b last:border-b-0 border-gray-light-300"/>
 	</div>
-	<TicketItem 
-		v-for="ticket in filteredTickets" 
-		:key="ticket._id" 
-		:ticket="ticket" 
-		class="odd:bg-gray-light-300"/>
 </div>
 </template>
 
@@ -264,6 +265,6 @@ export default Vue.extend({
 
 <style lang="postcss" scoped>
 .button {
-	@apply mx-0.5 text-lg px-1.5 leading-none py-1;
+	@apply text-gray-dark-400 mx-0.5 text-lg px-1.5 leading-none py-1;
 }
 </style>

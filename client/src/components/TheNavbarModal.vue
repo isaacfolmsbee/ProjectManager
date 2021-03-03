@@ -27,6 +27,6 @@ export default Vue.extend({
 }
 
 .router-link-exact-active {
-	@apply font-bold bg-gray-dark-400 text-gray-light-100 rounded-none;
+	@apply font-bold bg-gray-light-400 rounded-none;
 }
 </style>

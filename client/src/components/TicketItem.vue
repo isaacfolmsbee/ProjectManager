@@ -3,8 +3,8 @@
 	<div class="w-full flex items-center">
 		<div class="leading-none">
 			<div>
-				<span class="mr-1 px-1 py-0.5 bg-gray-dark-400 text-gray-light-100 text-xs xl:text-sm">{{ ticket.type }}</span>
-				<span class="px-1 py-0.5 bg-gray-dark-400 text-gray-light-100 text-xs xl:text-sm">{{ ticket.severity }}</span>
+				<span class="mr-1 px-1 py-0.5 bg-gray-light-300 text-gray-dark-400 text-xs xl:text-sm">{{ ticket.type }}</span>
+				<span class="px-1 py-0.5 bg-gray-light-300 text-gray-dark-400 text-xs xl:text-sm">{{ ticket.severity }}</span>
 			</div>
 			<h3 class="font-bold text-gray-dark-400 mt-1 xl:mt-0 xl:text-lg"><router-link :to="{path:'/ticket', query:{id: ticket._id}}">{{ ticket.title }}</router-link></h3>
 			<span class="text-xs xl:text-sm text-gray-dark-200">{{ ticket.createdBy }} / {{ dateFormatted }}</span>

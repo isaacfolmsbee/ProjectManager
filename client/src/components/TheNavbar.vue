@@ -1,5 +1,5 @@
 <template>
-<div class="fixed top-0 w-screen xl:w-60 h-16 xl:h-screen flex xl:flex-col bg-gray-light-100 border-b xl:border-b-0 xl:border-r border-gray-dark-400 items-center xl:items-start z-10">
+<div class="fixed top-0 w-screen xl:w-60 h-16 xl:h-screen flex xl:flex-col bg-gray-light-100 border-b xl:border-b-0 xl:border-r border-gray-light-400 items-center xl:items-start z-10">
 	<div class="xl:hidden absolute left-3">
 		<div :class="{ 'flex': doNotificationPing, 'hidden': !doNotificationPing }" class="absolute left-1.5 top-0.5 items-center justify-center">
 			<span class="animate-ping opacity-75 absolute w-1.5 h-1.5 rounded-full bg-gray-dark-400"></span>
@@ -21,20 +21,20 @@
 		<router-link to="/tickets" class="mb-5 router-link">Tickets</router-link>
 		<router-link to="/projects" class="mb-5 router-link">Manage Projects</router-link>
 	</div>
-	<div class="hidden mt-auto px-2 pb-2 xl:flex flex-col h-auto bg-gray-dark-400 w-full group transform translate-y-20 hover:translate-y-0 transition-transform duration-500">
+	<div class="hidden mt-auto px-2 pb-2 xl:flex flex-col h-auto bg-gray-light-300 w-full group transform translate-y-20 hover:translate-y-0 transition-transform duration-500">
 		<div class="py-2 flex justify-between">
-			<span class="text-xl text-gray-light-100">Account</span>
-			<svg class="w-8 h-8 text-gray-light-100 fill-current transform rotate-90 group-hover:-rotate-90 transition-transform duration-500" viewBox="0 0 24 24"><path d="M6.5 17.5l8.25-5.5L6.5 6.5l1-1.5L18 12L7.5 19z"></path></svg>
+			<span class="text-xl text-gray-dark-400">Account</span>
+			<svg class="w-8 h-8 text-gray-dark-400 fill-current transform rotate-90 group-hover:-rotate-90 transition-transform duration-500" viewBox="0 0 24 24"><path d="M6.5 17.5l8.25-5.5L6.5 6.5l1-1.5L18 12L7.5 19z"></path></svg>
 		</div>
 		<span 
 			v-if="isNotificationModalOpen"
 			@click="toggleNotifications()"
-			class="text-gray-light-100 text-lg cursor-pointer" >Hide Notifications</span>
+			class="text-gray-dark-400 text-lg cursor-pointer" >Hide Notifications</span>
 		<span 
 			v-else
 			@click="toggleNotifications()"
-			class="text-gray-light-100 text-lg cursor-pointer" >Show Notifications</span>
-		<router-link to="/logout" class="mx-auto mt-4 text-2xl text-gray-light-100">Logout</router-link>
+			class="text-gray-dark-400 text-lg cursor-pointer" >Show Notifications</span>
+		<router-link to="/logout" class="mx-auto mt-4 text-2xl text-gray-dark-400">Logout</router-link>
 	</div>
 	
 
@@ -101,6 +101,6 @@ export default Vue.extend({
 }
 
 .router-link.router-link-exact-active {
-	@apply font-bold bg-gray-light-300 border-b border-gray-light-600;
+	@apply font-bold bg-gray-light-300 border-b border-gray-light-500;
 }
 </style>

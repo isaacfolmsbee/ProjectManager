@@ -1,11 +1,11 @@
 <template>
 <div class="w-screen flex flex-col">
-	<div v-if="ticket" class="px-1.5 py-1 flex flex-wrap border-b border-gray-dark-400">
+	<div v-if="ticket" class="px-1.5 py-1 flex flex-wrap border-b border-gray-light-300">
 		<div class="w-full flex">
 			<div class="leading-none">
 				<div>
-					<span class="mr-1 px-1 py-0.5 bg-gray-dark-400 text-gray-light-100 text-xs">{{ ticket.type }}</span>
-					<span class="px-1 py-0.5 bg-gray-dark-400 text-gray-light-100 text-xs">{{ ticket.severity }}</span>
+					<span class="mr-1 px-1 py-0.5 bg-gray-light-400 text-gray-dark-400 text-xs">{{ ticket.type }}</span>
+					<span class="px-1 py-0.5 bg-gray-light-400 text-gray-dark-400 text-xs">{{ ticket.severity }}</span>
 				</div>
 				<h1 class="text-xl font-bold text-gray-dark-400 mt-1">{{ ticket.title }}</h1>
 				<span class="text-xs text-gray-dark-200">{{ ticket.createdBy }} / {{ dateFormatted }}</span>
@@ -30,7 +30,7 @@
 			{{ ticket.description }}
 		</div>
 	</div>
-	<div v-if="ticket" class="px-1.5 flex flex-col bg-gray-light-300 pb-2">
+	<div v-if="ticket" class="px-1.5 flex flex-col pb-2 border-b border-gray-light-300">
 		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Manage Ticket</h2>
 		<div class="w-full flex">
 			<SelectorInput 
@@ -50,17 +50,17 @@
 		<div class="flex mt-2">
 			<div class="w-1/2 mr-1">
 				<span class="text-gray-dark-400 text-xs">Assigned Users</span>
-				<div class="bg-gray-dark-400 w-full h-32 px-1">
+				<div class="bg-gray-light-400 w-full h-32 px-1">
 					<div 
 						v-for="user in ticket.usersAssigned"
 						:key="user._id"
 						class="flex mt-0.5 first:mt-0" >
-						<span class="text-gray-light-100">
+						<span class="text-gray-dark-600">
 							{{ user.name }}
 						</span>
 						<button 
 							@click="removeUserFromTicket(user._id)"
-							class="ml-auto text-sm text-gray-light-300">
+							class="ml-auto text-sm text-gray-dark-300">
 							remove
 						</button>
 					</div>
@@ -68,12 +68,12 @@
 			</div>
 			<div class="w-1/2 ml-1">
 				<span class="text-gray-dark-400 text-xs">Add User to Ticket</span>
-				<div class="bg-gray-dark-400 w-full h-32 px-1">
+				<div class="bg-gray-light-400 w-full h-32 px-1">
 					<div
 						v-for="user in eligibleUsers"
 						:key="user._id"
 						class="flex mt-0.5 first:mt-0" >
-						<span class="text-gray-light-100">
+						<span class="text-gray-dark-600">
 							{{ user.name }}
 						</span>
 						<button
@@ -88,12 +88,12 @@
 	</div>
 	<h2 class="my-2 ml-1.5 font-bold text-xl text-gray-dark-400">Add a Comment</h2>
 	<textarea 
-		class="bg-gray-dark-400 text-gray-light-100 mx-1.5 pl-1 h-20 rounded-none"
+		class="bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100 mx-1.5 pl-1 h-20 rounded-none"
 		placeholder="Add a comment..."
 		v-model="comment" ></textarea>
 	<button 
 		@click="postComment()"
-		class="bg-gray-dark-400 font-bold text-gray-light-100 mx-auto mt-2 py-0.5 px-2 rounded-none">
+		class="bg-gray-light-400 font-bold text-gray-dark-400 mx-auto mt-2 py-0.5 px-2 rounded-none">
 		Post Comment
 	</button>
 	<div v-if="ticket.comments">
@@ -123,7 +123,7 @@
 		<div 
 			v-for="record in ticket.history"
 			:key="record.dateChanged"
-			class="bg-gray-light-300 mt-2 px-1.5 py-1 flex flex-col w-full min-h-min" >
+			class="bg-gray-light-200 mt-2 px-1.5 py-1 flex flex-col w-full min-h-min" >
 
 			<span class="text-xs text-gray-dark-600">
 				{{ record.changedBy }} / {{ record.dateChanged.substr(0, 10) }}
@@ -131,10 +131,10 @@
 			<div 
 				v-for="change in record.changes"
 				:key="change.propertyChanged"
-				class="bg-gray-dark-400 flex justify-evenly p-0.5 text-gray-light-50 mt-1" >
+				class="bg-gray-light-300 flex justify-evenly p-0.5 text-gray-dark-400 mt-1" >
 				
 				<div class="flex flex-col items-center">
-					<span class="text-gray-light-300">
+					<span class="text-gray-dark-300">
 						Property
 					</span>
 					<span class="font-bold">
@@ -142,7 +142,7 @@
 					</span>
 				</div>
 				<div class="flex flex-col items-center">
-					<span class="text-gray-light-300">
+					<span class="text-gray-dark-300">
 						Old Value
 					</span>
 					<span class="font-bold">
@@ -150,7 +150,7 @@
 					</span>
 				</div>
 				<div class="flex flex-col items-center">
-					<span class="text-gray-light-300">
+					<span class="text-gray-dark-300">
 						New Value
 					</span>
 					<span class="font-bold">

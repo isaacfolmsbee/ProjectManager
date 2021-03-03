@@ -8,7 +8,7 @@
 			v-for="project in projects" 
 			:key="project._id" 
 			class="py-0.5 px-2 cursor-pointer"
-			:class="{ 'bg-gray-dark-400 text-gray-light-100': (project.name === selectedProject) }"
+			:class="{ 'bg-gray-light-300 text-gray-dark-400 font-bold': (project.name === selectedProject) }"
 			@click="$emit('changeProject', project)" >
 			{{ project.name }}
 		</span>

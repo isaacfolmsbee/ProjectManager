@@ -13,7 +13,7 @@
 		placeholder="Password..."
 		v-model="password" >
 	<button 
-		class="mt-3 py-1 px-4 bg-gray-dark-400 text-2xl xl:text-3xl text-gray-light-100 transition-colors duration-300 focus:bg-gray-dark-600 hover:bg-gray-dark-600"
+		class="mt-3 py-1 px-4 bg-gray-light-400 text-2xl xl:text-3xl text-gray-dark-400 transition-colors duration-300 focus:bg-gray-light-500 hover:bg-gray-light-500"
 		@click="login()" >Login</button>
 	<span class="text-gray-dark-300 mt-3">
 		Don't have an account? 

@@ -1,19 +1,19 @@
 <template>
 <div class="w-screen flex flex-col">
-	<div class="flex flex-col px-1.5">
+	<div class="flex flex-col px-1.5 border-b border-gray-light-300">
 		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Post a New Project</h2>
 		<input 
-			class="rounded-none w-full pl-1 h-8 bg-gray-dark-400 text-gray-light-100"
+			class="rounded-none w-full pl-1 h-8 bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100"
 			type="text" 
 			placeholder="Project Name..."
 			v-model="project.name" >
 		<textarea 
-			class="w-full pl-1 h-16 mt-2 rounded-none resize-none bg-gray-dark-400 text-gray-light-100"
+			class="w-full pl-1 h-16 mt-2 rounded-none resize-none bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100"
 			placeholder="Description..."
 			v-model="project.description" >
 		</textarea>
 		<button 
-			class="mt-2 py-0.5 px-2 mx-auto bg-primary-400 rounded-none font-bold bg-gray-dark-400 text-gray-light-100"
+			class="my-2 py-0.5 px-2 mx-auto bg-primary-400 rounded-none font-bold bg-gray-light-400 text-gray-dark-400"
 			@click="postProject()" >
 			Post New Project
 		</button>
@@ -21,33 +21,33 @@
 	<ProjectList 
 		:projects="projectList" 
 		:selectedProject="selectedProject.name"
-		class="mt-2 w-full bg-gray-light-300"
+		class="w-full border-b border-gray-light-300"
 		@changeProject="changeProject($event)" />
-	<div class="flex flex-col px-1.5">
+	<div class="flex flex-col px-1.5 pb-2 border-b border-gray-light-300">
 		<h2 class="mt-2 font-bold text-xl text-gray-dark-400">Assign User to Project</h2>
 		<div class="flex">
 			<div class="w-1/2 mr-1">
 				<span class="text-gray-dark-400 text-xs">User</span>
-				<div class="flex flex-col p-1 bg-gray-dark-400 w-full h-32">
+				<div class="flex flex-col p-1 bg-gray-light-400 w-full h-32">
 					<span
 						v-for="user in unassignedUsers"
 						:key="user._id"
 						@click="assignUser = { username: user.username, _id: user._id }"
 						class="p-0.5 mb-0.5 leading-none w-min whitespace-nowrap overflow-ellipsis cursor-pointer"
-						:class="[(assignUser.username === user.username) ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >
+						:class="[(assignUser.username === user.username) ? 'text-gray-dark-600 bg-gray-light-500': 'text-gray-dark-400']" >
 							{{ user.username }}
 					</span>
 				</div>
 			</div>
 			<div class="w-1/2 ml-1">
 				<span class="text-gray-dark-400 text-xs">Project Role</span>
-				<div class="flex flex-col bg-gray-dark-400 w-full h-32 px-1">
+				<div class="flex flex-col bg-gray-light-400 w-full h-32 px-1">
 					<span
 						v-for="role in projectRoles"
 						:key="role._id"
 						@click="assignUserRole = { name: role.name, _id: role._id }"
 						class="p-0.5 mb-0.5 leading-none w-min whitespace-nowrap overflow-ellipsis cursor-pointer"
-						:class="[(assignUserRole.name === role.name) ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >
+						:class="[(assignUserRole.name === role.name) ? 'text-gray-dark-600 bg-gray-light-500': 'text-gray-dark-400']" >
 							{{ role.name }}
 					</span>
 				</div>
@@ -55,35 +55,35 @@
 		</div>
 		<button 
 			@click="addUserToProject()"
-			class="mx-auto px-2 py-0.5 mt-2 bg-gray-dark-400 rounded-none font-bold text-gray-light-100">
+			class="mx-auto px-2 py-0.5 mt-2 bg-gray-light-400 rounded-none font-bold text-gray-dark-400">
 			Add {{ assignUser.username || 'User' }} to {{ selectedProject.name }}
 		</button>
 	</div>
-	<div class="flex flex-col px-1.5 mt-2 bg-gray-light-300">
+	<div class="flex flex-col px-1.5 border-b border-gray-light-300">
 		<h2 class="mt-2 font-bold text-xl text-gray-dark-400">Change Users' Roles</h2>
 		<div class="flex">
 			<div class="w-1/2 mr-1">
 				<span class="text-gray-dark-400 text-xs">User</span>
-				<div class="flex flex-col p-1 bg-gray-dark-400 w-full h-32">
+				<div class="flex flex-col p-1 bg-gray-light-400 w-full h-32">
 					<span
 						v-for="user in assignedUsers"
 						:key="user._id"
 						@click="changeUser = { username: user.username, _id: user._id }; changeUserRole = { _id: user.role, name: '' };"
 						class="p-0.5 mb-0.5 leading-none w-min whitespace-nowrap overflow-ellipsis cursor-pointer"
-						:class="[(changeUser.username === user.username) ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >
+						:class="[(changeUser.username === user.username) ? 'text-gray-dark-600 bg-gray-light-500': 'text-gray-dark-400']" >
 							{{ user.username }}
 					</span>
 				</div>
 			</div>
 			<div class="w-1/2 ml-1">
 				<span class="text-gray-dark-400 text-xs">Project Role</span>
-				<div class="flex flex-col bg-gray-dark-400 w-full h-32 px-1">
+				<div class="flex flex-col bg-gray-light-400 w-full h-32 px-1">
 					<span
 						v-for="role in projectRoles"
 						:key="role._id"
 						@click="changeUserRole = { name: role.name, _id: role._id }"
 						class="p-0.5 mb-0.5 leading-none w-min whitespace-nowrap overflow-ellipsis cursor-pointer"
-						:class="[(changeUserRole._id === role._id) ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >
+						:class="[(changeUserRole._id === role._id) ? 'text-gray-dark-600 bg-gray-light-500': 'text-gray-dark-400']" >
 							{{ role.name }}
 					</span>
 				</div>
@@ -92,62 +92,62 @@
 		<div class="flex justify-around my-2">
 			<button 
 				@click="removeUserFromProject()"
-				class="px-2 py-0.5 bg-gray-dark-400 rounded-none font-bold text-gray-light-100">
+				class="px-2 py-0.5 bg-gray-light-400 rounded-none font-bold text-gray-dark-400">
 				Remove User
 			</button>
 			<button 
 				@click="updateUserRole()"
-				class="px-2 py-0.5 bg-gray-dark-400 rounded-none font-bold text-gray-light-100">
+				class="px-2 py-0.5 bg-gray-light-400 rounded-none font-bold text-gray-dark-400">
 				Update User
 			</button>
 		</div>
 	</div>
-	<div class="flex flex-col px-1.5">
+	<div class="flex flex-col px-1.5 pb-2 border-b border-gray-light-300">
 		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Create a Project Role</h2>
 		<input 
-			class="rounded-none w-full pl-1 h-8 bg-gray-dark-400 text-gray-light-100"
+			class="rounded-none w-full pl-1 h-8 bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100"
 			type="text" 
 			placeholder="Role Name..."
 			v-model="roleName" >
-		<div class="flex flex-col bg-gray-dark-400 w-full mt-2 p-1">
+		<div class="flex flex-col bg-gray-light-400 w-full mt-2 p-1">
 			<div class="flex justify-evenly mb-1">
 				<span 
 					@click="modifyPermissionsList('editProject')" 
-					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer"
-					:class="[permissions.includes('editProject') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editProject</span>
+					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': permissions.includes('editProject')}" >editProject</span>
 				<span 
 					@click="modifyPermissionsList('editProjectUser')" 
-					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer"
-					:class="[permissions.includes('editProjectUser') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editProjectUser</span>
+					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': permissions.includes('editProjectUser')}" >editProjectUser</span>
 			</div>
 			<div class="flex justify-evenly mb-1">
 				<span 
 					@click="modifyPermissionsList('editProjectRoles')" 
-					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer"
-					:class="[permissions.includes('editProjectRoles') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editProjectRoles</span>
+					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': permissions.includes('editProjectRoles')}" >editProjectRoles</span>
 				<span 
 					@click="modifyPermissionsList('createTicket')" 
-					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer"
-					:class="[permissions.includes('createTicket') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >createTicket</span>
+					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': permissions.includes('createTicket')}" >createTicket</span>
 			</div>
 			<div class="flex justify-evenly">
 				<span 
 					@click="modifyPermissionsList('assignTicket')" 
-					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer"
-					:class="[permissions.includes('assignTicket') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >assignTicket</span>
+					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': permissions.includes('assignTicket')}" >assignTicket</span>
 				<span 
 					@click="modifyPermissionsList('editTicket')" 
-					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer"
-					:class="[permissions.includes('editTicket') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editTicket</span>
+					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': permissions.includes('editTicket')}" >editTicket</span>
 			</div>
 		</div>
 		<button 
 			@click="postProjectRole()"
-			class="mt-2 py-0.5 px-2 mx-auto bg-primary-400 rounded-none font-bold bg-gray-dark-400 text-gray-light-100">
+			class="mt-2 py-0.5 px-2 mx-auto rounded-none font-bold bg-gray-light-400 text-gray-dark-400">
 			Create Role
 		</button>
 	</div>
-	<div class="flex flex-col px-1.5 mt-2 bg-gray-light-300">
+	<div class="flex flex-col px-1.5">
 		<h2 class="mt-2 font-bold text-xl text-gray-dark-400">Edit Project Role</h2>
 		<span class="mt-1.5 text-xs text-gray-dark-200">Select Role</span>
 		<div class="w-full pb-2 flex overflow-x-auto">
@@ -161,51 +161,51 @@
 			</span>
 		</div>
 		<input 
-			class="rounded-none w-full pl-1 h-8 bg-gray-dark-400 text-gray-light-100"
+			class="rounded-none w-full pl-1 h-8 bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100"
 			type="text" 
 			placeholder="Role Name..."
 			v-model="editRole.name" >
-		<div class="flex flex-col bg-gray-dark-400 w-full mt-2 p-1">
+		<div class="flex flex-col bg-gray-light-400 w-full mt-2 p-1">
 			<div class="flex justify-evenly mb-1">
 				<span 
 					@click="modifyEditPermissionsList('editProject')" 
-					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer"
-					:class="[editRole.permissions.includes('editProject') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editProject</span>
+					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': editRole.permissions.includes('editProject')}" >editProject</span>
 				<span 
 					@click="modifyEditPermissionsList('editProjectUser')" 
-					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer"
-					:class="[editRole.permissions.includes('editProjectUser') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editProjectUser</span>
+					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': editRole.permissions.includes('editProjectUser')}" >editProjectUser</span>
 			</div>
 			<div class="flex justify-evenly mb-1">
 				<span 
 					@click="modifyEditPermissionsList('editProjectRoles')" 
-					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer"
-					:class="[editRole.permissions.includes('editProjectRoles') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editProjectRoles</span>
+					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': editRole.permissions.includes('editProjectRoles')}" >editProjectRoles</span>
 				<span 
 					@click="modifyEditPermissionsList('createTicket')" 
-					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer"
-					:class="[editRole.permissions.includes('createTicket') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >createTicket</span>
+					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': editRole.permissions.includes('createTicket')}" >createTicket</span>
 			</div>
 			<div class="flex justify-evenly">
 				<span 
 					@click="modifyEditPermissionsList('assignTicket')" 
-					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer"
-					:class="[editRole.permissions.includes('assignTicket') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >assignTicket</span>
+					class="w-1/2 text-center py-0.5 mr-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': editRole.permissions.includes('assignTicket')}" >assignTicket</span>
 				<span 
 					@click="modifyEditPermissionsList('editTicket')" 
-					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer"
-					:class="[editRole.permissions.includes('editTicket') ? 'text-gray-dark-600 bg-gray-light-300': 'text-gray-light-100']" >editTicket</span>
+					class="w-1/2 text-center py-0.5 ml-0.5 cursor-pointer text-gray-dark-600"
+					:class="{'bg-gray-light-500': editRole.permissions.includes('editTicket')}" >editTicket</span>
 			</div>
 		</div>
 		<div class="flex justify-around my-2">
 			<button 
 				
-				class="px-2 py-0.5 bg-gray-dark-400 rounded-none font-bold text-gray-light-100">
+				class="px-2 py-0.5 bg-gray-light-400 rounded-none font-bold text-gray-dark-400">
 				Remove Role
 			</button>
 			<button 
 				@click="editProjectRole()"
-				class="px-2 py-0.5 bg-gray-dark-400 rounded-none font-bold text-gray-light-100">
+				class="px-2 py-0.5 bg-gray-light-400 rounded-none font-bold text-gray-dark-400">
 				Update Role
 			</button>
 		</div>
