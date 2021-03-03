@@ -1,6 +1,16 @@
 <template>
-<div class="fixed top-16 w-full h-full flex flex-col bg-gray-light-100">	
-	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer mr-auto ml-1 my-2 text-gray-dark-300">Delete all</span>
+<div class="fixed top-16 xl:top-0 xl:left-60 w-full xl:w-64 h-full flex flex-col bg-gray-light-100 xl:border-r border-gray-dark-400">
+	<div class="hidden xl:flex justify-between mt-1.5">
+		<h2 class="text-gray-dark-400 mx-1.5 font-bold text-lg">Notifications</h2>
+		<svg 
+			@click="$emit('close')"
+			class="w-8 h-8 fill-current text-gray-dark-400 cursor-pointer" 
+			viewBox="0 0 24 24">
+			<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z">
+			</path>
+		</svg>
+	</div>
+	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer mr-auto ml-1.5 my-2 text-gray-dark-300">Delete all</span>
 	<span v-else class="font-bold text-gray-dark-400 mt-14 mx-auto text-xl">No notifications</span>
 	<div 
 		v-for="notification in notifications" 

@@ -1,5 +1,5 @@
 <template>
-<div class="fixed top-16 w-full h-full flex flex-col items-center bg-gray-light-100">	
+<div class="xl:hidden fixed top-16 w-full h-full flex flex-col items-center bg-gray-light-100">	
 	<span @click="$emit('closeModal')" class="my-7"><router-link to="/" class="router-link">Dashboard</router-link></span>
 	<span @click="$emit('closeModal')" class="mb-7"><router-link to="/tickets" class="router-link">Tickets</router-link></span>
 	<span @click="$emit('closeModal')" class="mb-7"><router-link to="/projects" class="router-link">Manage Projects</router-link></span>
