@@ -1,7 +1,7 @@
 <template>
 <div class="w-full px-5 h-full fixed z-20 -mt-0 bg-gray-light-100 flex flex-col justify-center items-center">
-	<h1 class="absolute top-5 font-bold text-2xl text-gray-dark-400">Project Manager</h1>
-	<h2 class="text-gray-dark-300 text-2xl">Register New Account</h2>
+	<h1 class="absolute top-5 font-bold text-2xl xl:text-3xl text-gray-dark-400">Project Manager</h1>
+	<h2 class="text-gray-dark-300 xl:mb-2 text-2xl xl:text-3xl">Register New Account</h2>
 	<input 
 		class="input" 
 		type="text" 
@@ -23,7 +23,7 @@
 		placeholder="Confirm Password..."
 		v-model="password" >
 	<button 
-		class="mt-3 py-1 px-4 bg-gray-dark-400 text-2xl text-gray-light-100 focus:bg-gray-dark-600"
+		class="mt-3 py-1 px-4 bg-gray-dark-400 text-2xl xl:text-3xl text-gray-light-100 transition-colors duration-300 focus:bg-gray-dark-600 hover:bg-gray-dark-600"
 		@click="register()" >Register</button>
 	<span class="text-gray-dark-300 mt-3">
 		Already have an account? 
@@ -61,6 +61,6 @@ export default Vue.extend({
 
 <style lang="postcss" scoped>
 .input {
-	@apply w-11/12 max-w-xs mt-3 py-2 pl-2 border-b bg-gray-light-100 border-gray-dark-200 focus:outline-none focus:bg-gray-light-300 placeholder-gray-dark-100 text-xl transition-colors duration-300 rounded-none;
+	@apply w-11/12 max-w-xs xl:max-w-sm mt-3 py-2 pl-2 border-b bg-gray-light-100 border-gray-dark-200 focus:outline-none focus:bg-gray-light-300 placeholder-gray-dark-100 text-xl transition-colors duration-300 rounded-none;
 }
 </style>
