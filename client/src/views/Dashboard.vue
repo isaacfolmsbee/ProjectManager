@@ -1,18 +1,23 @@
 <template>
-<div class="w-screen flex flex-col">
-	<ProjectList 
-		:projects="projectList" 
-		:selectedProject="selectedProject.name"
-		class="w-full bg-gray-light-300"
-		@changeProject="changeProject($event)" />
+<div class="w-screen flex flex-col lg:flex-row md:w-3/4 lg:w-screen lg:px-4 md:mx-auto md:py-2 lg:py-4 ">
+	<div class="lg:w-1/2 lg:mr-2 xl:pl-4">
+		<ProjectList 
+			:projects="projectList" 
+			:selectedProject="selectedProject.name"
+			class="w-full bg-gray-light-300"
+			@changeProject="changeProject($event)" />
+	</div>
+	
 
-	<h2 class="my-2 pl-1.5 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
+	<div class="md:bg-gray-light-300 md:mt-2 lg:mt-0 md:px-1.5 lg:w-1/2 lg:ml-2">
+		<h2 class="py-2 pl-1.5 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
 
-	<TicketItem 
-		v-for="ticket in tickets" 
-		:key="ticket._id" 
-		:ticket="ticket" 
-		class="even:bg-gray-light-300"/>
+		<TicketItem 
+			v-for="ticket in tickets" 
+			:key="ticket._id" 
+			:ticket="ticket" 
+			class="even:bg-gray-light-300 md:border-b last:border-b-0 md:border-gray-light-600"/>
+	</div>
 </div>
 </template>
 

@@ -1,9 +1,9 @@
 <template>
 <div class="py-2 flex flex-col">
-	<h2 class="pl-2 font-bold text-xl text-gray-dark-400">
+	<h2 class="pl-2 pb-2 font-bold text-xl text-gray-dark-400">
 		Select Project
 	</h2>
-	<div class="w-full flex items-center overflow-x-auto text-xl text-gray-dark-400 whitespace-nowrap ">
+	<div class="w-full pl-2 flex items-center overflow-x-auto text-xl text-gray-dark-400 whitespace-nowrap ">
 		<span 
 			v-for="project in projects" 
 			:key="project._id" 

@@ -36,6 +36,7 @@ module.exports = {
 	},
 	variants: {
 		extend: {
+			'borderWidth': ['last'],
 			'backgroundColor': ['even', 'odd'],
 			'rotate': ['group-hover'],
 			'margin': ['last', 'first'],
