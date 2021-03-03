@@ -1,40 +1,43 @@
 <template>
-<div class="w-full px-5 h-full fixed z-20 -mt-0 bg-gray-light-100 flex flex-col justify-center items-center">
-	<h1 class="absolute top-5 font-bold text-2xl xl:text-3xl text-gray-dark-400">Project Manager</h1>
-	<h2 class="text-gray-dark-300 xl:mb-2 text-2xl xl:text-3xl">Register New Account</h2>
+<div class="w-full px-5 h-full fixed z-20 -mt-0 -ml-0 bg-gray-light-300 flex flex-col justify-center items-center">
+	<div class="absolute top-0 left-0 shadow-md w-full bg-primary-800 py-3 md:py-4 flex">
+		<h1 class="mx-auto xl:ml-7 font-bold text-2xl xl:text-3xl text-gray-light-50">Project Manager</h1>
+	</div>
+	<h2 class="text-gray-dark-600 xl:mb-2 text-2xl xl:text-3xl">Register New Account</h2>
 	<input 
-		class="input" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="text" 
 		placeholder="Username..."
 		v-model="username" >
 	<input 
-		class="input" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="text" 
 		placeholder="Email..."
 		v-model="email" >
 	<input 
-		class="input" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="password" 
 		placeholder="Password..."
 		v-model="password" >
 	<input 
-		class="input" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="password" 
 		placeholder="Confirm Password..."
 		v-model="password" >
 	<button 
-		class="mt-3 py-1 px-4 bg-gray-light-400 text-2xl xl:text-3xl text-gray-dark-400 transition-colors duration-300 focus:bg-gray-light-500 hover:bg-gray-light-500"
+		class="mt-3 py-1.5 px-6 bg-primary-800 rounded-lg shadow-md text-2xl xl:text-3xl focus:outline-none text-gray-light-50 transition-colors duration-300 focus:bg-primary-600 hover:bg-primary-600"
 		@click="register()" >Register</button>
-	<span class="text-gray-dark-300 mt-3">
+	<span class="text-gray-dark-200 mt-3">
 		Already have an account? 
-		<router-link to="/login" class="text-gray-dark-900 cursor-pointer">Login</router-link>
+		<router-link to="/login" class="text-primary-600 cursor-pointer">Login</router-link>
 	</span>
-	<span class="text-gray-dark-300 mt-0.5">
+	<span class="text-gray-dark-200 mt-0.5">
 		Sign in as a 
-		<router-link to="/register" class="text-gray-dark-900 cursor-pointer">Demo User</router-link>
+		<router-link to="/register" class="text-primary-600 cursor-pointer">Demo User</router-link>
 	</span>
 </div>
 </template>
+
 <script lang="ts">
 import Vue from 'vue';
 import { register } from '../api/user';
