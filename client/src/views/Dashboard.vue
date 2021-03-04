@@ -1,41 +1,74 @@
 <template>
 <div class="w-full flex flex-col">
-	<div class="py-1.5 px-2.5 border-b border-gray-light-300">
-		<div class="flex justify-between">
-			<span class="text-gray-dark-400">Select Project</span>
-			<span class="text-gray-dark-300">Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
+	<div class="md:flex py-1.5 px-2.5 border-b border-gray-light-300">
+		<div class="flex flex-col md:w-1/2">
+			<div class="flex justify-between">
+				<span class="text-gray-dark-400">Select Project</span>
+				<span class="md:hidden text-gray-dark-300">Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
+			</div>
+			<ProjectSelector 
+				:projectList="projectList"
+				:startingProject="selectedProject" 
+				@input="changeProject($event)"
+				class="my-1" />
 		</div>
-		<ProjectSelector 
-			:projectList="projectList"
-			:startingProject="selectedProject" 
-			@input="changeProject($event)"
-			class="my-1" />
+		<span class="hidden md:inline mx-auto my-auto text-gray-dark-300 text-xl">Project Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
 	</div>
-	<div class="flex justify-evenly my-2">
-		<span 
-			class="status-btn" 
-			:class="[(this.selectedTicketStatus === 'open') ? 'bg-blue-500': 'bg-gray-dark-100']"
-			@click="changeTicketFilter('open')">
-			Open
-		</span>
-		<span 
-			class="status-btn" 
-			:class="[(this.selectedTicketStatus === 'in progress') ? 'bg-green-500': 'bg-gray-dark-100']"
-			@click="changeTicketFilter('in progress')">
-			In Progress
-		</span>
-		<span 
-			class="status-btn" 
-			:class="[(this.selectedTicketStatus === 'need info') ? 'bg-orange-500': 'bg-gray-dark-100']"
-			@click="changeTicketFilter('need info')">
-			Need Info
-		</span>
+	<div class="flex justify-evenly lg:justify-start my-2 lg:mx-2">
+		<div class="flex lg:flex-col lg:w-1/3 lg:mr-1">
+			<span 
+				class="status-btn lg:mr-auto" 
+				:class="[(this.selectedTicketStatus === 'open' || isDesktop) ? 'bg-blue-500': 'bg-gray-dark-100']"
+				@click="changeTicketFilter('open')">
+				Open
+			</span>
+			<div v-if="isDesktop" class="mt-2">
+				<TicketItem 
+					v-for="ticket in openTickets" 
+					:key="ticket._id" 
+					:ticket="ticket" 
+					class="mb-2" />
+			</div>
+		</div>
+		<div class="flex lg:flex-col lg:w-1/3 lg:mx-1">
+			<span 
+				class="status-btn lg:mr-auto" 
+				:class="[(this.selectedTicketStatus === 'in progress' || isDesktop) ? 'bg-green-500': 'bg-gray-dark-100']"
+				@click="changeTicketFilter('in progress')">
+				In Progress
+			</span>
+			<div v-if="isDesktop" class="mt-2">
+				<TicketItem 
+					v-for="ticket in inProgressTickets" 
+					:key="ticket._id" 
+					:ticket="ticket" 
+					class="mb-2" />
+			</div>
+		</div>
+		<div class="flex lg:flex-col lg:w-1/3 lg:ml-1">
+			<span 
+				class="status-btn lg:mr-auto" 
+				:class="[(this.selectedTicketStatus === 'need info' || isDesktop) ? 'bg-orange-500': 'bg-gray-dark-100']"
+				@click="changeTicketFilter('need info')">
+				Need Info
+			</span>
+			<div v-if="isDesktop" class="mt-2">
+				<TicketItem 
+					v-for="ticket in needInfoTickets" 
+					:key="ticket._id" 
+					:ticket="ticket" 
+					class="mb-2" />
+			</div>
+		</div>
 	</div>
-	<TicketItem 
-		v-for="ticket in filteredTickets" 
-		:key="ticket._id" 
-		:ticket="ticket" 
-		class="mx-2 mb-2" />
+	<div v-if="!isDesktop">
+		<TicketItem 
+			v-for="ticket in selectedTickets" 
+			:key="ticket._id" 
+			:ticket="ticket" 
+			class="mx-2 mb-2" />
+	</div>
+	
 	<!-- <div class="lg:w-1/2 lg:mr-2 xl:pl-4">
 		<ProjectList 
 			:projects="projectList" 
@@ -84,6 +117,7 @@ export default Vue.extend({
 	},
 	data() {
 		return {
+			isDesktop: window.innerWidth >= 1024 ? true: false,
 			selectedTicketStatus: 'open',
 			selectedProject: {
 				_id: '',
@@ -104,7 +138,49 @@ export default Vue.extend({
 				type: '',
 				usersAssigned: [],
 			}],
-			filteredTickets: [{
+			openTickets: [{
+				_id: '',
+				comments: [],
+				createdBy: '',
+				dateCreated: '',
+				description: '',
+				history: [],
+				project: '',
+				severity: '',
+				status: '',
+				title: '',
+				type: '',
+				usersAssigned: [],
+			}],
+			inProgressTickets: [{
+				_id: '',
+				comments: [],
+				createdBy: '',
+				dateCreated: '',
+				description: '',
+				history: [],
+				project: '',
+				severity: '',
+				status: '',
+				title: '',
+				type: '',
+				usersAssigned: [],
+			}],
+			needInfoTickets: [{
+				_id: '',
+				comments: [],
+				createdBy: '',
+				dateCreated: '',
+				description: '',
+				history: [],
+				project: '',
+				severity: '',
+				status: '',
+				title: '',
+				type: '',
+				usersAssigned: [],
+			}],
+			selectedTickets: [{
 				_id: '',
 				comments: [],
 				createdBy: '',
@@ -127,24 +203,37 @@ export default Vue.extend({
 			role: this.projectList[0].role,
 		};
 		this.tickets = await getTickets(this.selectedProject._id, this.jwt);
-		this.filterTicketsStatus('open');
+		this.openTickets = this.filterTicketsStatus('open');
+		this.inProgressTickets = this.filterTicketsStatus('in progress');
+		this.needInfoTickets = this.filterTicketsStatus('need info');
+		this.selectedTickets = this.openTickets;
+	},
+	mounted() {
+		window.onresize = () => {
+			this.isDesktop = window.innerWidth >= 1024 ? true: false;
+		}
 	},
 	methods: {
 		async changeProject(project: { _id: string; name: string; role: string}) {
 			this.selectedProject = project;
 			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
-			this.filterTicketsStatus(this.selectedTicketStatus);
-		},
-		async getTickets() {
-			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
+			this.openTickets = this.filterTicketsStatus('open');
+			this.inProgressTickets = this.filterTicketsStatus('in progress');
+			this.needInfoTickets = this.filterTicketsStatus('need info');
+			this.changeTicketFilter(this.selectedTicketStatus);
 		},
 		changeTicketFilter(status: string) {
-			console.log(status);
 			this.selectedTicketStatus = status;
-			this.filterTicketsStatus(status);
+			if (status === 'open') {
+				this.selectedTickets = this.openTickets;
+			} else if (status === 'in progress') {
+				this.selectedTickets = this.inProgressTickets;
+			} else {
+				this.selectedTickets = this.needInfoTickets;
+			}
 		},
 		filterTicketsStatus(status: string) {
-			this.filteredTickets = this.tickets.filter(
+			return this.tickets.filter(
 				(ticket: {
 					status: string;
 				}) => ticket.status.toLowerCase() === status
@@ -156,6 +245,6 @@ export default Vue.extend({
 
 <style lang="postcss" scoped>
 .status-btn {
-	@apply rounded-xl text-gray-light-50 py-1 px-2 shadow-md cursor-pointer transition-colors duration-300;
+	@apply rounded-xl text-gray-light-50 py-1 px-2 shadow-md cursor-pointer lg:cursor-default transition-colors duration-300;
 }
 </style>
