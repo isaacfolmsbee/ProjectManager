@@ -177,7 +177,6 @@ router.get('/project/:projectID', auth(''), async (req: Request, res: Response) 
 			.find({
 				project: new ObjectID(req.params.projectID),
 			})
-			.limit(10)
 			.toArray();
 	} else {
 		response = await tickets
@@ -185,7 +184,6 @@ router.get('/project/:projectID', auth(''), async (req: Request, res: Response) 
 				project: new ObjectID(req.params.projectID),
 				usersAssigned: { $in: [new ObjectID(req.user._id)] },
 			})
-			.limit(10)
 			.toArray();
 	}
 
