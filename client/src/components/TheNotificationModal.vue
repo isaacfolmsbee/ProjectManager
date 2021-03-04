@@ -1,5 +1,21 @@
 <template>
-<div class="fixed top-16 xl:top-0 xl:left-60 w-full xl:w-64 h-full flex flex-col bg-gray-light-100 xl:border-r border-gray-dark-400">
+<div class="xl:hidden fixed top-14 px-3 w-full h-full flex flex-col bg-primary-800">
+	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer ml-1.5 my-2 text-gray-light-400">Delete all</span>
+	<span v-else class="font-bold text-gray-light-300 mt-14 mx-auto text-xl">No notifications</span>
+	<div 
+		v-for="notification in notifications" 
+		:key="notification._id"
+		class="mb-1 px-1.5 pb-1 relative w-full border-b border-primary-700" >
+
+		<span @click="deleteNotification(notification._id)" class="absolute top-1 right-2 text-gray-light-400 cursor-pointer text-xs">Delete</span>
+		<div class="flex flex-col">
+			<span class="font-bold text-gray-light-200">{{ notification.title }}</span>
+			<span class="text-xs text-gray-light-400">{{ timeAgo(notification.dateCreated) }}</span>
+		</div>
+		<span class="text-gray-light-200">{{ notification.description }}</span>
+	</div>
+</div>
+<!-- <div class="fixed top-16 xl:top-0 xl:left-60 w-full xl:w-64 h-full flex flex-col bg-gray-light-100 xl:border-r border-gray-dark-400">
 	<div class="hidden xl:flex justify-between mt-1.5">
 		<h2 class="text-gray-dark-400 mx-1.5 font-bold text-lg">Notifications</h2>
 		<svg 
@@ -24,7 +40,7 @@
 		</div>
 		<span class="text-gray-dark-400">{{ notification.description }}</span>
 	</div>
-</div>
+</div> -->
 </template>
 
 <script lang="ts">
@@ -34,10 +50,6 @@ import { readNotifications, getNotifications, deleteNotifications, deleteNotific
 export default Vue.extend({
 	name: "TheNotificationModal",
 	props: {
-		isOpen: {
-			type: Boolean,
-			required: true,
-		},
 		jwt: {
 			type: String,
 			required: true,
@@ -50,7 +62,7 @@ export default Vue.extend({
 	},
 	async created() {
 		this.notifications = await getNotifications(this.jwt);
-		await readNotifications(this.jwt);		
+		await readNotifications(this.jwt);	
 	},
 	methods: {
 		async deleteNotifications() {
@@ -65,6 +77,72 @@ export default Vue.extend({
 				}	
 			}
 		},
+		getFormattedDate(date: Date, prefomattedDate: string | boolean = false, hideYear = false) {
+			const MONTH_NAMES = [
+				'January', 'February', 'March', 'April', 'May', 'June',
+				'July', 'August', 'September', 'October', 'November', 'December'
+			];
+			const day = date.getDate();
+			const month = MONTH_NAMES[date.getMonth()];
+			const year = date.getFullYear();
+			const hours = date.getHours();
+			let minutes: string | number = date.getMinutes();
+
+			if (minutes < 10) {
+				// Adding leading zero to minutes
+				minutes = `0${ minutes }`;
+			}
+
+			if (prefomattedDate) {
+				// Today at 10:20
+				// Yesterday at 10:20
+				return `${ prefomattedDate } at ${ hours }:${ minutes }`;
+			}
+
+			if (hideYear) {
+				// 10. January at 10:20
+				return `${ day }. ${ month } at ${ hours }:${ minutes }`;
+			}
+
+			// 10. January 2017. at 10:20
+			return `${ day }. ${ month } ${ year }. at ${ hours }:${ minutes }`;
+		},
+		// eslint-disable-next-line
+		timeAgo(dateParam: any) {
+			if (!dateParam) {
+				return null;
+			}
+
+			const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
+			const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000
+			// eslint-disable-next-line
+			const today: any = new Date();
+			const yesterday = new Date(today - DAY_IN_MS);
+			const seconds = Math.round((today - date) / 1000);
+			const minutes = Math.round(seconds / 60);
+			const isToday = today.toDateString() === date.toDateString();
+			const isYesterday = yesterday.toDateString() === date.toDateString();
+			const isThisYear = today.getFullYear() === date.getFullYear();
+
+
+			if (seconds < 5) {
+				return 'now';
+			} else if (seconds < 60) {
+				return `${ seconds } seconds ago`;
+			} else if (seconds < 90) {
+				return 'about a minute ago';
+			} else if (minutes < 60) {
+				return `${ minutes } minutes ago`;
+			} else if (isToday) {
+				return this.getFormattedDate(date, 'Today'); // Today at 10:20
+			} else if (isYesterday) {
+				return this.getFormattedDate(date, 'Yesterday'); // Yesterday at 10:20
+			} else if (isThisYear) {
+				return this.getFormattedDate(date, false, true); // 10. January at 10:20
+			}
+
+			return this.getFormattedDate(date); // 10. January 2017. at 10:20
+		},	
 	}
 })
 </script>

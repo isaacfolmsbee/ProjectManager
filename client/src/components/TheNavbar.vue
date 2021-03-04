@@ -1,5 +1,23 @@
 <template>
-<div class="fixed top-0 w-screen xl:w-60 h-16 xl:h-screen flex xl:flex-col bg-gray-light-100 border-b xl:border-b-0 xl:border-r border-gray-light-400 items-center xl:items-start z-10">
+<div class="fixed z-20 top-0 w-screen h-14 flex items-center bg-primary-800 shadow-md">
+	<svg @click="toggleNavbar()" class="ml-3 w-8 h-8 text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"></path></svg>
+	<router-link to="/" class="mx-auto text-2xl font-bold text-gray-light-50">Project Manager</router-link>
+	<div class="relative mr-3">
+		<div :class="{ 'flex': doNotificationPing, 'hidden': !doNotificationPing }" class="absolute right-1 top-1 items-center justify-center">
+			<span class="animate-ping opacity-75 absolute w-2 h-2 rounded-full bg-gray-light-50"></span>
+			<span class="absolute w-1.5 h-1.5 rounded-full bg-gray-light-50"></span>
+		</div>
+		<svg @click="toggleNotifications()" class="w-8 h-8 text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+	</div>
+	<TheNavbarModal 
+		v-if="isNavbarModalOpen"
+		@closeModal="isNavbarModalOpen = false" />
+	<TheNotificationModal 
+		v-if="isNotificationModalOpen" 
+		:jwt="jwt"
+		@close="isNotificationModalOpen = false" />
+</div>
+<!-- <div class="fixed top-0 w-screen xl:w-60 h-16 xl:h-screen flex xl:flex-col bg-gray-light-100 border-b xl:border-b-0 xl:border-r border-gray-light-400 items-center xl:items-start z-10">
 	<div class="xl:hidden absolute left-3">
 		<div :class="{ 'flex': doNotificationPing, 'hidden': !doNotificationPing }" class="absolute left-1.5 top-0.5 items-center justify-center">
 			<span class="animate-ping opacity-75 absolute w-1.5 h-1.5 rounded-full bg-gray-dark-400"></span>
@@ -15,7 +33,7 @@
 		:isOpen="isNavbarModalOpen" 
 		@closeModal="isNavbarModalOpen = false" />
 
-	<!-- Desktop Navbar Stuffy Wuffy -->
+
 	<div class="hidden xl:flex flex-col ml-2">
 		<router-link to="/" class="mt-12 mb-5 router-link">Dashboard</router-link>
 		<router-link to="/tickets" class="mb-5 router-link">Tickets</router-link>
@@ -43,7 +61,7 @@
 		:jwt="jwt" 
 		:isOpen="isNotificationModalOpen"
 		@close="isNotificationModalOpen = false" />
-</div>
+</div> -->
 </template>
 
 <script lang="ts">

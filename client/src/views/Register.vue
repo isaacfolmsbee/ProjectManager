@@ -1,26 +1,26 @@
 <template>
-<div class="w-full px-5 h-full fixed z-20 -mt-0 -ml-0 bg-gray-light-300 flex flex-col justify-center items-center">
+<div class="w-full px-5 h-full fixed z-20 -mt-0 -ml-0 bg-gray-light-200 flex flex-col justify-center items-center">
 	<div class="absolute top-0 left-0 shadow-md w-full bg-primary-800 py-3 md:py-4 flex">
 		<h1 class="mx-auto xl:ml-7 font-bold text-2xl xl:text-3xl text-gray-light-50">Project Manager</h1>
 	</div>
 	<h2 class="text-gray-dark-600 xl:mb-2 text-2xl xl:text-3xl">Register New Account</h2>
 	<input 
-		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="text" 
 		placeholder="Username..."
 		v-model="username" >
 	<input 
-		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="text" 
 		placeholder="Email..."
 		v-model="email" >
 	<input 
-		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="password" 
 		placeholder="Password..."
 		v-model="password" >
 	<input 
-		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-300 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
+		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="password" 
 		placeholder="Confirm Password..."
 		v-model="password" >
@@ -61,9 +61,3 @@ export default Vue.extend({
 	}
 })
 </script>
-
-<style lang="postcss" scoped>
-.input {
-	@apply w-11/12 max-w-xs xl:max-w-sm mt-3 py-2 pl-2 border-b bg-gray-light-100 border-gray-dark-200 focus:outline-none focus:bg-gray-light-300 placeholder-gray-dark-100 text-xl transition-colors duration-300 rounded-none;
-}
-</style>

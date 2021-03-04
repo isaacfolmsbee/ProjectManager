@@ -11,7 +11,7 @@
 			@logout="logout()" 
 			:projectList="userData.projects" 
 			:jwt='userData.JWT'
-			class="mt-16 xl:mt-0 xl:pl-60"/>
+			class="mt-14 xl:mt-0 xl:pl-60"/>
 	</div>
 </div>
 </template>
