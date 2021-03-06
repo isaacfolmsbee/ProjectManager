@@ -2,16 +2,22 @@
 <div id="app">
 	<div>
 		<TheNavbar 
-			:jwt='userData.JWT' 
+			v-if="displayNavbar"
+			:jwt='userData.JWT'
+			:projectList="userData.projects"
+			:selectedProject="selectedProject"
 			:hasUnreadNotification="userData.hasUnreadNotification"
-			@readNotifications="userData.hasUnreadNotification = false" />
+			@readNotifications="userData.hasUnreadNotification = false"
+			@changeProject="changeSelectedProject($event)" />
 
 		<router-view 
 			@login="login($event)" 
-			@logout="logout()" 
-			:projectList="userData.projects" 
-			:jwt='userData.JWT'
-			class="mt-14 xl:mt-0 xl:pl-60"/>
+			@logout="logout()"
+			@changeProject="changeSelectedProject($event)"
+			:projectList="userData.projects"
+			:selectedProject="selectedProject"
+			:jwt="userData.JWT"
+			class="mt-14 xl:mt-20 xl:pl-60"/>
 	</div>
 </div>
 </template>
@@ -27,6 +33,11 @@ export default Vue.extend({
 	},
 	data() {
 		return {
+			selectedProject: {
+				_id: '',
+				name: '',
+				role: '',
+			},
 			userData: {
 				_id: '',
 				JWT: '',
@@ -36,11 +47,28 @@ export default Vue.extend({
 			},
 		}
 	},
+	computed: {
+		displayNavbar() {
+			if (this.$route.name === 'Login') {
+				return false;
+			} else if (this.$route.name === 'Register') {
+				return false;
+			} else {
+				return true;
+			}
+		}
+	},
 	created() {
 		const userData = sessionStorage.getItem('userdata');
 
 		if (userData) {
 			this.userData = JSON.parse(userData);
+
+			this.selectedProject = {
+				_id: this.userData.projects[0]._id,
+				name: this.userData.projects[0].name,
+				role: this.userData.projects[0].role,
+			};
 		}
 	},
 	methods: {
@@ -52,6 +80,11 @@ export default Vue.extend({
 			hasUnreadNotification: boolean;
 		}) {
 			this.userData = userdata;
+			this.selectedProject = {
+				_id: this.userData.projects[0]._id,
+				name: this.userData.projects[0].name,
+				role: this.userData.projects[0].role,
+			};
 			sessionStorage.setItem('userdata', JSON.stringify(userdata));
 			this.$router.push('/');
 		},
@@ -63,8 +96,16 @@ export default Vue.extend({
 				projects: [],
 				hasUnreadNotification: false,
 			};
+			this.selectedProject = {
+				_id: '',
+				name: '',
+				role: '',
+			};
 			sessionStorage.removeItem('userdata');
 			this.$router.push('/login');
+		},
+		changeSelectedProject(project: { _id: string; name: string; role: string}) {
+			this.selectedProject = project;
 		}
 	}
 });

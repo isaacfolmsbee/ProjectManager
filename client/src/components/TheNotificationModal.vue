@@ -1,16 +1,20 @@
 <template>
-<div class="xl:hidden fixed top-14 px-3 w-full h-full flex flex-col bg-primary-800">
-	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer ml-1.5 my-2 text-gray-light-400">Delete all</span>
-	<span v-else class="font-bold text-gray-light-300 mt-14 mx-auto text-xl">No notifications</span>
+<div class="fixed top-14 xl:top-0 xl:right-0 px-3 xl:px-0 w-full xl:w-56 h-full xl:h-auto flex flex-col bg-primary-800 xl:rounded-l-lg">
+	<div @click="$emit('close')" class="h-20 mr-1.5 hidden xl:flex items-center justify-end border-b border-primary-500 text-gray-light-50 cursor-pointer">
+		<span class="text-lg font-mono">NOTIFICATIONS</span>
+		<svg class="w-10 h-10 fill-current" viewBox="0 0 24 24"><path d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z"></path></svg>
+	</div>
+	<span v-if="notifications.length" @click="deleteNotifications()" class="cursor-pointer ml-1.5 my-2 text-gray-light-400 xl:text-gray-light-200">Delete all</span>
+	<span v-else class="font-bold text-gray-light-300 mt-14 xl:mt-5 xl:pb-5 mx-auto text-xl">No notifications</span>
 	<div 
 		v-for="notification in notifications" 
 		:key="notification._id"
 		class="mb-1 px-1.5 pb-1 relative w-full border-b border-primary-700" >
 
-		<span @click="deleteNotification(notification._id)" class="absolute top-1 right-2 text-gray-light-400 cursor-pointer text-xs">Delete</span>
+		<span @click="deleteNotification(notification._id)" class="absolute top-1 xl:top-0 right-2 text-gray-light-400 cursor-pointer text-xs">Delete</span>
 		<div class="flex flex-col">
-			<span class="font-bold text-gray-light-200">{{ notification.title }}</span>
-			<span class="text-xs text-gray-light-400">{{ timeAgo(notification.dateCreated) }}</span>
+			<span class="xl:order-2 font-bold text-gray-light-200">{{ notification.title }}</span>
+			<span class="xl:order-1 text-xs text-gray-light-400">{{ timeAgo(notification.dateCreated) }}</span>
 		</div>
 		<span class="text-gray-light-200">{{ notification.description }}</span>
 	</div>

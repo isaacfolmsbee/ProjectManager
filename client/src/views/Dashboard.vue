@@ -1,6 +1,6 @@
 <template>
 <div class="w-full flex flex-col">
-	<div class="md:flex py-1.5 px-2.5 border-b border-gray-light-300">
+	<div class="xl:hidden md:flex py-1.5 px-2.5 border-b border-gray-light-300">
 		<div class="flex flex-col md:w-1/2">
 			<div class="flex justify-between">
 				<span class="text-gray-dark-400">Select Project</span>
@@ -68,24 +68,6 @@
 			:ticket="ticket" 
 			class="mx-2 mb-2" />
 	</div>
-	
-	<!-- <div class="lg:w-1/2 lg:mr-2 xl:pl-4">
-		<ProjectList 
-			:projects="projectList" 
-			:selectedProject="selectedProject.name"
-			class="w-full border-b md:border-b-0 border-gray-light-300 md:bg-gray-light-200"
-			@changeProject="changeProject($event)" />
-	</div>
-
-	<div class=" md:bg-gray-light-200 md:mt-2 lg:mt-0 md:px-1.5 lg:w-1/2 lg:ml-2">
-		<h2 class="py-2 pl-1.5 font-bold text-xl text-gray-dark-400">Recent Tickets</h2>
-
-		<TicketItem 
-			v-for="ticket in tickets" 
-			:key="ticket._id" 
-			:ticket="ticket" 
-			class="border-b last:border-b-0 border-gray-light-300 md:border-gray-light-400"/>
-	</div> -->
 </div>
 </template>
 
@@ -106,6 +88,13 @@ export default Vue.extend({
 			type: String,
 			required: true,
 		},
+		selectedProject: {
+			type: Object as PropType<{
+				_id: '';
+				name: '';
+				role: '';
+			}>,
+		},
 		projectList: {
 			type: Array as PropType<Array<{
 				_id: '';
@@ -119,11 +108,6 @@ export default Vue.extend({
 		return {
 			isDesktop: window.innerWidth >= 1024 ? true: false,
 			selectedTicketStatus: 'open',
-			selectedProject: {
-				_id: '',
-				name: '',
-				role: '',
-			},
 			tickets: [{
 				_id: '',
 				comments: [],
@@ -197,11 +181,6 @@ export default Vue.extend({
 		}
 	},
 	async created() {
-		this.selectedProject = {
-			_id: this.projectList[0]._id,
-			name: this.projectList[0].name,
-			role: this.projectList[0].role,
-		};
 		this.tickets = await getTickets(this.selectedProject._id, this.jwt);
 		this.openTickets = this.filterTicketsStatus('open');
 		this.inProgressTickets = this.filterTicketsStatus('in progress');
@@ -213,10 +192,19 @@ export default Vue.extend({
 			this.isDesktop = window.innerWidth >= 1024 ? true: false;
 		}
 	},
+	watch: {
+		selectedProject: async function() {
+			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
+			this.openTickets = this.filterTicketsStatus('open');
+			this.inProgressTickets = this.filterTicketsStatus('in progress');
+			this.needInfoTickets = this.filterTicketsStatus('need info');
+			this.changeTicketFilter(this.selectedTicketStatus);
+		}
+	},
 	methods: {
 		async changeProject(project: { _id: string; name: string; role: string}) {
-			this.selectedProject = project;
-			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
+			this.$emit('changeProject', project);
+			this.tickets = await getTickets(project._id, this.jwt);
 			this.openTickets = this.filterTicketsStatus('open');
 			this.inProgressTickets = this.filterTicketsStatus('in progress');
 			this.needInfoTickets = this.filterTicketsStatus('need info');

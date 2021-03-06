@@ -1,5 +1,5 @@
 <template>
-<div class="w-full px-5 h-full fixed z-20 -mt-0 -ml-0 bg-gray-light-200 flex flex-col justify-center items-center">
+<div class="w-full px-5 h-full fixed z-20 -mt-0 xl:pr-60 xl:-mt-0 bg-gray-light-200 flex flex-col justify-center items-center">
 	<div class="absolute top-0 left-0 shadow-md w-full bg-primary-800 py-3 md:py-4 flex">
 		<h1 class="mx-auto xl:ml-7 font-bold text-2xl xl:text-3xl text-gray-light-50">Project Manager</h1>
 	</div>
