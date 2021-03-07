@@ -183,7 +183,7 @@ export default Vue.extend({
 	@apply mb-4 py-1 px-2 rounded-lg text-xl font-bold text-gray-dark-300 flex items-center;
 }
 
-.router-link-exact-active {
+.router-link.router-link-exact-active {
 	@apply font-bold bg-primary-800 text-gray-light-50 shadow-md;
 }
 
