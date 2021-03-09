@@ -1,60 +1,71 @@
 <template>
 <div class="w-full flex flex-col">
 	<div 
-		v-if="isPostTicketActive" 
-		class="fixed z-20 top-0 w-screen h-screen bg-primary-800 flex flex-col px-2" >
+		v-if="isPostTicketActive"
+		class="fixed z-20 xl:-ml-60 top-0 bg-gray-dark-900 bg-opacity-25 w-screen h-screen flex">
+		
+		<div 
+			class="sm:mx-auto sm:my-auto w-screen sm:w-96 h-screen sm:h-auto bg-primary-800 flex flex-col px-2 sm:rounded-2xl" >
 
-		<svg @click="isPostTicketActive = false" class="h-10 w-10 ml-auto mt-2 text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
-		<h2 class="text-gray-light-50 mt-10 text-xl font-bold">Post New Ticket</h2>
-		<div class="mt-2 flex">
-			<input 
-				type="text"
-				v-model="ticket.title"
-				placeholder="Title..."
-				class="rounded-lg bg-gray-light-100 h-9 pl-1 flex-grow">
-			<input 
-				type="file"
-				@change="onFileSelected"
-				ref="fileInput"
-				class="hidden">
-			<button @click="triggerImageInput()" class="px-2 py-1 bg-primary-300 text-gray-light-50 rounded-lg ml-2">{{ attachFileLabel }}</button>
+			<svg @click="isPostTicketActive = false" class="sm:hidden h-10 w-10 ml-auto mt-2 text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
+			<div class="mt-10 sm:mt-2 flex items-center">
+				<h2 class="text-gray-light-50 text-xl font-bold">Post New Ticket</h2>
+				<svg @click="isPostTicketActive = false" class="hidden sm:inline-block h-10 w-10 ml-auto text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
+			</div>
+			<div class="mt-2 flex">
+				<input 
+					type="text"
+					v-model="ticket.title"
+					placeholder="Title..."
+					class="rounded-lg bg-gray-light-100 h-9 pl-1 flex-grow">
+				<input 
+					type="file"
+					@change="onFileSelected"
+					ref="fileInput"
+					class="hidden">
+				<button @click="triggerImageInput()" class="px-2 py-1 bg-primary-300 text-gray-light-50 rounded-lg ml-2">{{ attachFileLabel }}</button>
+			</div>
+			<div class="flex mt-2">
+				<SelectorInput 
+					v-model="ticket.type"
+					:name="'type'" 
+					:options="typeOptions"
+					class="w-1/2 mr-1" />
+				<SelectorInput 
+					v-model="ticket.severity"
+					:name="'severity'" 
+					:options="severityOptions"
+					class="w-1/2 ml-1" />
+			</div>
+			<textarea v-model="ticket.description" class="mt-2 resize-none h-20 pl-1 rounded-lg" placeholder="Description..."></textarea>
+			<button
+				@click="submitTicket()"
+				class="mt-2 bg-primary-300 px-2 py-1 rounded-lg text-gray-light-50 mb-2" >Post Ticket to {{ selectedProject.name }}</button>
 		</div>
-		<div class="flex mt-2">
-			<SelectorInput 
-				v-model="ticket.type"
-				:name="'type'" 
-				:options="typeOptions"
-				class="w-1/2 mr-1" />
-			<SelectorInput 
-				v-model="ticket.severity"
-				:name="'severity'" 
-				:options="severityOptions"
-				class="w-1/2 ml-1" />
-		</div>
-		<textarea v-model="ticket.description" class="mt-2 resize-none h-20 pl-1 rounded-lg" placeholder="Description..."></textarea>
-		<button
-			@click="submitTicket()"
-			class="mt-2 bg-primary-300 px-2 py-1 rounded-lg text-gray-light-50" >Post Ticket to {{ selectedProject.name }}</button>
 	</div>
+	
 	<div class="xl:hidden md:flex py-1.5 px-2.5 border-b border-gray-light-300">
 		<div class="flex flex-col md:w-1/2">
 			<div class="flex justify-between">
 				<span class="text-gray-dark-400">Select Project</span>
-				<span class="md:hidden text-gray-dark-300">Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
+				<span class="text-gray-dark-300">Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
 			</div>
 			<ProjectSelector 
 				:projectList="projectList"
-				:startingProject="selectedProject" 
+				:selectedProject="selectedProject" 
 				@input="changeProject($event)"
 				class="my-1" />
 		</div>
-		<span class="hidden md:inline mx-auto my-auto text-gray-dark-300 text-xl">Project Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
+		<button @click="isPostTicketActive = true" class="hidden md:inline-block bg-gray-light-100 my-auto mx-auto py-0.5 md:py-1 px-1.5 md:px-2.5 rounded-lg text-xl md:text-2xl text-primary-800">Post Ticket</button>
 	</div>
-	<button @click="isPostTicketActive = true" class="bg-gray-light-100 py-0.5 px-1.5 rounded-lg text-xl ml-2 mr-auto text-primary-800">Post Ticket</button>
-	<div class="rounded-lg bg-gray-light-100 shadow-md mx-2 mt-2 p-1 flex">
-		<input class="flex-grow mr-1.5 bg-gray-light-100 border-b border-gray-dark-700 rounded-none" v-model="query" type="text" placeholder="Query...">
-		<button @click="filterTickets()" class="font-bold bg-primary-800 text-gray-light-50 py-1 px-2 rounded-lg">Search</button>
+	<div class="xl:flex xl:mt-3 xl:mb-2">
+		<button @click="isPostTicketActive = true" class="md:hidden xl:inline-block bg-gray-light-100 py-0.5 xl:py-1 px-1.5 xl:px-2.5 rounded-lg text-xl xl:text-2xl ml-2 mb-2 xl:mb-0 mr-auto text-primary-800">Post Ticket</button>
+		<div class="rounded-lg bg-gray-light-100 shadow-md mx-2 p-1 flex">
+			<input class="flex-grow mr-1.5 bg-gray-light-100 border-b border-gray-dark-700 rounded-none" v-model="query" type="text" placeholder="Query...">
+			<button @click="filterTickets()" class="font-bold bg-primary-800 text-gray-light-50 py-1 px-2 rounded-lg">Search</button>
+		</div>
 	</div>
+	
 	<div class="flex justify-evenly lg:justify-start my-2 lg:mx-2">
 		<div class="flex lg:flex-col lg:w-1/3 lg:mr-1">
 			<span 
@@ -120,7 +131,7 @@ import SelectorInput from '../components/SelectorInput.vue';
 import { getAssignedTickets, postTicket, attachImageToTicket } from '../api/ticket';
 
 export default Vue.extend({
-	name: 'Dashboard',
+	name: 'UserTickets',
 	components: {
 		ProjectSelector,
 		SelectorInput,
@@ -239,7 +250,8 @@ export default Vue.extend({
 				await attachImageToTicket(ticketID, formData, this.jwt);
 				this.FILE = null;
 			}
-
+			
+			this.isPostTicketActive = false;
 			this.ticket = {
 				title: '',
 				type: '',

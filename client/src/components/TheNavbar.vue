@@ -43,7 +43,7 @@
 			<span class="text-xs text-gray-dark-300">Select Project</span>
 			<ProjectSelector 
 				:projectList="projectList"
-				:startingProject="selectedProject" 
+				:selectedProject="selectedProject" 
 				@input="$emit('changeProject', $event)"
 				class="my-1" />
 		</div>

@@ -8,7 +8,7 @@
 			</div>
 			<ProjectSelector 
 				:projectList="projectList"
-				:startingProject="selectedProject" 
+				:selectedProject="selectedProject" 
 				@input="changeProject($event)"
 				class="my-1" />
 		</div>

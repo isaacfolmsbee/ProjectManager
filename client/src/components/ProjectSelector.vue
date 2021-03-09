@@ -37,7 +37,7 @@ export default Vue.extend({
 			}>>,
 			required: true,
 		},
-		startingProject: {
+		selectedProject: {
 			type: Object as PropType<{
 				_id: '';
 				name: '';
@@ -49,20 +49,11 @@ export default Vue.extend({
 	data() {
 		return {
 			isOpen: false,
-			selectedProject: {
-				_id: '',
-				name: '',
-				role: '',
-			},
 		}
-	},
-	created() {
-		this.selectedProject = this.startingProject;
 	},
 	methods: {
 		selectProject(project: {_id: string; name: string; role: string}) {
 			this.isOpen = false;
-			this.selectedProject = project;
 			this.$emit('input', project);
 		}
 	}
