@@ -20,7 +20,7 @@
 				<svg class="router-svg" viewBox="0 0 256 256"><path d="M112 40H48a8 8 0 0 0-8 8v64a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8V48a8 8 0 0 0-8-8zm-8 64H56V56h48zm104-64h-64a8 8 0 0 0-8 8v64a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8V48a8 8 0 0 0-8-8zm-8 64h-48V56h48zm-88 32H48a8 8 0 0 0-8 8v64a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8v-64a8 8 0 0 0-8-8zm-8 64H56v-48h48zm104-64h-64a8 8 0 0 0-8 8v64a8 8 0 0 0 8 8h64a8 8 0 0 0 8-8v-64a8 8 0 0 0-8-8zm-8 64h-48v-48h48z"></path></svg>
 				Dashboard
 			</router-link>
-			<router-link to="/my-tickets" class="router-link">
+			<router-link to="/usertickets" class="router-link">
 				<svg class="router-svg" viewBox="0 0 1728 1728"><path d="M992 420l316 316l-572 572l-316-316zm-211 979l618-618q19-19 19-45t-19-45l-362-362q-18-18-45-18t-45 18L329 947q-19 19-19 45t19 45l362 362q18 18 45 18t45-18zm889-637l-907 908q-37 37-90.5 37t-90.5-37l-126-126q56-56 56-136t-56-136t-136-56t-136 56L59 1146q-37-37-37-90.5T59 965L966 59q37-37 90.5-37t90.5 37l125 125q-56 56-56 136t56 136t136 56t136-56l126 125q37 37 37 90.5t-37 90.5z"></path></svg>
 				My Tickets
 			</router-link>

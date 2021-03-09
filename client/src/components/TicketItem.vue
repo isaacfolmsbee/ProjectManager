@@ -1,5 +1,8 @@
 <template>
-<div class="p-1 flex flex-wrap rounded-lg shadow-md bg-gray-light-50">
+<router-link 
+	class="p-1 flex flex-wrap rounded-lg shadow-md bg-gray-light-50" 
+	:to="{path:'/ticket', query:{id: ticket._id}}">
+	
 	<span class="text-gray-dark-600 w-full">{{ ticket.description }}</span>
 	<div class="mt-1 flex w-full items-center">
 		<span 
@@ -12,7 +15,7 @@
 			:class="[{'bg-green-500': (ticket.severity  === 'low')}, 
 						{'bg-orange-500': (ticket.severity  === 'medium')}, 
 						{'bg-red-600': (ticket.severity  === 'high')}, 
-						{'bg-red-700': (ticket.severity  === 'severe')},]" >
+						{'bg-red-700': (ticket.severity  === 'critical')},]" >
 			{{ ticket.severity.charAt(0).toUpperCase() + ticket.severity.slice(1) }}
 		</span>
 		<span class="mr-1 ml-auto text-gray-dark-300 text-xs">{{ dateFormatted }}</span>
@@ -36,7 +39,7 @@
 	<div class="w-full mt-1 xl:mt-0 xl:text-lg">
 		{{ ticket.description }}
 	</div> -->
-</div>
+</router-link>
 </template>
 
 <script lang="ts">
