@@ -178,9 +178,9 @@ export default Vue.extend({
 	methods: {
 		async changeProject(project: { _id: string; name: string; role: string}) {
 			this.$emit('changeProject', project);
-			this.tickets = await getTickets(this.selectedProject._id, this.jwt);
+			this.tickets = await getTickets(project._id, this.jwt);
 			this.filteredTickets = this.tickets;
-			this.unassignedTickets = await getUnassignedTickets(this.selectedProject._id,  this.jwt);
+			this.unassignedTickets = await getUnassignedTickets(project._id,  this.jwt);
 			this.filteredUnassignedTickets = this.unassignedTickets;
 			this.inProgressTickets = this.filterTicketsStatus('in progress');
 			this.closedTickets = this.filterTicketsStatus('closed');
