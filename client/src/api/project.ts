@@ -115,3 +115,13 @@ export async function editProjectRole(projectID: string, roleID: string, name: s
 
 	return response.data;
 }
+
+export async function deleteProjectRole(projectID: string, roleID: string, jwt: string) {
+	const response = await axios.delete(`${url}${projectID}/role/${roleID}`, {
+		headers: {
+			Authorization: 'Bearer ' + jwt,
+		},
+	});
+
+	return response.data;
+}
