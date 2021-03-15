@@ -19,13 +19,13 @@
 		</router-link>
 	</span>
 	<span @click="$emit('closeModal')" class="mb-7 mr-auto">
-		<router-link to="/roles" class="router-link">
+		<router-link to="/manage-roles" class="router-link">
 			<svg class="router-svg" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1s1-4 5-4s5 3 5 4s-1 1-1 1H7zm4-6a3 3 0 1 0 0-6a3 3 0 0 0 0 6z"></path><path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"></path><path d="M4.5 8a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5z"></path></svg>
 			Manage Roles
 		</router-link>
 	</span>
 	<span @click="$emit('closeModal')" class="mb-7 mr-auto">
-		<router-link to="/projects" class="router-link">
+		<router-link to="/manage-projects" class="router-link">
 		<svg class="router-svg" viewBox="0 0 256 256"><path d="M230.91 171.97a8 8 0 0 1-2.879 10.94l-96 56a8 8 0 0 1-8.062 0l-96-56a8 8 0 0 1 8.062-13.82L128 222.738l91.969-53.648a8 8 0 0 1 10.941 2.88zm-10.941-50.88L128 174.738L36.031 121.09a8 8 0 0 0-8.062 13.82l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0-8.062-13.82zm-192-34.18l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0 0-13.82l-96-56a8 8 0 0 0-8.062 0l-96 56a8 8 0 0 0 0 13.82z"></path></svg>
 			Manage Projects
 		</router-link>

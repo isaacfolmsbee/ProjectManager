@@ -23,6 +23,15 @@ const routes: Array<RouteConfig> = [
 		},
 	},
 	{
+		path: '/manage-roles',
+		name: 'RolesManage',
+		component: () => import('../views/RolesManage.vue'),
+		meta: {
+			requiresAuth: true,
+			isUser: true,
+		},
+	},
+	{
 		path: '/usertickets',
 		name: 'UserTickets',
 		component: () => import('../views/UserTickets.vue'),
