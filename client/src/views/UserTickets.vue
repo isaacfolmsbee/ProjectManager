@@ -5,25 +5,25 @@
 		class="fixed z-20 xl:-ml-60 top-0 bg-gray-dark-900 bg-opacity-25 w-screen h-screen flex">
 		
 		<div 
-			class="sm:mx-auto sm:my-auto w-screen sm:w-96 h-screen sm:h-auto bg-primary-800 flex flex-col px-2 sm:rounded-2xl" >
+			class="sm:mx-auto sm:my-auto w-screen sm:w-96 h-screen sm:h-auto bg-gray-light-100 flex flex-col px-2 sm:rounded-2xl" >
 
-			<svg @click="isPostTicketActive = false" class="sm:hidden h-10 w-10 ml-auto mt-2 text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
+			<svg @click="isPostTicketActive = false" class="sm:hidden h-10 w-10 ml-auto mt-2 text-gray-dark-600 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
 			<div class="mt-10 sm:mt-2 flex items-center">
-				<h2 class="text-gray-light-50 text-xl font-bold">Post New Ticket</h2>
-				<svg @click="isPostTicketActive = false" class="hidden sm:inline-block h-10 w-10 ml-auto text-gray-light-50 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
+				<h2 class="text-gray-dark-600 text-xl font-bold">Post New Ticket</h2>
+				<svg @click="isPostTicketActive = false" class="hidden sm:inline-block h-10 w-10 ml-auto text-gray-dark-600 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
 			</div>
 			<div class="mt-2 flex">
 				<input 
 					type="text"
 					v-model="ticket.title"
 					placeholder="Title..."
-					class="rounded-lg bg-gray-light-100 h-9 pl-1 flex-grow">
+					class="rounded-lg bg-gray-light-300 h-9 pl-1 flex-grow">
 				<input 
 					type="file"
 					@change="onFileSelected"
 					ref="fileInput"
 					class="hidden">
-				<button @click="triggerImageInput()" class="px-2 py-1 bg-primary-300 text-gray-light-50 rounded-lg ml-2">{{ attachFileLabel }}</button>
+				<button @click="triggerImageInput()" class="px-2 py-1 bg-primary-800 text-gray-light-50 rounded-lg ml-2">{{ attachFileLabel }}</button>
 			</div>
 			<div class="flex mt-2">
 				<SelectorInput 
@@ -37,10 +37,10 @@
 					:options="severityOptions"
 					class="w-1/2 ml-1" />
 			</div>
-			<textarea v-model="ticket.description" class="mt-2 resize-none h-20 pl-1 rounded-lg" placeholder="Description..."></textarea>
+			<textarea v-model="ticket.description" class="bg-gray-light-300 mt-2 resize-none h-20 pl-1 rounded-lg" placeholder="Description..."></textarea>
 			<button
 				@click="submitTicket()"
-				class="mt-2 bg-primary-300 px-2 py-1 rounded-lg text-gray-light-50 mb-2" >Post Ticket to {{ selectedProject.name }}</button>
+				class="mt-2 bg-primary-800 px-2 py-1 rounded-lg text-gray-light-50 mb-2" >Post Ticket to {{ selectedProject.name }}</button>
 		</div>
 	</div>
 	

@@ -47,7 +47,7 @@
 				</p>
 			</div>
 		</div>
-		<div class="md:w-1/2 bg-gray-light-100 rounded-lg shadow-md flex flex-col my-2 p-1.5 pt-0.5 mx-2.5 md:ml-1.5">
+		<div class="md:w-1/2 bg-gray-light-100 rounded-lg shadow-md flex flex-col mt-2 p-1.5 pt-0.5 mx-2.5 md:ml-1.5">
 			<div>
 				<span class="text-xs text-gray-dark-300">
 					Select Role to Edit

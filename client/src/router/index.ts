@@ -32,6 +32,15 @@ const routes: Array<RouteConfig> = [
 		},
 	},
 	{
+		path: '/manage-projects',
+		name: 'ProjectsManage',
+		component: () => import('../views/ProjectsManage.vue'),
+		meta: {
+			requiresAuth: true,
+			isUser: true,
+		},
+	},
+	{
 		path: '/usertickets',
 		name: 'UserTickets',
 		component: () => import('../views/UserTickets.vue'),
