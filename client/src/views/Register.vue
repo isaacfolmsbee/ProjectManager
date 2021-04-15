@@ -23,7 +23,7 @@
 		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="password" 
 		placeholder="Confirm Password..."
-		v-model="password" >
+		v-model="confirmPassword" >
 	<button 
 		class="mt-3 py-1.5 px-6 bg-primary-800 rounded-lg shadow-md text-2xl xl:text-3xl focus:outline-none text-gray-light-50 transition-colors duration-300 focus:bg-primary-600 hover:bg-primary-600"
 		@click="register()" >Register</button>
