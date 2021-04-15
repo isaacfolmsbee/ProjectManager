@@ -42,7 +42,7 @@ export default Vue.extend({
 				_id: '',
 				JWT: '',
 				username: '',
-				projects: [],
+				projects: [] || undefined,
 				hasUnreadNotification: false,
 			},
 		}
@@ -60,15 +60,15 @@ export default Vue.extend({
 	},
 	created() {
 		const userData = sessionStorage.getItem('userdata');
-
 		if (userData) {
 			this.userData = JSON.parse(userData);
-
-			this.selectedProject = {
-				_id: this.userData.projects[0]._id,
-				name: this.userData.projects[0].name,
-				role: this.userData.projects[0].role,
-			};
+			if (this.userData.projects[0]) {
+				this.selectedProject = {
+					_id: this.userData.projects[0]._id,
+					name: this.userData.projects[0].name,
+					role: this.userData.projects[0].role,
+				};
+			}
 		}
 	},
 	methods: {
@@ -80,11 +80,13 @@ export default Vue.extend({
 			hasUnreadNotification: boolean;
 		}) {
 			this.userData = userdata;
-			this.selectedProject = {
-				_id: this.userData.projects[0]._id,
-				name: this.userData.projects[0].name,
-				role: this.userData.projects[0].role,
-			};
+			if (this.userData.projects[0]) {
+				this.selectedProject = {
+					_id: this.userData.projects[0]._id,
+					name: this.userData.projects[0].name,
+					role: this.userData.projects[0].role,
+				};
+			}
 			sessionStorage.setItem('userdata', JSON.stringify(userdata));
 			this.$router.push('/');
 		},

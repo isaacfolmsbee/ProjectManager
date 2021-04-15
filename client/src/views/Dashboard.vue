@@ -1,6 +1,8 @@
 <template>
 <div class="w-full flex flex-col">
-	<div class="xl:hidden md:flex py-1.5 px-2.5 border-b border-gray-light-300">
+	<div 
+		v-if="projectList.length < 0"
+		class="xl:hidden md:flex py-1.5 px-2.5 border-b border-gray-light-300">
 		<div class="flex flex-col md:w-1/2">
 			<div class="flex justify-between">
 				<span class="text-gray-dark-400">Select Project</span>
@@ -22,7 +24,7 @@
 				@click="changeTicketFilter('open')">
 				Open
 			</span>
-			<div v-if="isDesktop" class="mt-2">
+			<div v-if="isDesktop && openTickets" class="mt-2">
 				<TicketItem 
 					v-for="ticket in openTickets" 
 					:key="ticket._id" 
@@ -37,7 +39,7 @@
 				@click="changeTicketFilter('in progress')">
 				In Progress
 			</span>
-			<div v-if="isDesktop" class="mt-2">
+			<div v-if="isDesktop && inProgressTickets" class="mt-2">
 				<TicketItem 
 					v-for="ticket in inProgressTickets" 
 					:key="ticket._id" 
@@ -52,7 +54,7 @@
 				@click="changeTicketFilter('need info')">
 				Need Info
 			</span>
-			<div v-if="isDesktop" class="mt-2">
+			<div v-if="isDesktop && needInfoTickets" class="mt-2">
 				<TicketItem 
 					v-for="ticket in needInfoTickets" 
 					:key="ticket._id" 
@@ -61,7 +63,7 @@
 			</div>
 		</div>
 	</div>
-	<div v-if="!isDesktop">
+	<div v-if="!isDesktop && selectedTickets">
 		<TicketItem 
 			v-for="ticket in selectedTickets" 
 			:key="ticket._id" 
@@ -108,76 +110,11 @@ export default Vue.extend({
 		return {
 			isDesktop: window.innerWidth >= 1024 ? true: false,
 			selectedTicketStatus: 'open',
-			tickets: [{
-				_id: '',
-				comments: [],
-				createdBy: '',
-				dateCreated: '',
-				description: '',
-				history: [],
-				project: '',
-				severity: '',
-				status: '',
-				title: '',
-				type: '',
-				usersAssigned: [],
-			}],
-			openTickets: [{
-				_id: '',
-				comments: [],
-				createdBy: '',
-				dateCreated: '',
-				description: '',
-				history: [],
-				project: '',
-				severity: '',
-				status: '',
-				title: '',
-				type: '',
-				usersAssigned: [],
-			}],
-			inProgressTickets: [{
-				_id: '',
-				comments: [],
-				createdBy: '',
-				dateCreated: '',
-				description: '',
-				history: [],
-				project: '',
-				severity: '',
-				status: '',
-				title: '',
-				type: '',
-				usersAssigned: [],
-			}],
-			needInfoTickets: [{
-				_id: '',
-				comments: [],
-				createdBy: '',
-				dateCreated: '',
-				description: '',
-				history: [],
-				project: '',
-				severity: '',
-				status: '',
-				title: '',
-				type: '',
-				usersAssigned: [],
-			}],
-			selectedTickets: [{
-				_id: '',
-				comments: [],
-				createdBy: '',
-				dateCreated: '',
-				description: '',
-				history: [],
-				project: '',
-				severity: '',
-				status: '',
-				title: '',
-				type: '',
-				usersAssigned: [],
-			}],
+			tickets: [],
+			openTickets: [],
+			inProgressTickets: [],
+			needInfoTickets: [],
+			selectedTickets: [],
 		}
 	},
 	async created() {
