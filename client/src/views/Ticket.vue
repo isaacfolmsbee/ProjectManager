@@ -29,8 +29,17 @@
 			</div>
 			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
 				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Ticket Comments</h2>
-				<textarea v-model="comment" class="pl-1.5 mt-2 bg-gray-light-300 h-24 rounded-lg text-gray-dark-600 resize-none"></textarea>
-				<button @click="postComment()" class="text-gray-light-100 bg-primary-800 mr-auto px-2 py-1 rounded-lg my-2">Post Comment</button>
+				<textarea 
+					v-if="selectedProject.permissions.includes('comment')"
+					v-model="comment" 
+					class="pl-1.5 mt-2 bg-gray-light-300 h-24 rounded-lg text-gray-dark-600 resize-none">
+				</textarea>
+				<button 
+					v-if="selectedProject.permissions.includes('comment')"
+					@click="postComment()" 
+					class="text-gray-light-100 bg-primary-800 mr-auto px-2 py-1 rounded-lg my-2">
+						Post Comment
+				</button>
 				<div v-for="comment in ticket.comments"
 					:key="comment.dateCreated"
 					class="pb-2 border-b last:border-b-0 border-gray-light-300">
@@ -85,7 +94,9 @@
 			</div>
 		</div>
 		<div class="md:w-1/2 flex flex-col mx-2.5 md:ml-1.5">
-			<div class="mt-2 md:mt-0 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+			<div 
+				v-if="selectedProject.permissions.includes('editTickets')"
+				class="mt-2 md:mt-0 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
 				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Edit Ticket</h2>
 				<div class="w-full flex">
 					<div class="w-1/2 mr-1">
