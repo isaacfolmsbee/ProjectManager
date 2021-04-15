@@ -34,6 +34,7 @@ export default Vue.extend({
 				_id: '';
 				name: '';
 				role: '';
+				permissions: string[];
 			}>>,
 			required: true,
 		},
@@ -42,6 +43,7 @@ export default Vue.extend({
 				_id: '';
 				name: '';
 				role: '';
+				permissions: string[];
 			}>,
 			required: true,
 		}
@@ -52,7 +54,7 @@ export default Vue.extend({
 		}
 	},
 	methods: {
-		selectProject(project: {_id: string; name: string; role: string}) {
+		selectProject(project: {_id: string; name: string; role: string; permissions: Array<string>}) {
 			this.isOpen = false;
 			this.$emit('input', project);
 		}

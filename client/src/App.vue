@@ -37,6 +37,7 @@ export default Vue.extend({
 				_id: '',
 				name: '',
 				role: '',
+				permissions: [],
 			},
 			userData: {
 				_id: '',
@@ -67,6 +68,7 @@ export default Vue.extend({
 					_id: this.userData.projects[0]._id,
 					name: this.userData.projects[0].name,
 					role: this.userData.projects[0].role,
+					permissions: this.userData.projects[0].permissions,
 				};
 			}
 		}
@@ -85,6 +87,7 @@ export default Vue.extend({
 					_id: this.userData.projects[0]._id,
 					name: this.userData.projects[0].name,
 					role: this.userData.projects[0].role,
+					permissions: this.userData.projects[0].permissions,
 				};
 			}
 			sessionStorage.setItem('userdata', JSON.stringify(userdata));
@@ -102,11 +105,12 @@ export default Vue.extend({
 				_id: '',
 				name: '',
 				role: '',
+				permissions: [],
 			};
 			sessionStorage.removeItem('userdata');
 			this.$router.push('/login');
 		},
-		changeSelectedProject(project: { _id: string; name: string; role: string}) {
+		changeSelectedProject(project: { _id: string; name: string; role: string; permissions: Array<string>}) {
 			this.selectedProject = project;
 		}
 	}

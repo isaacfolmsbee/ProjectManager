@@ -122,7 +122,9 @@
 						Update Ticket
 				</button>
 			</div>
-			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+			<div 
+				v-if="selectedProject.permissions.includes('manageTickets')"
+				class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
 				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Assign Users to Ticket</h2>
 				<span class="mt-2 text-sm text-gray-dark-200">Select One or More Users</span>
 				<div 
@@ -145,7 +147,9 @@
 						Assign to Ticket
 				</button>
 			</div>
-			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+			<div 
+				v-if="selectedProject.permissions.includes('manageTickets')"
+				class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
 				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Remove Users from Ticket</h2>
 				<span class="mt-2 text-sm text-gray-dark-200">Select One or More Users</span>
 				<div 
@@ -174,7 +178,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 import SelectorInput from '../components/SelectorInput.vue';
 import { getTicket, 
 	postComment, 
@@ -192,6 +196,14 @@ export default Vue.extend({
 		jwt: {
 			type: String,
 			required: true,
+		},
+		selectedProject: {
+			type: Object as PropType<{
+				_id: '';
+				name: '';
+				role: '';
+				permissions: string[];
+			}>,
 		},
 	},
 	data() {

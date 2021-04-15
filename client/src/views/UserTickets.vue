@@ -58,11 +58,21 @@
 				@input="changeProject($event)"
 				class="my-1" />
 		</div>
-		<button @click="isPostTicketActive = true" class="hidden md:inline-block bg-gray-light-100 my-auto mx-auto py-0.5 md:py-1 px-1.5 md:px-2.5 rounded-lg text-xl md:text-2xl text-primary-800">Post Ticket</button>
+		<button 
+			v-if="selectedProject.permissions.includes('createTickets')"
+			@click="isPostTicketActive = true" 
+			class="hidden md:inline-block bg-gray-light-100 my-auto mx-auto py-0.5 md:py-1 px-1.5 md:px-2.5 rounded-lg text-xl md:text-2xl text-primary-800">
+				Post Ticket
+		</button>
 	</div>
 	<div class="xl:flex xl:mt-3 xl:mb-2">
-		<button @click="isPostTicketActive = true" class="md:hidden xl:inline-block bg-gray-light-100 py-0.5 xl:py-1 px-1.5 xl:px-2.5 rounded-lg text-xl xl:text-2xl ml-2 mb-2 xl:mb-0 mr-auto text-primary-800">Post Ticket</button>
-		<div class="rounded-lg bg-gray-light-100 shadow-md mx-2 p-1 flex">
+		<button 
+			v-if="selectedProject.permissions.includes('createTickets')"
+			@click="isPostTicketActive = true" 
+			class="md:hidden xl:inline-block bg-gray-light-100 py-0.5 xl:py-1 px-1.5 xl:px-2.5 rounded-lg text-xl xl:text-2xl ml-2 mb-2 xl:mb-0 text-primary-800">
+				Post Ticket
+		</button>
+		<div class="rounded-lg bg-gray-light-100 shadow-md mx-2 xl:ml-auto p-1 flex">
 			<input class="flex-grow mr-1.5 bg-gray-light-100 border-b border-gray-dark-700 rounded-none" v-model="query" type="text" placeholder="Query...">
 			<button @click="filterTickets()" class="font-bold bg-primary-800 text-gray-light-50 py-1 px-2 rounded-lg">Search</button>
 		</div>
@@ -149,6 +159,7 @@ export default Vue.extend({
 				_id: '';
 				name: '';
 				role: '';
+				permissions: string[];
 			}>,
 		},
 		projectList: {
@@ -156,6 +167,7 @@ export default Vue.extend({
 				_id: '';
 				name: '';
 				role: '';
+				permissions: string[];
 			}>>,
 			required: true,
 		},
@@ -198,6 +210,7 @@ export default Vue.extend({
 		this.inProgressTickets = this.filterTicketsStatus('in progress');
 		this.needInfoTickets = this.filterTicketsStatus('need info');
 		this.selectedTickets = this.openTickets;
+		console.log(this.selectedProject.permissions.includes('createTickets'));
 	},
 	mounted() {
 		window.onresize = () => {

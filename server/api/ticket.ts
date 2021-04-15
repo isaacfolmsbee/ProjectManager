@@ -171,21 +171,12 @@ router.post(
 router.get('/project/:projectID', auth(''), async (req: Request, res: Response) => {
 	const tickets: Collection = await dbHandler('tickets');
 	const users: Collection = await dbHandler('users');
-	let response;
-	if (req.user.isAdmin || req.permissions.includes('assignTicket')) {
-		response = await tickets
-			.find({
-				project: new ObjectID(req.params.projectID),
-			})
-			.toArray();
-	} else {
-		response = await tickets
-			.find({
-				project: new ObjectID(req.params.projectID),
-				usersAssigned: { $in: [new ObjectID(req.user._id)] },
-			})
-			.toArray();
-	}
+
+	let response = await tickets
+		.find({
+			project: new ObjectID(req.params.projectID),
+		})
+		.toArray();
 
 	for (const ticket of response) {
 		let query = await users.findOne(
@@ -320,7 +311,7 @@ router.get(
 
 router.get(
 	'/assigned/:projectID',
-	auth('manageTickets'),
+	auth('editTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
