@@ -17,13 +17,20 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 
 	const projects: Collection = await dbHandler('projects');
 
+	const roleID = new ObjectID();
+
 	await projects.insertOne({
 		name: req.body.name,
 		description: req.body.description,
-		assignedUsers: [],
+		assignedUsers: [
+			{
+				_id: new ObjectID(req.user._id),
+				role: roleID,
+			},
+		],
 		roles: [
 			{
-				_id: new ObjectID(),
+				_id: roleID,
 				name: 'Project Admin',
 				permissions: [
 					'editProject',

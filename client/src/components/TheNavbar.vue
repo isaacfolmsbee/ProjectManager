@@ -39,16 +39,21 @@
 		</div>
 	</div>
 	<div class="fixed top-0 hidden xl:flex w-screen h-20 pl-60 bg-gray-light-100 shadow-md">
-		<div class="ml-1.5 mt-1.5 w-52 flex flex-col">
-			<span class="text-xs text-gray-dark-300">Select Project</span>
+		<div 
+			v-if="projectList.length < 0"
+			class="ml-1.5 mt-1.5 w-52 flex flex-col">
+			<span 
+				class="text-xs text-gray-dark-300">Select Project</span>
 			<ProjectSelector 
 				:projectList="projectList"
 				:selectedProject="selectedProject" 
 				@input="$emit('changeProject', $event)"
 				class="my-1" />
 		</div>
-		<span class="text-gray-dark-300 text-2xl flex-grow text-center my-auto">Project Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
-		<div @click="toggleNotifications()" class="relative mr-1.5 flex items-center text-gray-dark-400 cursor-pointer">
+		<span 
+			v-if="projectList.length < 0"
+			class="text-gray-dark-300 text-2xl flex-grow text-center my-auto">Project Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
+		<div @click="toggleNotifications()" class="ml-auto relative mr-1.5 flex items-center text-gray-dark-400 cursor-pointer">
 			<div :class="[doNotificationPing ? 'flex': 'hidden']" class="absolute right-2 top-5 items-center justify-center">
 				<span class="animate-ping opacity-75 absolute w-2 h-2 rounded-full bg-gray-dark-400"></span>
 				<span class="absolute w-1.5 h-1.5 rounded-full bg-gray-dark-400"></span>

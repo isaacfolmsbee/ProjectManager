@@ -16,7 +16,7 @@
 				type="mt-2 text"
 				v-model="projectName"
 				placeholder="Name..."
-				class="rounded-lg bg-gray-light-300 h-9 pl-1 flex-grow">
+				class="rounded-lg bg-gray-light-300 max-h-8 pl-1 flex-grow">
 			<textarea v-model="projectDescription" class="bg-gray-light-300 mt-2 resize-none h-20 pl-1 rounded-lg" placeholder="Description..."></textarea>
 			<button
 				@click="submitProject()"
@@ -26,8 +26,9 @@
 
 	<div class="xl:hidden md:flex py-1.5 px-2.5 border-b border-gray-light-300">
 		<div 
-			v-if="projectList.length < 0"
+			v-if="projectList.length > 0"
 			class="flex flex-col md:w-1/2">
+
 			<div class="flex justify-between">
 				<span class="text-gray-dark-400">Select Project</span>
 				<span class="text-gray-dark-300">Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
@@ -38,7 +39,11 @@
 				@input="changeProject($event)"
 				class="my-1" />
 		</div>
-		<button class="hidden md:inline-block bg-gray-light-100 my-auto mx-auto py-0.5 md:py-1 px-1.5 md:px-2.5 rounded-lg text-xl md:text-2xl text-primary-800">Create Project</button>
+		<button 
+			@click="isPostProjectActive = true" 
+			class="hidden md:inline-block bg-gray-light-100 my-auto mx-auto py-0.5 md:py-1 px-1.5 md:px-2.5 rounded-lg text-xl md:text-2xl text-primary-800">
+				Create Project
+		</button>
 	</div>
 	<button @click="isPostProjectActive = true" class="md:hidden xl:inline-block mt-2 bg-gray-light-100 py-0.5 xl:py-1 px-1.5 xl:px-2.5 rounded-lg text-xl xl:text-2xl ml-2 mb-2 xl:mb-0 mr-auto text-primary-800">Create Project</button>
 	<div class="w-full flex flex-col md:flex-row px-2.5">

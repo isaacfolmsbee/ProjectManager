@@ -45,7 +45,7 @@
 	</div>
 	
 	<div 
-		v-if="projectList.length < 0"
+		v-if="projectList.length > 0"
 		class="xl:hidden md:flex py-1.5 px-2.5 border-b border-gray-light-300">
 		<div class="flex flex-col md:w-1/2">
 			<div class="flex justify-between">
