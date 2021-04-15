@@ -138,33 +138,43 @@ export default Vue.extend({
 			permissions: [
 				{
 					title: "Edit Project",
-					description: "Modify a project's data",
+					description: "Modify a project's title and description",
 					permission: "editProject"
 				},
 				{
-					title: "Edit Project Roles",
+					title: "Manage Project Roles",
 					description: "Edit and create project roles",
-					permission: "editProjectRoles"
+					permission: "manageProjectRoles"
 				},
 				{
-					title: "Assign Tickets",
-					description: "Assign tickets to users that are eligible",
-					permission: "assignTicket"
+					title: "Manage Project Users",
+					description: "Assign and modify users in project",
+					permission: "manageProjectUsers"
 				},
 				{
-					title: "Edit Project Users",
-					description: "Assign users to the project and modify their roles",
-					permission: "editProjectUser"
+					title: "Manage Tickets",
+					description: "Assign or remove users from tickets",
+					permission: "manageTickets"
 				},
 				{
 					title: "Create Tickets",
 					description: "Ability to create tickets",
-					permission: "createTicket"
+					permission: "createTickets"
 				},
 				{
 					title: "Edit Tickets",
 					description: "Edit ticket information (severity, status, type)",
-					permission: "editTicket"
+					permission: "editTickets"
+				},
+				{
+					title: "Comment",
+					description: "Add comments to tickets you're assigned",
+					permission: "comment"
+				},
+				{
+					title: "Statistics",
+					description: "Gain access to the statistics API",
+					permission: "statistics"
 				}
 			],
 			newRole: {

@@ -51,7 +51,7 @@ function checkFileType(
 	}
 }
 
-router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
+router.post('/', auth('createTickets'), async (req: Request, res: Response) => {
 	//Validate the request
 	const { error } = Joi.object({
 		project: Joi.string().required().hex().min(24).max(24),
@@ -144,7 +144,7 @@ router.post('/', auth('createTicket'), async (req: Request, res: Response) => {
 
 router.post(
 	'/:ticketID/attachment',
-	auth('createTicket'),
+	auth('createTickets'),
 	async (req: Request, res: Response) => {
 		upload(req, res, async (err: any) => {
 			if (err) {
@@ -257,7 +257,7 @@ router.get(
 
 router.get(
 	'/eligibleusers/:ticketID',
-	auth(''),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const projects: Collection = await dbHandler('projects');
@@ -291,7 +291,7 @@ router.get(
 						new ObjectID(eligibleUsers[i].role)
 					)
 				) {
-					isEligible = project.roles[j].permissions.includes('editTicket')
+					isEligible = project.roles[j].permissions.includes('editTickets')
 						? true
 						: false;
 				}
@@ -320,7 +320,7 @@ router.get(
 
 router.get(
 	'/assigned/:projectID',
-	auth(''),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
@@ -351,7 +351,7 @@ router.get(
 
 router.get(
 	'/unassigned/:projectID',
-	auth('assignTicket'),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
@@ -382,7 +382,7 @@ router.get(
 
 router.get(
 	'/active/:projectID',
-	auth('assignTicket'),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
@@ -413,7 +413,7 @@ router.get(
 
 router.get(
 	'/closed/:projectID',
-	auth('assignTicket'),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
@@ -444,7 +444,7 @@ router.get(
 
 router.post(
 	'/:ticketID/user/:userID',
-	auth('assignTicket'),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
@@ -484,7 +484,7 @@ router.post(
 
 router.delete(
 	'/:ticketID/user/:userID',
-	auth('assignTicket'),
+	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
 
@@ -558,7 +558,7 @@ router.post(
 
 router.put(
 	'/:ticketID',
-	auth('editTicket'),
+	auth('editTickets'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({

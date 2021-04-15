@@ -25,7 +25,16 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 			{
 				_id: new ObjectID(),
 				name: 'Project Admin',
-				permissions: ['projectAdmin'],
+				permissions: [
+					'editProject',
+					'manageProjectRoles',
+					'manageProjectUsers',
+					'manageTickets',
+					'createTickets',
+					'editTickets',
+					'comment',
+					'statistics'
+				],
 			},
 		],
 	});
@@ -35,7 +44,7 @@ router.post('/', auth('admin'), async (req: Request, res: Response) => {
 
 router.get(
 	'/:projectID/unassigned',
-	auth('editProjectUser'),
+	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
 		const users: Collection = await dbHandler('users');
@@ -78,7 +87,7 @@ router.get(
 
 router.get(
 	'/:projectID/assigned',
-	auth('editProjectUser'),
+	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
 		const users: Collection = await dbHandler('users');
@@ -113,7 +122,7 @@ router.get(
 
 router.post(
 	'/:projectID/user',
-	auth('editProjectUser'),
+	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
@@ -168,7 +177,7 @@ router.post(
 
 router.put(
 	'/:projectID/user/:userID',
-	auth('editProjectUser'),
+	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
@@ -204,7 +213,7 @@ router.put(
 
 router.delete(
 	'/:projectID/user/:userID',
-	auth('editProjectUser'),
+	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
 
@@ -225,7 +234,7 @@ router.delete(
 
 router.post(
 	'/:projectID/role',
-	auth('editProjectRoles'),
+	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
@@ -259,7 +268,7 @@ router.post(
 
 router.get(
 	'/:projectID/role',
-	auth('editProjectRoles'),
+	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
 
@@ -278,7 +287,7 @@ router.get(
 
 router.put(
 	'/:projectID/role/:roleID',
-	auth('editProjectRoles'),
+	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
 		//Validate the request
 		const { error } = Joi.object({
@@ -313,7 +322,7 @@ router.put(
 
 router.delete(
 	'/:projectID/role/:roleID',
-	auth('editProjectRoles'),
+	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
 		const projects: Collection = await dbHandler('projects');
 

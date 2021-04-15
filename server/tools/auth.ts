@@ -33,11 +33,11 @@ export function auth(permission: string) {
 
 		// Validate their ID params
 		const { error } = Joi.object({
-			projectID: Joi.string().hex().min(24).max(24),
-			userID: Joi.string().hex().min(24).max(24),
-			roleID: Joi.string().hex().min(24).max(24),
-			ticketID: Joi.string().hex().min(24).max(24),
-			notificationID: Joi.string().hex().min(24).max(24),
+			projectID: Joi.string().hex().length(24),
+			userID: Joi.string().hex().length(24),
+			roleID: Joi.string().hex().length(24),
+			ticketID: Joi.string().hex().length(24),
+			notificationID: Joi.string().hex().length(24),
 		}).validate(req.params);
 		if (error) {
 			return res.status(400).send('Invalid ID param');
