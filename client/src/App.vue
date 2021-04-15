@@ -14,6 +14,7 @@
 			@login="login($event)" 
 			@logout="logout()"
 			@changeProject="changeSelectedProject($event)"
+			:isAdmin="userData.isAdmin"
 			:projectList="userData.projects"
 			:selectedProject="selectedProject"
 			:jwt="userData.JWT"
@@ -42,6 +43,7 @@ export default Vue.extend({
 			userData: {
 				_id: '',
 				JWT: '',
+				isAdmin: false,
 				username: '',
 				projects: [] || undefined,
 				hasUnreadNotification: false,
@@ -77,6 +79,7 @@ export default Vue.extend({
 		login(userdata: {
 			_id: string;
 			JWT: string;
+			isAdmin: boolean;
 			username: string;
 			projects: [];
 			hasUnreadNotification: boolean;
@@ -97,6 +100,7 @@ export default Vue.extend({
 			this.userData = {
 				_id: '',
 				JWT: '',
+				isAdmin: false,
 				username: '',
 				projects: [],
 				hasUnreadNotification: false,

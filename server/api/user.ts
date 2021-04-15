@@ -197,6 +197,7 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 	res.status(200).send({
 		_id: req.user._id,
 		JWT: token,
+		isAdmin: req.user.isAdmin,
 		username: req.user.username,
 		projects: projectsList,
 		hasUnreadNotification: (query >= 1),

@@ -40,6 +40,7 @@
 				class="my-1" />
 		</div>
 		<button 
+			v-if="isAdmin"
 			@click="isPostProjectActive = true" 
 			class="hidden md:inline-block bg-gray-light-100 my-auto mx-auto py-0.5 md:py-1 px-1.5 md:px-2.5 rounded-lg text-xl md:text-2xl text-primary-800">
 				Create Project
@@ -141,6 +142,10 @@ export default Vue.extend({
 	props: {
 		jwt: {
 			type: String,
+			required: true,
+		},
+		isAdmin: {
+			type: Boolean,
 			required: true,
 		},
 		selectedProject: {
