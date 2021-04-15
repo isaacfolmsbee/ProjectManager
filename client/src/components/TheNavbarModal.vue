@@ -12,19 +12,19 @@
 			My Tickets
 		</router-link>
 	</span>
-	<span @click="$emit('closeModal')" class="mb-7 mr-auto">
+	<span v-if="selectedProject.views.includes('TicketsManage')" @click="$emit('closeModal')" class="mb-7 mr-auto">
 		<router-link to="/manage-tickets" class="router-link">
 			<svg class="router-svg" viewBox="0 0 20 20"><path d="M20 6.38L18.99 9.2v-.01c-.52-.19-1.03-.16-1.53.08s-.85.62-1.04 1.14s-.16 1.03.07 1.53c.24.5.62.84 1.15 1.03v.01l-1.01 2.82l-15.06-5.38l.99-2.79c.52.19 1.03.16 1.53-.08c.5-.23.84-.61 1.03-1.13s.16-1.03-.08-1.53a1.93 1.93 0 0 0-1.13-1.02L4.93 1zm-4.97 5.69l1.37-3.76c.12-.31.1-.65-.04-.95s-.39-.53-.7-.65L8.14 3.98c-.64-.23-1.37.12-1.6.74L5.17 8.48c-.24.65.1 1.37.74 1.6l7.52 2.74c.14.05.28.08.43.08c.52 0 1-.33 1.17-.83zM7.97 4.45l7.51 2.73c.19.07.34.21.43.39c.08.18.09.38.02.57l-1.37 3.76c-.13.38-.58.59-.96.45L6.09 9.61a.75.75 0 0 1-.45-.96l1.37-3.76c.1-.29.39-.49.7-.49c.09 0 .17.02.26.05zm6.82 12.14c.35.27.75.41 1.2.41H16v3H0v-2.96c.55 0 1.03-.2 1.41-.59c.39-.38.59-.86.59-1.41s-.2-1.02-.59-1.41s-.86-.59-1.41-.59V10h1.05l-.28.8l2.87 1.02c-.51.16-.89.62-.89 1.18v4c0 .69.56 1.25 1.25 1.25h8c.69 0 1.25-.56 1.25-1.25v-1.75l.83.3c.12.43.36.78.71 1.04zM3.25 17v-4c0-.41.34-.75.75-.75h.83l7.92 2.83V17c0 .41-.34.75-.75.75H4c-.41 0-.75-.34-.75-.75z"></path></svg>
 			Manage Tickets
 		</router-link>
 	</span>
-	<span @click="$emit('closeModal')" class="mb-7 mr-auto">
+	<span v-if="selectedProject.views.includes('RolesManage')" @click="$emit('closeModal')" class="mb-7 mr-auto">
 		<router-link to="/manage-roles" class="router-link">
 			<svg class="router-svg" viewBox="0 0 16 16"><path d="M7 14s-1 0-1-1s1-4 5-4s5 3 5 4s-1 1-1 1H7zm4-6a3 3 0 1 0 0-6a3 3 0 0 0 0 6z"></path><path fill-rule="evenodd" d="M5.216 14A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216z"></path><path d="M4.5 8a2.5 2.5 0 1 0 0-5a2.5 2.5 0 0 0 0 5z"></path></svg>
 			Manage Roles
 		</router-link>
 	</span>
-	<span @click="$emit('closeModal')" class="mb-7 mr-auto">
+	<span v-if="selectedProject.views.includes('ProjectsManage')" @click="$emit('closeModal')" class="mb-7 mr-auto">
 		<router-link to="/manage-projects" class="router-link">
 		<svg class="router-svg" viewBox="0 0 256 256"><path d="M230.91 171.97a8 8 0 0 1-2.879 10.94l-96 56a8 8 0 0 1-8.062 0l-96-56a8 8 0 0 1 8.062-13.82L128 222.738l91.969-53.648a8 8 0 0 1 10.941 2.88zm-10.941-50.88L128 174.738L36.031 121.09a8 8 0 0 0-8.062 13.82l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0-8.062-13.82zm-192-34.18l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0 0-13.82l-96-56a8 8 0 0 0-8.062 0l-96 56a8 8 0 0 0 0 13.82z"></path></svg>
 			Manage Projects
@@ -34,10 +34,20 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue';
+import Vue, { PropType } from 'vue';
 
 export default Vue.extend({
 	name: "TheNavbarModal",
+	props: {
+		selectedProject: {
+			type: Object as PropType<{
+				_id: '';
+				name: '';
+				role: '';
+				views: string[];
+			}>,
+		},
+	}
 })
 </script>
 

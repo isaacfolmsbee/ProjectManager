@@ -176,10 +176,23 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 			}
 		);
 
+		let views = [];
+
+		if (project.permissions.includes('manageTickets')) {
+			views.push('TicketsManage');
+		}
+		if (project.permissions.includes('manageProjectRoles')) {
+			views.push('RolesManage');
+		}
+		if (project.permissions.includes('manageProjectUsers')) {
+			views.push('ProjectsManage');
+		}
+
 		projectsList.push({
 			_id: project._id,
 			name: query.name,
 			role: project.role,
+			views,
 			permissions: project.permissions,
 		});
 	}
