@@ -1,162 +1,172 @@
 <template>
-<div class="w-screen flex flex-col">
-	<div v-if="ticket" class="px-1.5 py-1 flex flex-wrap border-b border-gray-light-300">
-		<div class="w-full flex">
-			<div class="leading-none">
+<div class="w-full flex flex-col">
+	<div v-if="ticket" class="w-full flex flex-col md:flex-row mt-2">
+		<div class="md:w-1/2 flex flex-col mx-2.5 md:mr-1.5">
+			<div class="bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
 				<div>
-					<span class="mr-1 px-1 py-0.5 bg-gray-light-400 text-gray-dark-400 text-xs">{{ ticket.type }}</span>
-					<span class="px-1 py-0.5 bg-gray-light-400 text-gray-dark-400 text-xs">{{ ticket.severity }}</span>
+					<span 
+						class="mr-1 py-0.5 px-1.5 rounded-lg text-sm text-gray-light-50"
+						:class="[(ticket.type === 'bug') ? 'bg-red-600': 'bg-blue-500']" >
+						{{ ticket.type.charAt(0).toUpperCase() + ticket.type.slice(1) }}
+					</span>
+					<span 
+						class="py-0.5 px-1.5 rounded-lg text-sm text-gray-light-50"
+						:class="[{'bg-green-500': (ticket.severity  === 'low')}, 
+									{'bg-orange-500': (ticket.severity  === 'medium')}, 
+									{'bg-red-600': (ticket.severity  === 'high')}, 
+									{'bg-red-700': (ticket.severity  === 'critical')},]" >
+						{{ ticket.severity.charAt(0).toUpperCase() + ticket.severity.slice(1) }}
+					</span>
 				</div>
-				<h1 class="text-xl font-bold text-gray-dark-400 mt-1">{{ ticket.title }}</h1>
-				<span class="text-xs text-gray-dark-200">{{ ticket.createdBy }} / {{ dateFormatted }}</span>
-			</div>
-			<div class="ml-auto mr-1 leading-none">
-				<span 
-					v-if="ticket.history.length >= 1"
-					@click="isHistoryOpen = true"
-					class="text-gray-dark-900 text-xs cursor-pointer" >
-					
-					Ticket History
-				</span>
+				<h1 class="text-lg">{{ ticket.title }}</h1>
+				<span class="text-sm text-gray-dark-300">{{ ticket.createdBy }} / {{ dateFormatted }}</span>
+				<p>{{ ticket.description }}</p>
 				<a 
-					v-if="ticket.attachment" 
-					:href="'/uploads/' + ticket.attachment"
-					target="_blank" rel="noopener noreferrer" >
-					<svg class="ml-auto mt-1 h-9 w-9 fill-current text-gray-dark-400" viewBox="0 0 384 512"><path d="M369.9 97.9L286 14C277 5 264.8-.1 252.1-.1H48C21.5 0 0 21.5 0 48v416c0 26.5 21.5 48 48 48h288c26.5 0 48-21.5 48-48V131.9c0-12.7-5.1-25-14.1-34zM332.1 128H256V51.9l76.1 76.1zM48 464V48h160v104c0 13.3 10.7 24 24 24h104v288H48zm32-48h224V288l-23.5-23.5c-4.7-4.7-12.3-4.7-17 0L176 352l-39.5-39.5c-4.7-4.7-12.3-4.7-17 0L80 352v64zm48-240c-26.5 0-48 21.5-48 48s21.5 48 48 48s48-21.5 48-48s-21.5-48-48-48z"></path></svg>
+					v-if="ticket.attachment" :href="'/uploads/' + ticket.attachment"
+					class="mt-2">
+					<img class="max-h-80 rounded-lg" v-if="ticket.attachment" :src="'/uploads/' + ticket.attachment" alt="image attached to ticket">
 				</a>
 			</div>
-		</div>
-		<div class="text-gray-dark-400 w-full my-1">
-			{{ ticket.description }}
-		</div>
-	</div>
-	<div v-if="ticket" class="px-1.5 flex flex-col pb-2 border-b border-gray-light-300">
-		<h2 class="my-2 font-bold text-xl text-gray-dark-400">Manage Ticket</h2>
-		<div class="w-full flex">
-			<SelectorInput 
-				v-model="status"
-				:name="'status'" 
-				:options="statusOptions"
-				:startingValue="status"
-				class="w-1/2 mr-1" />
-			<SelectorInput 
-				v-model="severity"
-				:name="'severity'" 
-				:options="severityOptions"
-				:startingValue="severity"
-				@input="updateSeverity()"
-				class="w-1/2 ml-1" />
-		</div>
-		<div class="flex mt-2">
-			<div class="w-1/2 mr-1">
-				<span class="text-gray-dark-400 text-xs">Assigned Users</span>
-				<div class="bg-gray-light-400 w-full h-32 px-1">
-					<div 
-						v-for="user in ticket.usersAssigned"
-						:key="user._id"
-						class="flex mt-0.5 first:mt-0" >
-						<span class="text-gray-dark-600">
-							{{ user.name }}
-						</span>
-						<button 
-							@click="removeUserFromTicket(user._id)"
-							class="ml-auto text-sm text-gray-dark-300">
-							remove
-						</button>
-					</div>
-				</div>
-			</div>
-			<div class="w-1/2 ml-1">
-				<span class="text-gray-dark-400 text-xs">Add User to Ticket</span>
-				<div class="bg-gray-light-400 w-full h-32 px-1">
-					<div
-						v-for="user in eligibleUsers"
-						:key="user._id"
-						class="flex mt-0.5 first:mt-0" >
-						<span class="text-gray-dark-600">
-							{{ user.name }}
-						</span>
-						<button
-							@click="assignUserToTicket(user._id)"
-							class="ml-auto text-sm text-gray-light-300" >
-							add
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<h2 class="my-2 ml-1.5 font-bold text-xl text-gray-dark-400">Add a Comment</h2>
-	<textarea 
-		class="bg-gray-light-400 text-gray-dark-400 placeholder-gray-dark-100 mx-1.5 pl-1 h-20 rounded-none"
-		placeholder="Add a comment..."
-		v-model="comment" ></textarea>
-	<button 
-		@click="postComment()"
-		class="bg-gray-light-400 font-bold text-gray-dark-400 mx-auto mt-2 py-0.5 px-2 rounded-none">
-		Post Comment
-	</button>
-	<div v-if="ticket.comments">
-		<h2 class="mt-2 py-1.5 pl-1.5 font-bold text-xl bg-gray-light-300 text-gray-dark-400">Comments</h2>
-		<div 
-			v-for="comment in ticket.comments"
-			:key="comment.dateCreated"
-			class="px-1.5 py-1.5 flex flex-col even:bg-gray-light-300" >
-			<span class="text-xs text-gray-dark-200">
-				{{ comment.createdBy }} / {{ comment.dateCreated.substr(0, 10) }}
-			</span>
-			<span class="text-gray-dark-400 mt-0.5">
-				{{ comment.text }}
-			</span>
-		</div>
-	</div>
-	<div 
-		v-if="isHistoryOpen"
-		class="fixed top-16 bottom-0 overflow-y-scroll left-0 w-full flex flex-col items-center bg-gray-light-100">	
-		<svg 
-			@click="isHistoryOpen = false"
-			class="ml-auto w-10 h-10 min-h-10 mr-1.5 fill-current text-gray-dark-400 cursor-pointer" 
-			viewBox="0 0 24 24">
-			<path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z">
-			</path>
-		</svg>
-		<div 
-			v-for="record in ticket.history"
-			:key="record.dateChanged"
-			class="bg-gray-light-200 mt-2 px-1.5 py-1 flex flex-col w-full min-h-min" >
+			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Ticket Comments</h2>
+				<textarea v-model="comment" class="pl-1.5 mt-2 bg-gray-light-300 h-24 rounded-lg text-gray-dark-600 resize-none"></textarea>
+				<button @click="postComment()" class="text-gray-light-100 bg-primary-800 mr-auto px-2 py-1 rounded-lg my-2">Post Comment</button>
+				<div v-for="comment in ticket.comments"
+					:key="comment.dateCreated"
+					class="pb-2 border-b last:border-b-0 border-gray-light-300">
 
-			<span class="text-xs text-gray-dark-600">
-				{{ record.changedBy }} / {{ record.dateChanged.substr(0, 10) }}
-			</span>
-			<div 
-				v-for="change in record.changes"
-				:key="change.propertyChanged"
-				class="bg-gray-light-300 flex justify-evenly p-0.5 text-gray-dark-400 mt-1" >
-				
-				<div class="flex flex-col items-center">
-					<span class="text-gray-dark-300">
-						Property
+					<span class="text-xs text-gray-dark-200">
+						{{ comment.createdBy }} / {{ timeAgo(comment.dateCreated) }}
 					</span>
-					<span class="font-bold">
-						{{ change.propertyChanged }}
-					</span>
+					<p>{{ comment.text }}</p>
 				</div>
-				<div class="flex flex-col items-center">
-					<span class="text-gray-dark-300">
-						Old Value
+			</div>
+			<div class="my-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Ticket History</h2>
+				<div 
+					v-for="record in ticket.history"
+					:key="record.dateChanged"
+					class="mt-2 flex flex-col border-b border-gray-light-300 last:border-b-0" >
+
+					<span class="text-sm text-gray-dark-500">
+						{{ record.changedBy }} / {{ timeAgo(record.dateChanged) }}
 					</span>
-					<span class="font-bold">
-						{{ change.oldValue }}
-					</span>
+					<div 
+						v-for="change in record.changes"
+						:key="change.propertyChanged"
+						class="flex justify-evenly p-0.5 text-gray-dark-400 mt-1" >
+						
+						<div class="flex flex-col items-center">
+							<span class="text-gray-dark-300">
+								Property
+							</span>
+							<span class="font-bold">
+								{{ change.propertyChanged }}
+							</span>
+						</div>
+						<div class="flex flex-col items-center">
+							<span class="text-gray-dark-300">
+								Old Value
+							</span>
+							<span class="font-bold">
+								{{ change.oldValue }}
+							</span>
+						</div>
+						<div class="flex flex-col items-center">
+							<span class="text-gray-dark-300">
+								New Value
+							</span>
+							<span class="font-bold">
+								{{ change.newValue }}
+							</span>
+						</div>
+					</div>
 				</div>
-				<div class="flex flex-col items-center">
-					<span class="text-gray-dark-300">
-						New Value
-					</span>
-					<span class="font-bold">
-						{{ change.newValue }}
-					</span>
+			</div>
+		</div>
+		<div class="md:w-1/2 flex flex-col mx-2.5 md:ml-1.5">
+			<div class="mt-2 md:mt-0 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Edit Ticket</h2>
+				<div class="w-full flex">
+					<div class="w-1/2 mr-1">
+						<span class="text-sm text-gray-dark-200">Ticket Severity</span>
+						<SelectorInput 
+							v-model="severity"
+							:name="'severity'" 
+							:options="severityOptions"
+							:startingValue="ticket.severity"
+							class="mr-1" />
+					</div>
+					<div class="w-1/2 ml-1">
+						<span class="text-sm text-gray-dark-200">Ticket Status</span>
+						<SelectorInput 
+							v-model="status"
+							:name="'status'" 
+							:options="statusOptions"
+							:startingValue="ticket.status"
+							class="mr-1" />
+					</div>
 				</div>
+				<div class="w-1/2 mt-2">
+					<span class="text-sm text-gray-dark-200">Ticket Type</span>
+					<SelectorInput 
+						v-model="type"
+						:name="'type'" 
+						:options="typeOptions"
+						:startingValue="ticket.type"
+						class="mr-1" />
+				</div>
+				<button 
+					@click="updateTicket()"
+					class="text-lg font-bold text-gray-light-100 bg-primary-800 rounded-lg mr-auto mt-2 px-2.5 py-0.5">
+						Update Ticket
+				</button>
+			</div>
+			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Assign Users to Ticket</h2>
+				<span class="mt-2 text-sm text-gray-dark-200">Select One or More Users</span>
+				<div 
+					v-for="user in eligibleUsers"
+					:key="user._id"
+					class="flex flex-col">
+					<div class="flex mt-2 items-center">
+						<span 
+							@click="toggleUnassignedUser(user._id)"
+							class="mr-1.5 h-6 flex w-10 p-1 rounded-xl cursor-pointer"
+							:class="[(assigningUsers.includes(user._id)) ? 'bg-primary-600 justify-end': 'bg-gray-dark-600']" >
+							<span class="h-full w-1/2 rounded-full bg-gray-light-100"></span>
+						</span>
+						<span class="text-lg font-bold">{{ user.name }}</span>
+					</div>
+				</div>
+				<button 
+					@click="assignUsers()"
+					class="text-lg font-bold text-gray-light-100 bg-primary-800 rounded-lg mr-auto mt-2 px-2.5 py-0.5">
+						Assign to Ticket
+				</button>
+			</div>
+			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
+				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Remove Users from Ticket</h2>
+				<span class="mt-2 text-sm text-gray-dark-200">Select One or More Users</span>
+				<div 
+					v-for="user in ticket.usersAssigned"
+					:key="user._id"
+					class="flex flex-col">
+					<div class="flex mt-2 items-center">
+						<span 
+							@click="toggleAssignedUser(user._id)"
+							class="mr-1.5 h-6 flex w-10 p-1 rounded-xl cursor-pointer"
+							:class="[(unassigningUsers.includes(user._id)) ? 'bg-primary-600 justify-end': 'bg-gray-dark-600']" >
+							<span class="h-full w-1/2 rounded-full bg-gray-light-100"></span>
+						</span>
+						<span class="text-lg font-bold">{{ user.name }}</span>
+					</div>
+				</div>
+				<button 
+					@click="unassignUsers()"
+					class="text-lg font-bold text-gray-light-100 bg-red-700 rounded-lg mr-auto mt-2 px-2.5 py-0.5">
+						Remove from Ticket
+				</button>
 			</div>
 		</div>
 	</div>
@@ -176,7 +186,7 @@ import { getTicket,
 export default Vue.extend({
 	name: "Ticket",
 	components: {
-		SelectorInput,
+		SelectorInput
 	},
 	props: {
 		jwt: {
@@ -192,6 +202,7 @@ export default Vue.extend({
 			isHistoryOpen: false,
 			status: '',
 			severity: '',
+			type: '',
 			statusOptions: [
 				'in progress',
 				'need info',
@@ -203,11 +214,18 @@ export default Vue.extend({
 				'high',
 				'critical',
 			],
+			typeOptions: [
+				'bug',
+				'suggestion'
+			],
 			lastPosted: {
 				severity: '',
 				status: '',
+				type: '',
 			},
 			eligibleUsers: [],
+			assigningUsers: [],
+			unassigningUsers: [],
 		}
 	},
 	async created() {
@@ -218,10 +236,15 @@ export default Vue.extend({
 			this.status = this.ticket.status
 			this.eligibleUsers = await getEligibleUsers(this.ticketID, this.jwt);
 		}
+		this.lastPosted = {
+			severity: this.ticket.severity,
+			status: this.ticket.status,
+			type: this.ticket.type,
+		};
 	},
 	computed: {
 		dateFormatted(): string {
-			return this.ticket.dateCreated.substr(0, 10);
+			return this.timeAgo(this.ticket.dateCreated);
 		},
 	},
 	methods: {
@@ -230,33 +253,133 @@ export default Vue.extend({
 			this.comment = '';
 			this.ticket = await getTicket(this.ticketID, this.jwt);
 		},
-		async updateSeverity() {
+		async updateTicket() {
+			let severity;
+			let status;
+			let type;
 			if (this.severity !== this.lastPosted.severity) {
 				this.lastPosted.severity = this.severity;
-				await editTicket(undefined, this.severity, this.ticketID, this.jwt);
-				this.ticket = await getTicket(this.ticketID, this.jwt);
+				severity = this.severity;
 			}
-		},
-		async updateStatus() {
 			if (this.status !== this.lastPosted.status) {
 				this.lastPosted.status = this.status;
-				await editTicket(this.status, undefined, this.ticketID, this.jwt);
+				status = this.status;
+			}
+			if (this.type !== this.lastPosted.type) {
+				this.lastPosted.type = this.type;
+				type = this.type;
+			}
+
+			// My guy, ignore the turnary statement, I SWEAR I couldn't fix it otherwise
+			try {
+				await editTicket(status, severity, type, this.ticketID, this.jwt);
 				this.ticket = await getTicket(this.ticketID, this.jwt);
+			} catch (error) {
+				console.log(error.response);
+			}
+			
+		},
+		toggleUnassignedUser(userID: string) {
+			const index = this.assigningUsers.indexOf(userID)
+			if (index >= 0) {
+				this.assigningUsers.splice(index, 1);
+			} else {
+				this.assigningUsers.push(userID);
 			}
 		},
-		async removeUserFromTicket(userID: string) {
-			await removeUserFromTicket(this.ticketID, userID, this.jwt);
+		async assignUsers() {
+			for (const user of this.assigningUsers) {
+				await assignUserToTicket(this.ticketID, user, this.jwt);
+				for (let i = 0; i < this.eligibleUsers.length; i++) {
+					if (this.eligibleUsers[i]._id === user) {
+						this.eligibleUsers.splice(i, 1);
+					}
+				}
+			}
+			this.assigningUsers = [];
+			this.ticket = await getTicket(this.ticketID, this.jwt);
+		},
+		toggleAssignedUser(userID: string) {
+			const index = this.unassigningUsers.indexOf(userID)
+			if (index >= 0) {
+				this.unassigningUsers.splice(index, 1);
+			} else {
+				this.unassigningUsers.push(userID);
+			}
+		},
+		async unassignUsers() {
+			for (const user of this.unassigningUsers) {
+				await removeUserFromTicket(this.ticketID, user, this.jwt);
+			}
+			this.unassigningUsers = [];
 			this.ticket = await getTicket(this.ticketID, this.jwt);
 			this.eligibleUsers = await getEligibleUsers(this.ticketID, this.jwt);
 		},
-		async assignUserToTicket(userID: string) {
-			await assignUserToTicket(this.ticketID, userID, this.jwt);
-			for (let i = 0; i < this.eligibleUsers.length; i++) {
-				if (this.eligibleUsers[i]._id === userID) {
-					this.eligibleUsers.splice(i, 1);
-				}
+		getFormattedDate(date: Date, prefomattedDate: string | boolean = false, hideYear = false) {
+			const MONTH_NAMES = [
+				'January', 'February', 'March', 'April', 'May', 'June',
+				'July', 'August', 'September', 'October', 'November', 'December'
+			];
+			const day = date.getDate();
+			const month = MONTH_NAMES[date.getMonth()];
+			const year = date.getFullYear();
+			const hours = date.getHours();
+			let minutes: string | number = date.getMinutes();
+
+			if (minutes < 10) {
+				// Adding leading zero to minutes
+				minutes = `0${ minutes }`;
 			}
-			this.ticket = await getTicket(this.ticketID, this.jwt);
+
+			if (prefomattedDate) {
+				// Today at 10:20
+				// Yesterday at 10:20
+				return `${ prefomattedDate } at ${ hours }:${ minutes }`;
+			}
+
+			if (hideYear) {
+				// 10. January at 10:20
+				return `${ day }. ${ month } at ${ hours }:${ minutes }`;
+			}
+
+			// 10. January 2017. at 10:20
+			return `${ day }. ${ month } ${ year }. at ${ hours }:${ minutes }`;
+		},
+		// eslint-disable-next-line
+		timeAgo(dateParam: any) {
+			if (!dateParam) {
+				return null;
+			}
+
+			const date = typeof dateParam === 'object' ? dateParam : new Date(dateParam);
+			const DAY_IN_MS = 86400000; // 24 * 60 * 60 * 1000
+			// eslint-disable-next-line
+			const today: any = new Date();
+			const yesterday = new Date(today - DAY_IN_MS);
+			const seconds = Math.round((today - date) / 1000);
+			const minutes = Math.round(seconds / 60);
+			const isToday = today.toDateString() === date.toDateString();
+			const isYesterday = yesterday.toDateString() === date.toDateString();
+			const isThisYear = today.getFullYear() === date.getFullYear();
+
+
+			if (seconds < 5) {
+				return 'now';
+			} else if (seconds < 60) {
+				return `${ seconds } seconds ago`;
+			} else if (seconds < 90) {
+				return 'about a minute ago';
+			} else if (minutes < 60) {
+				return `${ minutes } minutes ago`;
+			} else if (isToday) {
+				return this.getFormattedDate(date, 'Today'); // Today at 10:20
+			} else if (isYesterday) {
+				return this.getFormattedDate(date, 'Yesterday'); // Yesterday at 10:20
+			} else if (isThisYear) {
+				return this.getFormattedDate(date, false, true); // 10. January at 10:20
+			}
+
+			return this.getFormattedDate(date); // 10. January 2017. at 10:20
 		},
 	}
 })

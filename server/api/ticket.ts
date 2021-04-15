@@ -563,7 +563,8 @@ router.put(
 		//Validate the request
 		const { error } = Joi.object({
 			status: Joi.string().valid('in progress', 'need info', 'closed'),
-			severity: Joi.string().valid('low', 'medium', 'high', 'severe'),
+			severity: Joi.string().valid('low', 'medium', 'high', 'critical'),
+			type: Joi.string().valid('bug', 'suggestion'),
 		}).validate(req.body);
 		if (error) {
 			return res.status(400).send(error.details[0].message);

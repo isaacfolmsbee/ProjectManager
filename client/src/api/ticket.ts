@@ -128,11 +128,12 @@ export async function attachImageToTicket(
 	return response.data;
 }
 
-export async function editTicket(status: string, severity: string, ticketID: string, jwt: string) {
+export async function editTicket(status: string, severity: string, type: string, ticketID: string, jwt: string) {
 	const response = await axios.put(url + ticketID,
 		{
 			status,
 			severity,
+			type,
 		},
 		{
 		headers: {

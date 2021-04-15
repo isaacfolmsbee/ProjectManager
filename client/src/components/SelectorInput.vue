@@ -1,7 +1,7 @@
 <template>
 <div class="relative flex flex-col">
 	<div
-		class="absolute top-9 w-full max-h-0 opacity-0 order-1 bg-primary-800 text-gray-light-50 rounded-lg transition-all duration-500 overflow-hidden border border-gray-dark-500"
+		class="z-10 absolute top-9 w-full max-h-0 opacity-0 order-1 bg-primary-800 text-gray-light-50 rounded-lg transition-all duration-500 overflow-hidden border border-gray-dark-500"
 		:class="{ 'max-h-screen opacity-100': isOpen }" >
 
 		<div 
