@@ -81,15 +81,7 @@ const routes: Array<RouteConfig> = [
 		meta: {
 			guest: true,
 		},
-	},
-	{
-		path: '/projects',
-		name: 'Projects',
-		component: () => import('../views/Projects.vue'),
-		meta: {
-			guest: true,
-		},
-	},
+	}
 ];
 
 const router = new VueRouter({
