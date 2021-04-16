@@ -20,6 +20,7 @@
 					class="rounded-lg bg-gray-light-300 h-9 pl-1 flex-grow">
 				<input 
 					type="file"
+					accept=".png, .jpg, .jpeg, .gif"
 					@change="onFileSelected"
 					ref="fileInput"
 					class="hidden">
