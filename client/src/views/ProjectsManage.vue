@@ -12,6 +12,7 @@
 				<h2 class="text-gray-dark-600 text-xl font-bold">Post New Project</h2>
 				<svg @click="isPostProjectActive = false" class="hidden sm:inline-block h-10 w-10 ml-auto text-gray-dark-600 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
 			</div>
+			<span class="text-red-600">{{ errorMessage }}</span>
 			<input 
 				type="mt-2 text"
 				v-model="projectName"
@@ -122,6 +123,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import Joi from 'joi';
 import ProjectSelector from '../components/ProjectSelector.vue';
 import SelectorInput from '../components/SelectorInput.vue';
 import { 
@@ -177,6 +179,7 @@ export default Vue.extend({
 			projectName: '',
 			projectDescription: '',
 			isPostProjectActive: false,
+			errorMessage: '',
 		}
 	},
 	async created() {
@@ -232,6 +235,33 @@ export default Vue.extend({
 			this.assignedUsers = await getAssigned(this.selectedProject._id, this.jwt);
 		},
 		async submitProject() {
+			const { error } = Joi.object({
+				name: Joi
+					.string()
+					.required()
+					.min(2)
+					.messages({
+						'string.empty': 'name is required',
+						'string.min': 'name must be atleast 2 characters'
+					}),
+				description: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'description is required'
+					})
+			}).validate({
+				name: this.projectName,
+				description: this.projectDescription,
+			});
+
+			if (error) {
+				this.errorMessage = error.details[0].message;
+				return;
+			} else {
+				this.errorMessage = '';
+			}
+
 			await postProject(this.projectName, this.projectDescription, this.jwt);
 			this.isPostProjectActive = false;
 			this.projectName = '';

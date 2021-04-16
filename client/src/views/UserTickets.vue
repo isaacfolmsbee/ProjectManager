@@ -12,6 +12,7 @@
 				<h2 class="text-gray-dark-600 text-xl font-bold">Post New Ticket</h2>
 				<svg @click="isPostTicketActive = false" class="hidden sm:inline-block h-10 w-10 ml-auto text-gray-dark-600 fill-current cursor-pointer" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5L12 10.59L6.41 5L5 6.41L10.59 12L5 17.59L6.41 19L12 13.41L17.59 19L19 17.59L13.41 12L19 6.41z"></path></svg>
 			</div>
+			<span class="text-red-600">{{ errorMessage }}</span>
 			<div class="mt-2 flex">
 				<input 
 					type="text"
@@ -138,6 +139,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import Joi from 'joi';
 import TicketItem from '../components/TicketItem.vue';
 import ProjectSelector from '../components/ProjectSelector.vue';
 import SelectorInput from '../components/SelectorInput.vue';
@@ -202,6 +204,7 @@ export default Vue.extend({
 			inProgressTickets: null,
 			needInfoTickets: null,
 			selectedTickets: null,
+			errorMessage: '',
 		}
 	},
 	async created() {
@@ -251,21 +254,51 @@ export default Vue.extend({
 			this.FILE = event.target.files[0];
 		},
 		async submitTicket() {
-			const ticketID = await postTicket(
-			{
-				project: this.selectedProject._id,
+			const { error } = Joi.object({
+				title: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'title is required'
+					}),
+				description: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'description is required'
+					})
+			}).validate({
 				title: this.ticket.title,
-				type: this.ticket.type,
-				severity: this.ticket.severity,
 				description: this.ticket.description,
-			}, 
-			this.jwt);
+			});
+
+			if (error) {
+				this.errorMessage = error.details[0].message;
+				return;
+			} else {
+				this.errorMessage = '';
+			}
 			
-			if (this.FILE) {
-				const formData = new FormData();
-				formData.append('ticketImg', this.FILE, this.FILE.name);
-				await attachImageToTicket(ticketID, formData, this.jwt);
-				this.FILE = null;
+			try {
+				const ticketID = await postTicket(
+				{
+					project: this.selectedProject._id,
+					title: this.ticket.title,
+					type: this.ticket.type,
+					severity: this.ticket.severity,
+					description: this.ticket.description,
+				}, 
+				this.jwt);
+
+				if (this.FILE) {
+					const formData = new FormData();
+					formData.append('ticketImg', this.FILE, this.FILE.name);
+					await attachImageToTicket(ticketID, formData, this.jwt);
+					this.FILE = null;
+				}
+			} catch (error) {
+				this.errorMessage = error.response.data.toLowerCase();
+				return;
 			}
 			
 			this.isPostTicketActive = false;

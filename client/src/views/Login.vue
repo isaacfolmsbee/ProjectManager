@@ -4,6 +4,7 @@
 		<h1 class="mx-auto xl:ml-7 font-bold text-2xl xl:text-3xl text-gray-light-50">Project Manager</h1>
 	</div>
 	<h2 class="text-gray-dark-600 xl:mb-2 text-2xl xl:text-3xl">Sign in</h2>
+	<span class="text-red-600">{{ errorMessage }}</span>
 	<input 
 		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="text" 
@@ -31,18 +32,49 @@
 <script lang="ts">
 import Vue from 'vue';
 import { login } from '../api/user';
+import Joi from 'joi';
 
 export default Vue.extend({
 	data() {
 		return {
 			email: '',
 			password: '',
+			errorMessage: '',
 		}
 	},
 	methods: {
 		async login() {
-			const userdata = await login(this.email, this.password);
-			this.$emit('login', userdata);
+			const { error } = Joi.object({
+				email: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'email is required'
+					}),
+				password: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'password is required'
+					})
+			}).validate({
+				email: this.email,
+				password: this.password,
+			});
+
+			if (error) {
+				this.errorMessage = error.details[0].message;
+				return;
+			} else {
+				this.errorMessage = '';
+			}
+
+			try {
+				const userdata = await login(this.email, this.password);
+				this.$emit('login', userdata);
+			} catch (error) {
+				this.errorMessage = error.response.data.toLowerCase();
+			}
 		}
 	}
 })

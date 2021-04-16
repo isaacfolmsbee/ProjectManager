@@ -31,6 +31,7 @@
 					Create Role
 				</button>
 			</div>
+			<span class="text-red-600">{{ createErrorMessage }}</span>
 			<div 
 				v-for="permission in permissions"
 				:key="permission.permission"
@@ -78,6 +79,7 @@
 					Update Role
 				</button>
 			</div>
+			<span class="text-red-600">{{ updateErrorMessage }}</span>
 			<div 
 				v-for="permission in permissions"
 				:key="permission.permission"
@@ -106,6 +108,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import Joi from 'joi';
 import ProjectSelector from '../components/ProjectSelector.vue';
 import { postProjectRole, getRoles, editProjectRole, deleteProjectRole } from '../api/project';
 
@@ -189,6 +192,8 @@ export default Vue.extend({
 				permissions: []
 			},
 			projectRoles: [],
+			createErrorMessage: '',
+			updateErrorMessage: '',
 		}
 	},
 	async created() {
@@ -216,6 +221,26 @@ export default Vue.extend({
 			}
 		},
 		async postProjectRole() {
+			const { error } = Joi.object({
+				name: Joi
+					.string()
+					.required()
+					.min(2)
+					.messages({
+						'string.empty': 'name is required',
+						'string.min': 'name must be atleast 2 characters'
+					}),
+			}).validate({
+				name: this.newRole.name
+			});
+
+			if (error) {
+				this.createErrorMessage = error.details[0].message;
+				return;
+			} else {
+				this.createErrorMessage = '';
+			}
+
 			await postProjectRole(
 				this.selectedProject._id, 
 				this.newRole.name, 
@@ -230,6 +255,26 @@ export default Vue.extend({
 			}
 		},
 		async editProjectRole() {
+			const { error } = Joi.object({
+				name: Joi
+					.string()
+					.required()
+					.min(2)
+					.messages({
+						'string.empty': 'name is required',
+						'string.min': 'name must be atleast 2 characters'
+					}),
+			}).validate({
+				name: this.editRole.name
+			});
+
+			if (error) {
+				this.updateErrorMessage = error.details[0].message;
+				return;
+			} else {
+				this.updateErrorMessage = '';
+			}
+
 			await editProjectRole(
 				this.selectedProject._id, 
 				this.editRole._id, 

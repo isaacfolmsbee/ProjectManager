@@ -4,6 +4,7 @@
 		<h1 class="mx-auto xl:ml-7 font-bold text-2xl xl:text-3xl text-gray-light-50">Project Manager</h1>
 	</div>
 	<h2 class="text-gray-dark-600 xl:mb-2 text-2xl xl:text-3xl">Register New Account</h2>
+	<span class="text-red-600">{{ errorMessage }}</span>
 	<input 
 		class="w-full max-w-xs xl:max-w-sm mt-3 py-2 pl-2 bg-gray-light-200 border-b border-gray-dark-200 outline-none focus:bg-opacity-10 focus:bg-primary-800 placeholder-gray-dark-300 text-xl transition-colors duration-300 rounded-none" 
 		type="text" 
@@ -41,6 +42,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import { register } from '../api/user';
+import Joi from 'joi';
 
 export default Vue.extend({
 	data() {
@@ -49,13 +51,65 @@ export default Vue.extend({
 			email: '',
 			password: '',
 			confirmPassword: '',
+			errorMessage: '',
 		}
 	},
 	methods: {
 		async register() {
+			const { error } = Joi.object({
+				username: Joi
+					.string()
+					.min(4)
+					.required()
+					.messages({
+						'string.min': 'username must be atleast 2 characters',
+						'string.empty': 'username is required',
+					}),
+				email: Joi
+					.string()
+					.email({ tlds: {allow: false} })
+					.required()
+					.messages({
+						'string.email': 'invalid email',
+						'string.empty': 'email is required',
+					}),
+				password: Joi
+					.string()
+					.required()
+					.min(8)
+					.messages({
+						'string.empty': 'password is required',
+						'string.min': 'password must be atleast 8 characters'
+					}),
+				confirmPassword: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'confirmation password is required'
+					})
+			}).validate({
+				username: this.username,
+				email: this.email,
+				password: this.password,
+				confirmPassword: this.confirmPassword,
+			});
+
+			if (error) {
+				this.errorMessage = error.details[0].message;
+				return;
+			} else {
+				this.errorMessage = '';
+			}
+
 			if (this.password === this.confirmPassword) {
-				await register(this.username, this.email, this.password);
-				this.$router.push('/login');
+				try {
+					await register(this.username, this.email, this.password);
+				} catch (error) {
+					this.errorMessage = error.response.data.toLowerCase();
+				}
+				// this.$router.push('/login');
+			} else {
+				this.errorMessage = "passwords don't match";
 			}
 		}
 	}

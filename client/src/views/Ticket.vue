@@ -29,6 +29,7 @@
 			</div>
 			<div class="mt-2 bg-gray-light-100 rounded-lg shadow-md flex flex-col p-1.5">
 				<h2 class="text-xl lg:text-2xl text-gray-dark-600 font-bold">Ticket Comments</h2>
+				<span class="text-red-600">{{ errorMessage }}</span>
 				<textarea 
 					v-if="selectedProject.permissions.includes('comment')"
 					v-model="comment" 
@@ -190,6 +191,7 @@
 
 <script lang="ts">
 import Vue, { PropType } from 'vue';
+import Joi from 'joi';
 import SelectorInput from '../components/SelectorInput.vue';
 import { getTicket, 
 	postComment, 
@@ -249,6 +251,7 @@ export default Vue.extend({
 			eligibleUsers: [],
 			assigningUsers: [],
 			unassigningUsers: [],
+			errorMessage: '',
 		}
 	},
 	async created() {
@@ -272,6 +275,24 @@ export default Vue.extend({
 	},
 	methods: {
 		async postComment() {
+			const { error } = Joi.object({
+				text: Joi
+					.string()
+					.required()
+					.messages({
+						'string.empty': 'comment is required',
+					}),
+			}).validate({
+				text: this.comment,
+			});
+
+			if (error) {
+				this.errorMessage = error.details[0].message;
+				return;
+			} else {
+				this.errorMessage = '';
+			}
+
 			await postComment(this.comment, this.ticketID, this.jwt);
 			this.comment = '';
 			this.ticket = await getTicket(this.ticketID, this.jwt);
