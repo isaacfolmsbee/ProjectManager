@@ -10,7 +10,6 @@ const routes: Array<RouteConfig> = [
 		component: () => import('../views/Dashboard.vue'),
 		meta: {
 			requiresAuth: true,
-			isUser: true,
 		},
 	},
 	{
@@ -19,7 +18,7 @@ const routes: Array<RouteConfig> = [
 		component: () => import('../views/TicketsManage.vue'),
 		meta: {
 			requiresAuth: true,
-			isUser: true,
+			requiredView: 'TicketsManage',
 		},
 	},
 	{
@@ -28,7 +27,7 @@ const routes: Array<RouteConfig> = [
 		component: () => import('../views/RolesManage.vue'),
 		meta: {
 			requiresAuth: true,
-			isUser: true,
+			requiredView: 'RolesManage',
 		},
 	},
 	{
@@ -37,7 +36,7 @@ const routes: Array<RouteConfig> = [
 		component: () => import('../views/ProjectsManage.vue'),
 		meta: {
 			requiresAuth: true,
-			isUser: true,
+			requiredView: 'ProjectsManage',
 		},
 	},
 	{
@@ -46,7 +45,6 @@ const routes: Array<RouteConfig> = [
 		component: () => import('../views/UserTickets.vue'),
 		meta: {
 			requiresAuth: true,
-			isUser: true,
 		},
 	},
 	{
@@ -55,7 +53,6 @@ const routes: Array<RouteConfig> = [
 		component: () => import('../views/Ticket.vue'),
 		meta: {
 			requiresAuth: true,
-			isUser: true,
 		},
 	},
 	{
@@ -79,14 +76,43 @@ const routes: Array<RouteConfig> = [
 		name: 'Logout',
 		component: () => import('../views/Logout.vue'),
 		meta: {
-			guest: true,
+			requiresAuth: true,
 		},
 	}
 ];
 
 const router = new VueRouter({
-	mode: 'hash',
+	mode: 'history',
 	routes,
+});
+
+router.beforeEach((to, from, next) => {
+	const views = sessionStorage.getItem('views');
+	const isAdmin = sessionStorage.getItem('isAdmin');
+
+	if (to.meta.requiresAuth) {
+		if (isAdmin !== null) {
+			if (to.meta.requiredView) {
+				if (views.includes(to.meta.requiredView)) {
+					next();
+				} else {
+					next('/');
+				}
+			} else {
+				next();
+			}
+		} else {
+			next('/login');
+		}
+	} else if (to.meta.guest) {
+		if (isAdmin === null) {
+			next();
+		} else {
+			next('/');
+		}
+	} else {
+		next();
+	}
 });
 
 // router.beforeEach((to, from, next) => {

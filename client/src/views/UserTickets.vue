@@ -204,13 +204,14 @@ export default Vue.extend({
 		}
 	},
 	async created() {
-		this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
-		this.filteredTickets = this.tickets;
-		this.openTickets = this.filterTicketsStatus('open');
-		this.inProgressTickets = this.filterTicketsStatus('in progress');
-		this.needInfoTickets = this.filterTicketsStatus('need info');
-		this.selectedTickets = this.openTickets;
-		console.log(this.selectedProject.permissions.includes('createTickets'));
+		if (this.selectedProject.permissions.includes('editTickets')) {
+			this.tickets = await getAssignedTickets(this.selectedProject._id, this.jwt);
+			this.filteredTickets = this.tickets;
+			this.openTickets = this.filterTicketsStatus('open');
+			this.inProgressTickets = this.filterTicketsStatus('in progress');
+			this.needInfoTickets = this.filterTicketsStatus('need info');
+			this.selectedTickets = this.openTickets;
+		}
 	},
 	mounted() {
 		window.onresize = () => {

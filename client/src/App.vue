@@ -95,8 +95,10 @@ export default Vue.extend({
 					views: this.userData.projects[0].views,
 					permissions: this.userData.projects[0].permissions,
 				};
+				sessionStorage.setItem('views', JSON.stringify(this.userData.projects[0].views));
 			}
 			sessionStorage.setItem('userdata', JSON.stringify(userdata));
+			sessionStorage.setItem('isAdmin', this.userData.isAdmin.toString());
 			this.$router.push('/');
 		},
 		logout() {
@@ -115,11 +117,14 @@ export default Vue.extend({
 				views: [],
 				permissions: [],
 			};
+			sessionStorage.removeItem('views');
 			sessionStorage.removeItem('userdata');
+			sessionStorage.removeItem('isAdmin');
 			this.$router.push('/login');
 		},
 		changeSelectedProject(project: { _id: string; name: string; role: string; views: Array<string>; permissions: Array<string>}) {
 			this.selectedProject = project;
+			sessionStorage.setItem('views', JSON.stringify(project.views));
 		}
 	}
 });
