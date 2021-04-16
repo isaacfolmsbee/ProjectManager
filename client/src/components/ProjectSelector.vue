@@ -1,6 +1,6 @@
 <template>
 <div class="relative flex flex-col">
-	<div @click="isOpen = !isOpen" class="cursor-pointer relative bg-primary-800 text-gray-light-50 py-1 px-2 rounded-lg">
+	<div @click="isOpen = !isOpen" class="cursor-pointer pr-12 relative bg-primary-800 text-gray-light-50 py-1 px-2 rounded-lg">
 		<span class="text-2xl font-bold">
 			{{ selectedProject.name }}
 		</span>
