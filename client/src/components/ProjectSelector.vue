@@ -13,7 +13,7 @@
 			v-for="project in projectList"
 			:key="project._id"
 			:id="project._id"
-			class="py-1 px-2 cursor-pointer border-b last:borderb-0 border-primary-700"
+			class="py-1 px-2 cursor-pointer border-b last:borderb-0 border-primary-600"
 			@click="selectProject(project)" >
 
 			<input type="radio" :id="project._id" class="hidden">
