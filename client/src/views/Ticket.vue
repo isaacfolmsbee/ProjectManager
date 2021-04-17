@@ -261,7 +261,8 @@ export default Vue.extend({
 			this.ticketID = this.$route.query.id;
 			this.ticket = await getTicket(this.$route.query.id, this.jwt);
 			this.severity = this.ticket.severity;
-			this.status = this.ticket.status
+			this.status = this.ticket.status;
+			this.type = this.ticket.type;
 			this.eligibleUsers = await getEligibleUsers(this.selectedProject._id, this.ticketID, this.jwt);
 		}
 		this.lastPosted = {
@@ -316,7 +317,6 @@ export default Vue.extend({
 				type = this.type;
 			}
 
-			// My guy, ignore the turnary statement, I SWEAR I couldn't fix it otherwise
 			try {
 				await editTicket(this.selectedProject._id, status, severity, type, this.ticketID, this.jwt);
 				this.ticket = await getTicket(this.ticketID, this.jwt);
