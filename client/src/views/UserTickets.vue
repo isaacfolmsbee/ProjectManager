@@ -290,10 +290,10 @@ export default Vue.extend({
 				}, 
 				this.jwt);
 
-				if (this.FILE) {
+				if (this.FILE && ticketID.length === 24) {
 					const formData = new FormData();
 					formData.append('ticketImg', this.FILE, this.FILE.name);
-					await attachImageToTicket(ticketID, formData, this.jwt);
+					await attachImageToTicket(this.selectedProject._id, ticketID, formData, this.jwt);
 					this.FILE = null;
 				}
 			} catch (error) {

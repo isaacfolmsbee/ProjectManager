@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import Joi from 'joi';
+import Joi, { compile } from 'joi';
 import { ObjectID } from 'mongodb';
 
 export function auth(permission: string) {
@@ -19,6 +19,7 @@ export function auth(permission: string) {
 				_id: string;
 				username: string;
 				isAdmin: boolean;
+				isDemoUser: boolean;
 				projects: [
 					{
 						_id: string;
@@ -85,6 +86,7 @@ export function auth(permission: string) {
 						j < req.user.projects[i].permissions.length;
 						j++
 					) {
+						console.log(req.user.projects[i].permissions[j]);
 						if (
 							req.user.projects[i].permissions[j] === permission
 						) {

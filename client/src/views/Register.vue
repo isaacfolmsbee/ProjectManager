@@ -107,7 +107,7 @@ export default Vue.extend({
 				} catch (error) {
 					this.errorMessage = error.response.data.toLowerCase();
 				}
-				// this.$router.push('/login');
+				this.$router.push('/login');
 			} else {
 				this.errorMessage = "passwords don't match";
 			}

@@ -4,6 +4,7 @@ declare namespace Express {
 			_id: string;
 			username: string;
 			isAdmin: boolean;
+			isDemoUser: boolean,
 			projects: [
 				{
 					_id: string;

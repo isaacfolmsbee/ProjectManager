@@ -262,7 +262,7 @@ export default Vue.extend({
 			this.ticket = await getTicket(this.$route.query.id, this.jwt);
 			this.severity = this.ticket.severity;
 			this.status = this.ticket.status
-			this.eligibleUsers = await getEligibleUsers(this.ticketID, this.jwt);
+			this.eligibleUsers = await getEligibleUsers(this.selectedProject._id, this.ticketID, this.jwt);
 		}
 		this.lastPosted = {
 			severity: this.ticket.severity,
@@ -295,7 +295,7 @@ export default Vue.extend({
 				this.errorMessage = '';
 			}
 
-			await postComment(this.comment, this.ticketID, this.jwt);
+			await postComment(this.selectedProject._id, this.comment, this.ticketID, this.jwt);
 			this.comment = '';
 			this.ticket = await getTicket(this.ticketID, this.jwt);
 		},
@@ -318,7 +318,7 @@ export default Vue.extend({
 
 			// My guy, ignore the turnary statement, I SWEAR I couldn't fix it otherwise
 			try {
-				await editTicket(status, severity, type, this.ticketID, this.jwt);
+				await editTicket(this.selectedProject._id, status, severity, type, this.ticketID, this.jwt);
 				this.ticket = await getTicket(this.ticketID, this.jwt);
 			} catch (error) {
 				console.log(error.response);
@@ -335,7 +335,7 @@ export default Vue.extend({
 		},
 		async assignUsers() {
 			for (const user of this.assigningUsers) {
-				await assignUserToTicket(this.ticketID, user, this.jwt);
+				await assignUserToTicket(this.selectedProject._id, this.ticketID, user, this.jwt);
 				for (let i = 0; i < this.eligibleUsers.length; i++) {
 					if (this.eligibleUsers[i]._id === user) {
 						this.eligibleUsers.splice(i, 1);
@@ -355,11 +355,11 @@ export default Vue.extend({
 		},
 		async unassignUsers() {
 			for (const user of this.unassigningUsers) {
-				await removeUserFromTicket(this.ticketID, user, this.jwt);
+				await removeUserFromTicket(this.selectedProject._id, this.ticketID, user, this.jwt);
 			}
 			this.unassigningUsers = [];
 			this.ticket = await getTicket(this.ticketID, this.jwt);
-			this.eligibleUsers = await getEligibleUsers(this.ticketID, this.jwt);
+			this.eligibleUsers = await getEligibleUsers(this.selectedProject._id, this.ticketID, this.jwt);
 		},
 	}
 })

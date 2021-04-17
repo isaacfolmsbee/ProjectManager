@@ -47,7 +47,7 @@
 				Create Project
 		</button>
 	</div>
-	<button @click="isPostProjectActive = true" class="md:hidden xl:inline-block mt-2 bg-gray-light-100 py-0.5 xl:py-1 px-1.5 xl:px-2.5 rounded-lg text-xl xl:text-2xl ml-2 mb-2 xl:mb-0 mr-auto text-primary-800">Create Project</button>
+	<button v-if="isAdmin" @click="isPostProjectActive = true" class="md:hidden xl:inline-block mt-2 bg-gray-light-100 py-0.5 xl:py-1 px-1.5 xl:px-2.5 rounded-lg text-xl xl:text-2xl ml-2 mb-2 xl:mb-0 mr-auto text-primary-800">Create Project</button>
 	<div class="w-full flex flex-col md:flex-row px-2.5">
 		<div class="md:w-1/2 bg-gray-light-100 rounded-lg shadow-md flex flex-col mt-2 p-1.5 md:mr-1.5">
 			<span class="text-xs text-gray-dark-300">

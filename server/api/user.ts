@@ -40,6 +40,7 @@ router.post('/', async (req: Request, res: Response) => {
 		email: req.body.email,
 		password: hashedPassword,
 		isAdmin: false,
+		isDemoUser: false,
 		notifications: [],
 	});
 
@@ -52,6 +53,7 @@ router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 		username: Joi.string().min(4),
 		email: Joi.string().email(),
 		isAdmin: Joi.boolean(),
+		isDemoUser: Joi.boolean(),
 	}).validate(req.body);
 	if (error) {
 		return res.status(400).send(error.details[0].message);
@@ -70,6 +72,12 @@ router.put('/:userID', auth('admin'), async (req: Request, res: Response) => {
 });
 
 router.delete('/', auth(''), async (req: Request, res: Response) => {
+
+	// If they are a demo user ignore request
+	if (req.user.isDemoUser) {
+		return res.sendStatus(200);
+	}
+
 	const users: Collection = await dbHandler('users');
 
 	await users.deleteOne({ _id: new mongodb.ObjectID(req.user._id) });
@@ -152,6 +160,7 @@ router.post('/login', async (req: Request, res: Response) => {
 			_id: user._id,
 			username: user.username,
 			isAdmin: user.isAdmin,
+			isDemoUser: user.isDemoUser,
 			projects: projectRoles,
 		},
 		TOKEN_SECRET
@@ -211,6 +220,7 @@ router.get('/userdata', auth(''), async (req: Request, res: Response) => {
 		_id: req.user._id,
 		JWT: token,
 		isAdmin: req.user.isAdmin,
+		isDemoUser: req.user.isDemoUser,
 		username: req.user.username,
 		projects: projectsList,
 		hasUnreadNotification: (query >= 1),
@@ -235,6 +245,12 @@ router.post(
 	'/notifications/read',
 	auth(''),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const users: Collection = await dbHandler('users');
 
 		let modified = true;
@@ -260,6 +276,12 @@ router.delete(
 	'/notifications',
 	auth(''),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const users: Collection = await dbHandler('users');
 
 		await users.updateOne(
@@ -279,6 +301,12 @@ router.delete(
 	'/notifications/:notificationID',
 	auth(''),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const users: Collection = await dbHandler('users');
 
 		await users.updateOne(

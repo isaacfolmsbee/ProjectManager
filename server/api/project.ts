@@ -131,6 +131,12 @@ router.post(
 	'/:projectID/user',
 	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			_id: Joi.string().required().hex().min(24).max(24),
@@ -186,6 +192,12 @@ router.put(
 	'/:projectID/user/:userID',
 	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			role: Joi.string().required().hex().min(24).max(24),
@@ -222,6 +234,12 @@ router.delete(
 	'/:projectID/user/:userID',
 	auth('manageProjectUsers'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const projects: Collection = await dbHandler('projects');
 
 		await projects.updateOne(
@@ -243,6 +261,12 @@ router.post(
 	'/:projectID/role',
 	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			name: Joi.string().required().min(2),
@@ -296,6 +320,12 @@ router.put(
 	'/:projectID/role/:roleID',
 	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			name: Joi.string().required().min(2),
@@ -331,6 +361,12 @@ router.delete(
 	'/:projectID/role/:roleID',
 	auth('manageProjectRoles'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const projects: Collection = await dbHandler('projects');
 
 		await projects.updateOne(
@@ -352,6 +388,12 @@ router.put(
 	'/:projectID',
 	auth('editProject'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			name: Joi.string().min(2),

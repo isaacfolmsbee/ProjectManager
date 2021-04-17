@@ -91,7 +91,7 @@ export async function postTicket(
 	},
 	jwt: string
 ) {
-	const response = await axios.post(url, ticket, {
+	const response = await axios.post(url + ticket.project, ticket, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -100,8 +100,8 @@ export async function postTicket(
 	return response.data;
 }
 
-export async function postComment(text: string, ticketID: string, jwt: string) {
-	const response = await axios.post(url + ticketID + '/comment',
+export async function postComment(projectID: string, text: string, ticketID: string, jwt: string) {
+	const response = await axios.post(`${url}${projectID}/${ticketID}/comment`,
 		{
 			text,
 		},
@@ -115,11 +115,12 @@ export async function postComment(text: string, ticketID: string, jwt: string) {
 }
 
 export async function attachImageToTicket(
+	projectID: string,
 	ticketID: string,
 	formData: FormData,
 	jwt: string
 ) {
-	const response = await axios.post(url + ticketID + '/attachment', formData, {
+	const response = await axios.post(`${url}${projectID}/${ticketID}/attachment`, formData, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -128,8 +129,8 @@ export async function attachImageToTicket(
 	return response.data;
 }
 
-export async function editTicket(status: string, severity: string, type: string, ticketID: string, jwt: string) {
-	const response = await axios.put(url + ticketID,
+export async function editTicket(projectID: string, status: string, severity: string, type: string, ticketID: string, jwt: string) {
+	const response = await axios.put(url + projectID + '/' + ticketID,
 		{
 			status,
 			severity,
@@ -144,8 +145,8 @@ export async function editTicket(status: string, severity: string, type: string,
 	return response.data;
 }
 
-export async function removeUserFromTicket(ticketID: string, userID: string, jwt: string) {
-	const response = await axios.delete(`${url}${ticketID}/user/${userID}`,
+export async function removeUserFromTicket(projectID: string, ticketID: string, userID: string, jwt: string) {
+	const response = await axios.delete(`${url}${projectID}/${ticketID}/user/${userID}`,
 		{
 		headers: {
 			Authorization: 'Bearer ' + jwt,
@@ -155,8 +156,8 @@ export async function removeUserFromTicket(ticketID: string, userID: string, jwt
 	return response.data;
 }
 
-export async function getEligibleUsers(ticketID: string, jwt: string) {
-	const response = await axios.get(`${url}eligibleusers/${ticketID}`,
+export async function getEligibleUsers(projectID: string, ticketID: string, jwt: string) {
+	const response = await axios.get(`${url}${projectID}/eligibleusers/${ticketID}`,
 		{
 		headers: {
 			Authorization: 'Bearer ' + jwt,
@@ -166,8 +167,8 @@ export async function getEligibleUsers(ticketID: string, jwt: string) {
 	return response.data;
 }
 
-export async function assignUserToTicket(ticketID: string, userID: string,	jwt: string) {
-	const response = await axios.post(`${url}${ticketID}/user/${userID}`, {}, {
+export async function assignUserToTicket(projectID: string, ticketID: string, userID: string, jwt: string) {
+	const response = await axios.post(`${url}${projectID}/${ticketID}/user/${userID}`, {}, {
 		headers: {
 			Authorization: 'Bearer ' + jwt,
 		},
@@ -175,23 +176,3 @@ export async function assignUserToTicket(ticketID: string, userID: string,	jwt: 
 
 	return response.data;
 }
-
-// export async function getSeverityStat(projectID: string, jwt: string) {
-// 	const response = await axios.get(`${url}severity/${projectID}`, {
-// 		headers: {
-// 			auth: jwt,
-// 		},
-// 	});
-
-// 	return response.data;
-// }
-
-// export async function getTypeStat(projectID: string, jwt: string) {
-// 	const response = await axios.get(`${url}type/${projectID}`, {
-// 		headers: {
-// 			auth: jwt,
-// 		},
-// 	});
-
-// 	return response.data;
-// }

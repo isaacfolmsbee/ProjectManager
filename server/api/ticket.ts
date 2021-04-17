@@ -51,7 +51,13 @@ function checkFileType(
 	}
 }
 
-router.post('/', auth('createTickets'), async (req: Request, res: Response) => {
+router.post('/:projectID', auth('createTickets'), async (req: Request, res: Response) => {
+
+	// If they are a demo user ignore request
+	if (req.user.isDemoUser) {
+		return res.sendStatus(200);
+	}
+
 	//Validate the request
 	const { error } = Joi.object({
 		project: Joi.string().required().hex().min(24).max(24),
@@ -143,9 +149,15 @@ router.post('/', auth('createTickets'), async (req: Request, res: Response) => {
 });
 
 router.post(
-	'/:ticketID/attachment',
+	'/:projectID/:ticketID/attachment',
 	auth('createTickets'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		upload(req, res, async (err: any) => {
 			if (err) {
 				res.status(400).send(err.message);
@@ -247,7 +259,7 @@ router.get(
 );
 
 router.get(
-	'/eligibleusers/:ticketID',
+	'/:projectID/eligibleusers/:ticketID',
 	auth('manageTickets'),
 	async (req: Request, res: Response) => {
 		const tickets: Collection = await dbHandler('tickets');
@@ -434,9 +446,15 @@ router.get(
 );
 
 router.post(
-	'/:ticketID/user/:userID',
+	'/:projectID/:ticketID/user/:userID',
 	auth('manageTickets'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const tickets: Collection = await dbHandler('tickets');
 		const users: Collection = await dbHandler('users');
 
@@ -474,9 +492,15 @@ router.post(
 );
 
 router.delete(
-	'/:ticketID/user/:userID',
+	'/:projectID/:ticketID/user/:userID',
 	auth('manageTickets'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		const tickets: Collection = await dbHandler('tickets');
 
 		await tickets.updateOne(
@@ -493,9 +517,15 @@ router.delete(
 );
 
 router.post(
-	'/:ticketID/comment',
+	'/:projectID/:ticketID/comment',
 	auth('comment'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			text: Joi.string().required(),
@@ -548,9 +578,15 @@ router.post(
 );
 
 router.put(
-	'/:ticketID',
+	'/:projectID/:ticketID',
 	auth('editTickets'),
 	async (req: Request, res: Response) => {
+
+		// If they are a demo user ignore request
+		if (req.user.isDemoUser) {
+			return res.sendStatus(200);
+		}
+
 		//Validate the request
 		const { error } = Joi.object({
 			status: Joi.string().valid('in progress', 'need info', 'closed'),
