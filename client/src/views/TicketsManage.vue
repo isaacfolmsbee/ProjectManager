@@ -16,7 +16,7 @@
 		</div>
 		<span class="hidden md:inline mx-auto my-auto text-gray-dark-300 text-xl">Project Role: <span class="text-primary-600">{{ selectedProject.role }}</span></span>
 	</div>
-	<div class="xl:mt-3 rounded-lg bg-gray-light-100 shadow-md mx-2 p-1 flex">
+	<div class="xl:mt-3 rounded-lg bg-gray-light-100 shadow-md mr-2 ml-auto p-1 flex">
 		<input class="flex-grow mr-1.5 bg-gray-light-100 border-b border-gray-dark-700 rounded-none" v-model="query" type="text" placeholder="Query...">
 		<button @click="filterTickets()" class="font-bold bg-primary-800 text-gray-light-50 py-1 px-2 rounded-lg">Search</button>
 	</div>
