@@ -33,10 +33,14 @@
 				Manage Roles
 			</router-link>
 			<router-link v-if="selectedProject.views.includes('ProjectsManage')" to="/manage-projects" class="router-link">
-			<svg class="router-svg" viewBox="0 0 256 256"><path d="M230.91 171.97a8 8 0 0 1-2.879 10.94l-96 56a8 8 0 0 1-8.062 0l-96-56a8 8 0 0 1 8.062-13.82L128 222.738l91.969-53.648a8 8 0 0 1 10.941 2.88zm-10.941-50.88L128 174.738L36.031 121.09a8 8 0 0 0-8.062 13.82l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0-8.062-13.82zm-192-34.18l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0 0-13.82l-96-56a8 8 0 0 0-8.062 0l-96 56a8 8 0 0 0 0 13.82z"></path></svg>
+				<svg class="router-svg" viewBox="0 0 256 256"><path d="M230.91 171.97a8 8 0 0 1-2.879 10.94l-96 56a8 8 0 0 1-8.062 0l-96-56a8 8 0 0 1 8.062-13.82L128 222.738l91.969-53.648a8 8 0 0 1 10.941 2.88zm-10.941-50.88L128 174.738L36.031 121.09a8 8 0 0 0-8.062 13.82l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0-8.062-13.82zm-192-34.18l96 56a8 8 0 0 0 8.062 0l96-56a8 8 0 0 0 0-13.82l-96-56a8 8 0 0 0-8.062 0l-96 56a8 8 0 0 0 0 13.82z"></path></svg>
 				Manage Projects
 			</router-link>
 		</div>
+		<router-link to="/logout" class="mt-auto router-link">
+			<svg class="router-svg" viewBox="0 0 24 24"><path d="M16 17v-3H9v-4h7V7l5 5l-5 5M14 2a2 2 0 0 1 2 2v2h-2V4H5v16h9v-2h2v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9z"></path></svg>
+			Logout
+		</router-link>
 	</div>
 	<div class="fixed top-0 hidden xl:flex w-screen h-20 pl-60 bg-gray-light-100 shadow-md">
 		<div 

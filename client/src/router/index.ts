@@ -13,6 +13,38 @@ const routes: Array<RouteConfig> = [
 		},
 	},
 	{
+		path: '/login',
+		name: 'Login',
+		component: () => import('../views/Login.vue'),
+		meta: {
+			guest: true,
+		},
+	},
+	{
+		path: '/register',
+		name: 'Register',
+		component: () => import('../views/Register.vue'),
+		meta: {
+			guest: true,
+		},
+	},
+	{
+		path: '/demo-login',
+		name: 'DemoLogin',
+		component: () => import('../views/DemoLogin.vue'),
+		meta: {
+			guest: true,
+		},
+	},
+	{
+		path: '/logout',
+		name: 'Logout',
+		component: () => import('../views/Logout.vue'),
+		meta: {
+			requiresAuth: true,
+		},
+	},
+	{
 		path: '/manage-tickets',
 		name: 'TicketsManage',
 		component: () => import('../views/TicketsManage.vue'),
@@ -51,30 +83,6 @@ const routes: Array<RouteConfig> = [
 		path: '/ticket',
 		name: 'Ticket',
 		component: () => import('../views/Ticket.vue'),
-		meta: {
-			requiresAuth: true,
-		},
-	},
-	{
-		path: '/login',
-		name: 'Login',
-		component: () => import('../views/Login.vue'),
-		meta: {
-			guest: true,
-		},
-	},
-	{
-		path: '/register',
-		name: 'Register',
-		component: () => import('../views/Register.vue'),
-		meta: {
-			guest: true,
-		},
-	},
-	{
-		path: '/logout',
-		name: 'Logout',
-		component: () => import('../views/Logout.vue'),
 		meta: {
 			requiresAuth: true,
 		},

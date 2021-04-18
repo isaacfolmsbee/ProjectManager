@@ -24,7 +24,7 @@
 	</span>
 	<span class="text-gray-dark-200 mt-0.5">
 		Sign in as a 
-		<router-link to="/register" class="text-primary-600 cursor-pointer">Demo User</router-link>
+		<router-link to="/demo-login" class="text-primary-600 cursor-pointer">Demo User</router-link>
 	</span>
 </div>
 </template>
