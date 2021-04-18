@@ -86,7 +86,6 @@ export function auth(permission: string) {
 						j < req.user.projects[i].permissions.length;
 						j++
 					) {
-						console.log(req.user.projects[i].permissions[j]);
 						if (
 							req.user.projects[i].permissions[j] === permission
 						) {
